@@ -3,7 +3,7 @@
     class="navbar-container"
     :modelValue="drawer"
   >
-    <v-list-item>
+    <v-list-item class="logo-item">
       <router-link to="/dashboard" class="logo-link">
         <v-img
           v-if="getLogo()"
@@ -56,6 +56,7 @@
 
 <script>
 import { categoryUrl } from '/src/api/scheme'
+import { config_dataset } from '/src/utils/settings'
 
 export default {
   props: {
@@ -84,7 +85,7 @@ export default {
       return this.$route.params.group === group_slug && this.$route.params.category === category_slug
     },
     getLogo() {
-      return this.settings.logo_image
+      return config_dataset.logo_image
     },
     navbarDensity() {
       return this.settings.navbar_density || "default"

@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie'
 
+const backend_domain = import.meta.env.VITE_APP_URL_PREFIX || 'http://localhost:8082'
 var config_dataset = {
-  backend_prefix: `${import.meta.env.VITE_APP_URL_PREFIX}/admin/`,
+  backend_prefix: `${backend_domain}/admin/`,
   static_prefix: '/static/custom_admin',
   version: '-',
   api_timeout_ms: 1000 * 5,
@@ -18,6 +19,8 @@ if (import.meta.env.PROD) {
     config_dataset.backend_prefix = '/'
   }
 }
+
+console.assert(config_dataset.backend_prefix, "backend_prefix is required");
 
 export var config_dataset
 console.log('config_dataset', config_dataset, 'prod', import.meta.env.PROD)

@@ -200,8 +200,6 @@ body {
 }
 .project-logo {
     margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 .project-logo-text {
     margin: 5px;
@@ -210,6 +208,12 @@ body {
     max-width: 400px;
     min-width: 300px;
     background-color: rgb(var(--v-theme-darken3)) !important;
+    .login-title {
+        padding: .625rem 1rem;
+    }
+}
+.login-window > .v-card-item:nth-child(2) {
+    padding: 0 !important;
 }
 .create-dialog {
     max-width: $model-form-width;
@@ -246,10 +250,17 @@ body {
     padding: 0px 16px;
 }
 
+.logo-item {
+    padding: 0px;
+    align-items: center;
+}
 .logo-link {
     color: inherit;
     text-decoration: none !important;
     border-bottom-style: none !important;
+}
+.project-logo-text {
+    padding: 10px;
 }
 
 .login-title {

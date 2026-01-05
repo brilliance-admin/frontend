@@ -111,6 +111,7 @@
 import { getSettings } from '/src/api/settings'
 import { createRules } from '/src/utils/validationRules'
 import { login } from '/src/api/user'
+import { config_dataset } from '/src/utils/settings'
 
 import Settings from '/src/components/Settings.vue'
 import Language from '/src/components/Language.vue'
@@ -160,7 +161,7 @@ export default {
   },
   methods: {
     getLogo() {
-      return this.settings.logo_image
+      return config_dataset.logo_image
     },
     getTitle() {
       return this.settings.title
