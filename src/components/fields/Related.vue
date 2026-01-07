@@ -62,6 +62,7 @@
               :label="$t('inputStringForSearch')"
               @update:modelValue="updateSearch"
               density="compact"
+              :disabled="isReadOnly()"
             />
 
             <v-card
@@ -78,14 +79,19 @@
                   :key="item.key"
                   :title="item.title"
                   @click="addItem(item)"
+                  :disabled="isReadOnly()"
                 />
               </v-list>
             </v-card>
           </v-col>
 
           <v-col cols="6 dial-list-col">
-            <div class="dial-list-selected-text text-caption">
-              {{ $t('selected') }}
+            <div
+              class="dial-list-selected-text text-caption"
+            >
+              <template v-if="!isReadOnly()">
+                {{ $t('selected') }}
+              </template>
             </div>
 
             <v-card
@@ -102,6 +108,7 @@
                   :key="item.key"
                   :title="item.title"
                   @click="removeItem(item)"
+                  :disabled="isReadOnly()"
                 />
               </v-list>
             </v-card>
@@ -168,6 +175,8 @@ export default {
       this.updateChoices()
     },
     updateChoices() {
+      if (this.isReadOnly()) return
+
       this.apiLoading = true
 
       var existedChoices = []
@@ -218,6 +227,8 @@ export default {
       return this.field.dual_list && this.isMany() && !this.isFilter
     },
     addItem(item) {
+      if (this.isReadOnly()) return
+
       if (!this.value) {
         this.value = []
       }
@@ -225,6 +236,8 @@ export default {
       this.onChange(this.value)
     },
     removeItem(item) {
+      if (this.isReadOnly()) return
+
       this.value = this.value.filter(i => i.key !== item.key)
       this.onChange(this.value)
     },
