@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { categoryUrl } from '/src/api/scheme'
+import { categoryUrl } from '/src/api/schema'
 import FormUpdate from '/src/components/table/FormUpdate.vue'
 
 export default {

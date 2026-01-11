@@ -47,7 +47,7 @@ import Header from '/src/layout/Header.vue'
 import Settings from '/src/components/Settings.vue'
 import Loader from '/src/components/Loader.vue'
 
-import { getAdminSchema } from '/src/api/scheme'
+import { getAdminSchema } from '/src/api/schema'
 import { getToken } from '/src/utils/auth'
 import { getLocalSettings } from '/src/utils/settings'
 import { removeToken } from '/src/utils/auth'

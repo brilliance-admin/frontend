@@ -26,8 +26,8 @@ export async function getAdminSchema() {
         return
       }
 
-      if (!response.data.groups) {
-        reject('Admin schema groups data not found or empty');
+      if (!response.data.categories) {
+        reject('Admin schema categories data not found or empty');
         return
       }
 
@@ -84,11 +84,11 @@ export class AdminSchema {
   }
 
   get_category(group_slug, category_slug) {
-    if (!this.schema.groups) {
-      console.error('this.schema.groups is none; this.schema:', this.schema)
+    if (!this.schema.categories) {
+      console.error('this.schema.categories is none; this.schema:', this.schema)
       return
     }
-    const group = this.schema.groups[group_slug]
+    const group = this.schema.categories[group_slug]
     if (!group) {
       return
     }
@@ -98,7 +98,7 @@ export class AdminSchema {
     }
   }
 
-  get_groups() {
-    return this.schema.groups
+  get_categories() {
+    return this.schema.categories
   }
 }

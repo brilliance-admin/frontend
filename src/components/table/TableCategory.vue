@@ -115,7 +115,12 @@
               <v-tooltip>
                 #{{ rel.key }} {{ rel.title }}
                 <template v-slot:activator="{ props }">
-                  <v-chip size="small" v-bind="props">{{ truncate(rel.title, 30) }}</v-chip>
+                  <v-chip
+                    :size="header.field.size || 'default'"
+                    v-bind="props"
+                  >
+                    {{ truncate(rel.title, 30) }}
+                  </v-chip>
                 </template>
               </v-tooltip>
             </template>
@@ -128,12 +133,12 @@
 
           <template v-else-if="header.type === 'choice'">
             <template v-if="item[header.key] !== null && item[header.key] !== undefined">
-              <template v-if="Object.keys(header.field.tag_colors || {}).length > 0">
+              <template v-if="hasTagColors(header.field)">
                 <v-chip
                   class="table-choice-chip"
-                  :size="header.field.size || 'small'"
+                  :size="header.field.size || 'default'"
                   :variant="header.field.variant"
-                  :color="header.field.tag_colors[getChoiceValue(item, header)]"
+                  :color="getChoiceColor(item, header)"
                 >{{ getChoiceTitle(item, header) }}</v-chip>
               </template>
               <template v-else>
@@ -361,7 +366,7 @@
 
 <script>
 import { applyFiltersToQuery, extractFiltersFromQuery } from '/src/utils/filters'
-import { CategorySchema, detailUrl } from '/src/api/scheme'
+import { CategorySchema, detailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
 import { getDataList, sendTableAction, downloadContent } from '/src/api/table'
 import { truncate } from '/src/utils'
@@ -692,6 +697,18 @@ export default {
       if (typeof value === 'object') return value.value
       return value
     },
+    getChoiceColor(item, header) {
+      const value = item[header.key]
+      if (typeof value === 'object' && value.tag_color) return value.tag_color
+
+      if (header.field.choices) {
+        const value = this.getChoiceValue(item, header);
+        const choice = header.field.choices.find(c => c.value === value)
+        if (choice) return choice.tag_color
+      }
+
+      return null
+    },
     getChoiceTitle(item, header) {
       const value = item[header.key]
       if (typeof value === 'object') return value.title
@@ -721,6 +738,11 @@ export default {
         count += Object.values(this.filters).filter(v => v !== null && v !== undefined).length
       }
       return count
+    },
+    hasTagColors(field) {
+      if (!Array.isArray(field.choices)) return false
+
+      return field.choices.some(c => c && typeof c === 'object' && 'tag_color' in c)
     },
   },
 }

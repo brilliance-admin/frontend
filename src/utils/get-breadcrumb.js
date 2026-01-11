@@ -1,5 +1,5 @@
 import i18n from '/src/plugins/i18n'
-import { detailUrl, categoryUrl } from '/src/api/scheme'
+import { detailUrl, categoryUrl } from '/src/api/schema'
 
 export function getBreadcrumbs(adminSchema, router, route) {
   let path = []

@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { CategorySchema } from '/src/api/scheme'
+import { CategorySchema } from '/src/api/schema'
 import { getCustomField } from '/src/components/custom-fields/index.js'
 // Contains a list of tabs and a list of fields
 
@@ -194,18 +194,24 @@ export default {
       if (custom_field) return custom_field
 
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
-      if (['integer'].indexOf(field.type) !== -1) return NumberField
+      if (['integer'].indexOf(field.type) !== -1) {
+        if (field.choices) return ChoiceField
+        return NumberField
+      }
+      if (['field', 'string', 'email', 'url', 'slug'].indexOf(field.type) !== -1) {
+        if (field.tinymce) return TinyMCEField
+        if (field.ckeditor) return CKEditor
+        if (field.choices) return ChoiceField
+        return StringField
+      }
+
       if (['list', 'choice'].indexOf(field.type) !== -1) return ChoiceField
+
       if (['image', 'file'].indexOf(field.type) !== -1) return FileField
       if (['datetime', 'date', 'time'].indexOf(field.type) !== -1) return DateTimeField
       if (['related'].indexOf(field.type) !== -1) return RelatedField
       if (['array'].indexOf(field.type) !== -1) return ArrayField
 
-      if (['field', 'string', 'email', 'url', 'slug'].indexOf(field.type) !== -1) {
-        if (field.tinymce) return TinyMCEField
-        if (field.ckeditor) return CKEditor
-        return StringField
-      }
       if (field.type === 'json') {
         if (field.json_forms) return JSONFormsField
         return JSONEditorField

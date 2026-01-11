@@ -63,7 +63,7 @@
 
 <script>
 // A component for displaying a button that causes a form to be opened to create a model.
-import { CategorySchema } from '/src/api/scheme'
+import { CategorySchema } from '/src/api/schema'
 import { getTableCreate } from '/src/api/table'
 import { toast } from "vue3-toastify"
 import FieldsContainer from '/src/components/table/FieldsContainer.vue'

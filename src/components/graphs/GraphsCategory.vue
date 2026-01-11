@@ -43,7 +43,7 @@
 
 <script>
 import { toast } from "vue3-toastify"
-import { CategorySchema } from '/src/api/scheme'
+import { CategorySchema } from '/src/api/schema'
 import { getGraphData } from '/src/api/graph'
 
 import { Line as ChartLine, Bar, Bubble, Doughnut, Pie, PolarArea, Radar, Scatter } from "vue-chartjs";

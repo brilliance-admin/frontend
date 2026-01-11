@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { CategorySchema } from '/src/api/scheme'
+import { CategorySchema } from '/src/api/schema'
 import { getTableRetrieve, sendTableUpdate } from '/src/api/table'
 import { toast } from "vue3-toastify"
 import FieldsContainer from '/src/components/table/FieldsContainer.vue'

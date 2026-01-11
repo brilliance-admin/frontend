@@ -79,7 +79,7 @@
 
 <script>
 import { normalizeFilters } from '/src/utils/filters'
-import { CategorySchema } from '/src/api/scheme'
+import { CategorySchema } from '/src/api/schema'
 import BooleanFilter from '/src/components/fields/BooleanFilter.vue'
 import StringField from '/src/components/fields/String.vue'
 import NumberField from '/src/components/fields/Number.vue'

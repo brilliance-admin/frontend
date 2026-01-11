@@ -20,42 +20,63 @@
     <v-divider></v-divider>
 
     <v-list v-model:opened="openedGroups">
-      <v-list-group
-        v-for="(group, group_slug) in adminSchema.get_groups()"
-        :value="group_slug"
-        :key="group_slug"
-      >
-        <template v-slot:activator="{ props }">
+      <template v-for="(group, group_slug) in adminSchema.get_categories()">
+
+        <!-- Группа разделов -->
+        <v-list-group
+          :value="group_slug"
+          :key="group_slug"
+          v-if="hasSubcategories(group)"
+        >
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              :density="navbarDensity()"
+              v-bind="props"
+              :title="group.title"
+              :prepend-icon="group.icon"
+              :subtitle="group.description"
+            ></v-list-item>
+          </template>
+
           <v-list-item
+            class="navbar-link"
+            v-for="(category, category_slug) in group.categories"
+
+            :active="isTabActive(group_slug, category_slug)"
+
+            :key="category_slug"
+            :prepend-icon="category.icon"
+            :title="category.title"
+            :subtitle="category.description"
+            :to="categoryUrl(group_slug, category_slug)"
             :density="navbarDensity()"
-            v-bind="props"
-            :title="group.title"
-            :prepend-icon="group.icon"
-            :subtitle="group.description"
           ></v-list-item>
-        </template>
+        </v-list-group>
 
+        <!-- Ссылка -->
         <v-list-item
-          class="navbar-link"
-          v-for="(category, category_slug) in group.categories"
-
+          v-else-if="group.link"
           :active="isTabActive(group_slug, category_slug)"
-
-          :key="category_slug"
-          :prepend-icon="category.icon"
-          :title="category.title"
-          :subtitle="category.description"
-          :to="categoryUrl(group_slug, category_slug)"
+          :title="group.title"
+          :subtitle="group.description"
           :density="navbarDensity()"
-        ></v-list-item>
-      </v-list-group>
+          :append-icon="group.icon || 'mdi-open-in-new'"
+
+          :to="isAbsolute(group.link) ? undefined : group.link"
+          :href="isAbsolute(group.link) ? group.link : undefined"
+
+          target="_blank"
+          rel="noopener"
+        />
+
+      </template>
     </v-list>
 
   </v-navigation-drawer>
 </template>
 
 <script>
-import { categoryUrl } from '/src/api/scheme'
+import { categoryUrl } from '/src/api/schema'
 import { config_dataset } from '/src/utils/settings'
 
 export default {
@@ -95,6 +116,13 @@ export default {
     },
     toggleDrawer() {
       this.drawer = !this.drawer
+    },
+    hasSubcategories(group) {
+      return group.categories && typeof group.categories === 'object' && Object.keys(group.categories).length > 0
+    },
+    isAbsolute(link) {
+      if (!link) return false
+      return /^(https?:)?\/\//.test(link)
     },
   }
 }
