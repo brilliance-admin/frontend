@@ -26,7 +26,7 @@
         <v-list-group
           :value="group_slug"
           :key="group_slug"
-          v-if="hasSubcategories(group)"
+          v-if="group.type === 'group'"
         >
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -55,7 +55,7 @@
 
         <!-- Ссылка -->
         <v-list-item
-          v-else-if="group.link"
+          v-else-if="group.type === 'link'"
           :active="isTabActive(group_slug, category_slug)"
           :title="group.title"
           :subtitle="group.description"
