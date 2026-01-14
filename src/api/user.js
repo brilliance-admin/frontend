@@ -1,5 +1,6 @@
 import request from '/src/utils/request'
-import { setToken, removeToken, getLang } from '/src/utils/auth'
+import { setToken, removeToken } from '/src/utils/auth'
+import { getLang } from '/src/utils/language'
 import { config_dataset } from '/src/utils/settings'
 import urlJoin from 'url-join'
 

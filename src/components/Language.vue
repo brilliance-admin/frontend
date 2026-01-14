@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { setLang } from '/src/utils/auth'
+import { setLang } from '/src/utils/language'
 
 export default {
   props: {

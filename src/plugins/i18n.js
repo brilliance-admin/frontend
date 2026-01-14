@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n'
 import { en, ru, cs, tr } from 'vuetify/locale'
 
-import { getLang } from '/src/utils/auth'
+import { getLang } from '/src/utils/language'
 
 const messages = {
   en: {

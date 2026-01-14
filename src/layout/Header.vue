@@ -26,7 +26,8 @@
 <script>
 import Language from '/src/components/Language.vue'
 import { getBreadcrumbs } from '/src/utils/get-breadcrumb'
-import { setLang, removeToken } from '/src/utils/auth'
+import { removeToken } from '/src/utils/auth'
+import { setLang } from '/src/utils/language'
 
 export default {
   props: {

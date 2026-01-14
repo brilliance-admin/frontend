@@ -1,6 +1,6 @@
 import request from '/src/utils/request'
 import { config_dataset } from '/src/utils/settings'
-import { getLang } from '/src/utils/auth'
+import { getLang } from '/src/utils/language'
 import urlJoin from 'url-join'
 
 const tableDataListUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/list/')

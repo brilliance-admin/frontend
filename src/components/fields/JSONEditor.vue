@@ -27,6 +27,11 @@ export default {
   },
   watch: {
     value(val){
+      if (typeof val === 'string') {
+        try {
+          val = JSON.parse(val)
+        } catch (e) { }
+      }
       this.$emit('changed', val)
     }
   },
