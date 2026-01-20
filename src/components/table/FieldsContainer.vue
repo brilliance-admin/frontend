@@ -38,6 +38,7 @@
           <v-row class="field-cell">
             <div class="label-col">
               <v-list-subheader>
+                <span v-html="`<!-- Type: ${field.type} -->`"></span>
                 <p class="form-title">{{ field.label }}</p> <p v-if="field.required" class="required-title">*</p>
               </v-list-subheader>
             </div>

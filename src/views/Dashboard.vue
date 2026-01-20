@@ -17,6 +17,9 @@
 
           <template v-slot:title>
             <span class="font-weight-black">{{ group.title }}</span>
+            <v-card-subtitle>
+              <span v-if="group.description" class="navbar-title">{{ group.description }}</span>
+            </v-card-subtitle>
           </template>
 
           <v-card-text class="bg-surface-light pt-4">
@@ -27,6 +30,7 @@
                 :title="category.title"
                 :prepend-icon="category.icon"
                 :to="categoryUrl(group_slug, category_slug)"
+                :subtitle="category.description"
               ></v-list-item>
             </v-list>
           </v-card-text>

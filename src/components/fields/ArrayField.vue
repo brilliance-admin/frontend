@@ -1,5 +1,8 @@
 <template>
   <div class="array-fields">
+
+    <span v-html="`<!-- Array type: ${field.array_type} -->`"></span>
+
     <div
       v-for="(item, index) in value"
       :key="index"
@@ -54,12 +57,25 @@ export default {
   },
   created() {
     validateProps(this)
-    this.value = (this.field.default?.length ? this.field.default : [''])
+    const def = this.field.default
+    this.value = Array.isArray(def) && def.length ? this.normalizeIn(def) : ['']
   },
   methods: {
+    normalizeIn(arr) {
+      if (this.field.array_type === 'json' || this.field.array_type === 'jsonb') {
+        return arr.map(v => typeof v === 'string' ? v : JSON.stringify(v))
+      }
+      return arr.map(v => String(v))
+    },
+    normalizeOut(arr) {
+      if (this.field.array_type === 'json' || this.field.array_type === 'jsonb') {
+        return arr.map(v => JSON.parse(v))
+      }
+      return arr
+    },
     updateFormData(initFormData) {
       const v = initFormData[this.fieldSlug]
-      this.value = (Array.isArray(v) && v.length) ? v : ['']
+      this.value = (Array.isArray(v) && v.length) ? this.normalizeIn(v) : ['']
     },
     add() {
       this.value.push('')
@@ -70,12 +86,12 @@ export default {
       this.emit()
     },
     updateItem(index, newValue) {
-      this.value[index] = newValue
+      this.value[index] = String(newValue)
       this.emit()
     },
     emit() {
       const cleaned = this.value.map(v => v.trim()).filter(Boolean)
-      this.$emit('changed', cleaned)
+      this.$emit('changed', this.normalizeOut(cleaned))
     },
   },
 }
