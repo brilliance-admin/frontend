@@ -16,7 +16,7 @@ const messages = {
     notFoundPageGoBack: 'Go back to navigation',
     yes: 'Yes',
     no: 'No',
-    mainPage: 'Main page',
+    navigation: 'Menu',
     login: 'Login',
     username: 'Username',
     password: 'Password',
@@ -63,7 +63,7 @@ const messages = {
     notFoundPageGoBack: 'Вернуться на главную страницу',
     yes: 'Да',
     no: 'Нет',
-    mainPage: 'Главная',
+    navigation: 'Меню',
     login: 'Вход',
     username: 'Логин',
     password: 'Пароль',
@@ -102,26 +102,6 @@ const messages = {
     errorMessage: 'Непредвиденная ошибка!\nПожалуйста, попробуйте ещё раз позже или обратитесь в поддержку.\nСтатус: {status}\n\n{errorText}',
     successAdminAction: 'Действие успешно выполнено.',
     validationErrors: 'Ошибка валидации зпроса. Пожалуйста, попробуйте ещё раз позже или обратитесь в поддержку.\n\n{errors}',
-  },
-  cs: {
-    mainPage: 'Hlavní stránka',
-    languageSelection: 'Výběr jazyka',
-    $vuetify: {
-      ...cs,
-      dataIterator: {
-        loadingText: 'Načítání...',
-      },
-    },
-  },
-  tr: {
-    mainPage: 'Hlavní stránka',
-    languageSelection: 'Dil seçimi',
-    $vuetify: {
-      ...cs,
-      dataIterator: {
-        loadingText: 'Ana sayfa...',
-      },
-    },
   },
 }
 

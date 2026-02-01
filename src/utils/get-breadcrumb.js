@@ -5,7 +5,7 @@ export function getBreadcrumbs(adminSchema, router, route) {
   let path = []
 
   path.unshift({
-    title: i18n.global.t('mainPage'),
+    title: i18n.global.t('navigation'),
     to: '/navigation',
   })
 

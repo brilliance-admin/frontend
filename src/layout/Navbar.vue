@@ -4,7 +4,7 @@
     :modelValue="drawer"
   >
     <v-list-item class="logo-item">
-      <router-link to="/navigation" class="logo-link">
+      <router-link :to="getMainPage()" class="logo-link">
         <v-img
           v-if="getLogo()"
           class="project-logo"
@@ -115,6 +115,9 @@ export default {
     },
     getLogo() {
       return config_dataset.logo_image
+    },
+    getMainPage() {
+      return this.settings.main_page || "/navigation"
     },
     navbarDensity() {
       return this.settings.navbar_density || "default"

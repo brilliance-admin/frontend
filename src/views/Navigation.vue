@@ -61,7 +61,7 @@ export default {
     $route: {
       immediate: true,
       handler(to, from) {
-        document.title = `${this.$t('mainPage')} | ${this.settings?.title}`
+        document.title = `${this.$t('navigation')} | ${this.settings?.title}`
       }
     },
   },
