@@ -13,7 +13,7 @@ const messages = {
     sectionSettings: 'Section settings',
     notFoundPageHeadline: 'Page not found',
     notFoundPageTitle: 'The page you were looking for does not exist',
-    notFoundPageGoBack: 'Go back to Dashboard',
+    notFoundPageGoBack: 'Go back to navigation',
     yes: 'Yes',
     no: 'No',
     mainPage: 'Main page',

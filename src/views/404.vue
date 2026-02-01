@@ -8,7 +8,7 @@
           <v-col class="d-flex justify-center">
 
             <div class="page-404">
-              <router-link to="/dashboard" v-if="getLogo()">
+              <router-link to="/navigation" v-if="getLogo()">
                 <v-img
                   class="project-logo"
                   :src="getLogo()"
@@ -19,7 +19,7 @@
 
               <p class="text-h4 text-center">{{ $t('notFoundPageHeadline') }}</p>
               <p class="text-center text-subtitle-2">{{ $t('notFoundPageTitle') }}</p>
-              <router-link to="/dashboard"><p class="dashboard-link text-center">{{ $t('notFoundPageGoBack') }}</p></router-link>
+              <router-link to="/navigation"><p class="navigation-link text-center">{{ $t('notFoundPageGoBack') }}</p></router-link>
             </div>
 
           </v-col>

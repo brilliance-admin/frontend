@@ -3,7 +3,7 @@ import { config_dataset } from '/src/utils/settings'
 
 import Layout from '/src/layout/Layout.vue'
 import Detail from '/src/views/Detail.vue'
-import Dashboard from '/src/views/Dashboard.vue'
+import Navigation from '/src/views/Navigation.vue'
 import Category from '/src/views/Category.vue'
 import Login from '/src/views/Login.vue'
 import Page404 from '/src/views/404.vue'
@@ -11,7 +11,7 @@ import Page404 from '/src/views/404.vue'
 const routes = [
   {
     path: '',
-    redirect: '/dashboard',
+    redirect: '/navigation',
   },
   {
     path: '/login',
@@ -26,9 +26,9 @@ const routes = [
     component: Layout,
     children: [
       {
-        path: 'dashboard',
+        path: 'navigation',
         props: true,
-        component: Dashboard,
+        component: Navigation,
       },
       {
         path: ':group/:category/',

@@ -3,9 +3,9 @@ import { config_dataset } from '/src/utils/settings'
 import { getLang } from '/src/utils/language'
 import urlJoin from 'url-join'
 
-const graphUrl = urlJoin(config_dataset.backend_prefix, 'graph/{group}/{category}/')
+const graphUrl = urlJoin(config_dataset.backend_prefix, 'dashboard/{group}/{category}/')
 
-export function getGraphData(kwargs) {
+export function getDashboardData(kwargs) {
   return new Promise((resolve, reject) => {
     const url = graphUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
     request({

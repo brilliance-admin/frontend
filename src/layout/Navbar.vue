@@ -4,7 +4,7 @@
     :modelValue="drawer"
   >
     <v-list-item class="logo-item">
-      <router-link to="/dashboard" class="logo-link">
+      <router-link to="/navigation" class="logo-link">
         <v-img
           v-if="getLogo()"
           class="project-logo"
@@ -22,11 +22,24 @@
     <v-list v-model:opened="openedGroups">
       <template v-for="(group, group_slug) in adminSchema.get_categories()">
 
-        <!-- Группа разделов -->
+        <!-- Группа с одним разделом - выводим как прямую ссылку -->
+        <v-list-item
+          v-if="group.type === 'group' && isSingleCategory(group)"
+          class="navbar-link"
+          :key="'single-' + group_slug"
+          :active="isFirstCategoryActive(group_slug, group)"
+          :prepend-icon="group.icon"
+          :title="group.title"
+          :subtitle="group.description"
+          :to="getFirstCategoryUrl(group_slug, group)"
+          :density="navbarDensity()"
+        ></v-list-item>
+
+        <!-- Группа с несколькими разделами -->
         <v-list-group
           :value="group_slug"
-          :key="group_slug"
-          v-if="group.type === 'group'"
+          :key="'group-' + group_slug"
+          v-else-if="group.type === 'group'"
         >
           <template v-slot:activator="{ props }">
             <v-list-item
@@ -41,9 +54,7 @@
           <v-list-item
             class="navbar-link"
             v-for="(category, category_slug) in group.categories"
-
             :active="isTabActive(group_slug, category_slug)"
-
             :key="category_slug"
             :prepend-icon="category.icon"
             :title="category.title"
@@ -56,15 +67,14 @@
         <!-- Ссылка -->
         <v-list-item
           v-else-if="group.type === 'link'"
-          :active="isTabActive(group_slug, category_slug)"
+          :key="'link-' + group_slug"
+          :active="isTabActive(group_slug, null)"
           :title="group.title"
           :subtitle="group.description"
           :density="navbarDensity()"
-          :append-icon="group.icon || 'mdi-open-in-new'"
-
+          :prepend-icon="group.icon || 'mdi-open-in-new'"
           :to="isAbsolute(group.link) ? undefined : group.link"
           :href="isAbsolute(group.link) ? group.link : undefined"
-
           target="_blank"
           rel="noopener"
         />
@@ -81,10 +91,8 @@ import { config_dataset } from '/src/utils/settings'
 
 export default {
   props: {
-    adminSchema: {type: Object, required: true},
-    settings: {type: Object, required: true},
-  },
-  components: {
+    adminSchema: { type: Object, required: true },
+    settings: { type: Object, required: true },
   },
   data() {
     return {
@@ -117,13 +125,22 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer
     },
-    hasSubcategories(group) {
-      return group.categories && typeof group.categories === 'object' && Object.keys(group.categories).length > 0
-    },
     isAbsolute(link) {
       if (!link) return false
       return /^(https?:)?\/\//.test(link)
     },
-  }
+    isSingleCategory(group) {
+      if (!group.categories) return false
+      return Object.keys(group.categories).length === 1
+    },
+    getFirstCategoryUrl(group_slug, group) {
+      const firstCategorySlug = Object.keys(group.categories)[0]
+      return categoryUrl(group_slug, firstCategorySlug)
+    },
+    isFirstCategoryActive(group_slug, group) {
+      const firstCategorySlug = Object.keys(group.categories)[0]
+      return this.isTabActive(group_slug, firstCategorySlug)
+    },
+  },
 }
 </script>

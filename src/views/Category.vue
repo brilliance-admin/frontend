@@ -1,15 +1,15 @@
 <template>
 
-  <template v-if="categorySchema.type === 'table'">
+  <template v-if="getType() === 'table'">
     <TableCategory :admin-schema="adminSchema" :category-schema="categorySchema"/>
   </template>
 
-  <template v-else-if="categorySchema.type === 'graphs'">
-    <GraphsCategory :admin-schema="adminSchema" :category-schema="categorySchema"/>
+  <template v-else-if="getType() === 'dashboard'">
+    <DashboardCategory :admin-schema="adminSchema" :category-schema="categorySchema"/>
   </template>
 
   <template v-else>
-    Category type "{{ categorySchema.type }}" is not supported
+    Category type "{{ getType() }}" is not supported
   </template>
 
 </template>
@@ -17,7 +17,7 @@
 <script>
 import { config_dataset } from '/src/utils/settings'
 import TableCategory from '/src/components/table/TableCategory.vue'
-import GraphsCategory from '/src/components/graphs/GraphsCategory.vue'
+import DashboardCategory from '/src/components/dashboard/DashboardCategory.vue'
 
 export default {
   props: {
@@ -29,6 +29,7 @@ export default {
   },
   components: {
     TableCategory,
+    DashboardCategory,
   },
   data() {
     return {
@@ -57,6 +58,10 @@ export default {
     },
   },
   methods: {
+    getType() {
+      if (!this.categorySchema) return
+      return this.categorySchema.type
+    },
   },
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
-  <div class="dashboard-page">
+  <div class="navigation-page">
 
     <template v-for="(group, group_slug) in adminSchema.get_categories()">
       <div
-        class="dashboard-element"
+        class="navigation-element"
         cols="12"
         md="3"
         :key="group_slug"

@@ -6,7 +6,7 @@ export function getBreadcrumbs(adminSchema, router, route) {
 
   path.unshift({
     title: i18n.global.t('mainPage'),
-    to: '/dashboard',
+    to: '/navigation',
   })
 
   const categorySchema = adminSchema.get_category(route.params.group, route.params.category)

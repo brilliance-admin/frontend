@@ -74,8 +74,8 @@ export class CategorySchema {
     return this.schema['table_info']
   }
 
-  getGraphInfo() {
-    return this.schema['graph_info']
+  getDashboardInfo() {
+    return this.schema['dashboard_info']
   }
 }
 
