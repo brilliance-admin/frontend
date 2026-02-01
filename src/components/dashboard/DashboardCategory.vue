@@ -1,8 +1,8 @@
 <template>
   <div class="list-page">
 
-    <div class="list-above-block">
-      <div class="header-row-filters" v-if="hasFilters()">
+    <div class="list-above-block" v-if="hasFilters()">
+      <div class="header-row-filters">
         <Filters
           :category-schema="categorySchema"
           :filters-init="filters"
@@ -18,7 +18,7 @@
     </div>
 
     <div v-if="responseData">
-      <v-container>
+      <v-container class="dashboard-container">
         <DashboardContainer :component-data="responseData" />
       </v-container>
     </div>

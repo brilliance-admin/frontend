@@ -1,11 +1,11 @@
 <template>
-  <v-card rounded="lg" class="pa-6 mb-4 flex-grow-1">
+  <v-card rounded="lg" class="pa-6 flex-grow-1 d-flex flex-column">
     <div class="d-flex align-center mb-2">
       <v-icon size="20" color="grey-darken-1" class="mr-2">{{ componentData.icon || 'mdi-wallet-outline' }}</v-icon>
       <span class="text-body-2 text-grey-darken-1">{{ componentData.title }}</span>
     </div>
     <div class="d-flex align-center mb-4">
-      <span class="text-h5 font-weight-bold">{{ componentData.value }}</span>
+      <span class="dashboard-value text-h5 font-weight-bold">{{ componentData.value }}</span>
       <v-chip
         v-if="componentData.change !== undefined"
         :color="componentData.change >= 0 ? 'success' : 'error'"
@@ -21,7 +21,7 @@
       <svg class="mini-chart" viewBox="0 0 300 60" preserveAspectRatio="none">
         <polyline
           fill="none"
-          :stroke="componentData.line_color || '#1976D2'"
+          :stroke="componentData.line_color || 'rgb(var(--v-theme-primary))'"
           stroke-width="2"
           :points="chartPoints"
         />

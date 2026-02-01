@@ -110,3 +110,14 @@
   white-space: nowrap;
   z-index: 10;
 }
+
+.dashboard-container {
+    padding: 4px 16px;
+}
+
+@media (max-width: $screen-narrow) {
+  .dashboard-value {
+    font-weight: 300 !important;
+    font-size: 18px !important;
+  }
+}

@@ -6,7 +6,7 @@
     :lg="componentData.lg"
     class="d-flex flex-column"
   >
-    <v-row v-if="componentData.components" class="flex-grow-1">
+    <v-row v-if="componentData.components" class="flex-grow-1 h-100">
       <template v-for="component in componentData.components" :key="component">
         <template v-if="component.component_type === 'container'">
           <DashboardContainer :component-data="component" />
@@ -22,7 +22,7 @@
           </v-col>
         </template>
         <template v-else-if="component.component_type === 'small_graph'">
-          <v-col cols="12" class="d-flex">
+          <v-col cols="12" class="d-flex flex-grow-1">
             <SmallGraph :component-data="component" class="flex-grow-1" />
           </v-col>
         </template>
