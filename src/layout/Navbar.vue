@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      drawer: true,
+      drawer: null,
       openedGroups: [],
       categoryUrl: categoryUrl,
     }

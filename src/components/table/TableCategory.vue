@@ -148,7 +148,7 @@
           </template>
 
           <template v-else-if="header.type === 'datetime'">
-            <span class="cell-string">{{ formatDateTime(item[header.key]) }}</span>
+            <span :class="['cell-string', `cell-${header.type}`]">{{ formatDateTime(item[header.key]) }}</span>
           </template>
 
           <template v-else-if="header.type === 'image'">

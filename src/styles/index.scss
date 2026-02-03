@@ -124,6 +124,11 @@ body {
     }
 }
 
+.cell-datetime {
+  color: rgba(var(--v-theme-on-surface), 0.6);
+  font-size: 0.85rem;
+}
+
 .hide-element {
     display: none;
 }
@@ -338,10 +343,15 @@ body {
 .navbar-filters {
     margin: 10px;
 }
-
 .model-table {
-    user-select: none;
+    -webkit-user-select: none;
     -moz-user-select: none;
+    user-select: none;
+}
+.model-table .table-cell {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    user-select: text;
 }
 
 .theme-grid {
@@ -375,4 +385,41 @@ body {
 }
 .swatch-right {
     border-radius: 0 4px 4px 0;
+}
+.model-table td:not(:last-child) {
+    border-right: 1px solid rgba(var(--v-theme-on-surface), 0.04) !important;
+}
+
+/* Уменьшить ширину полей фильтров */
+.filters-container .filter-element {
+    width: 220px;
+}
+/* Приглушить label'ы внутри фильтров */
+.filters-container .v-field .v-label {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+.filters-container .v-field-label--floating {
+    font-size: 10px !important;
+}
+/* Скруглить поля */
+.filters-container .v-field {
+    border-radius: 8px !important;
+}
+/* Кнопка Apply — компактнее, в тон */
+.filters-container .filter-button .v-btn {
+    border-radius: 8px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+    height: 40px;
+}
+.filters-container .v-field input {
+    font-size: 13px !important;
+}
+.filters-container .v-field .v-icon {
+    font-size: 20px;
+}
+.filters-drawer .v-btn--icon {
+    width: 40px;
+    height: 40px;
 }
