@@ -73,6 +73,12 @@
   background-color: #1976D2;
 }
 
+.dashboard-card {
+    background-color: rgba(var(--v-theme-on-surface), 0.03) !important;
+}
+[class*="theme--"][class*="dark" i].dashboard-card {
+    background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
+}
 .bar-subtag {
     background-color: rgba(var(--v-theme-on-surface), 0.025) !important;
 }

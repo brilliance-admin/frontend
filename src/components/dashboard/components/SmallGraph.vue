@@ -1,5 +1,5 @@
 <template>
-  <v-card rounded="lg" class="pa-6 flex-grow-1 d-flex flex-column">
+  <v-card rounded="lg" class="dashboard-card pa-6 flex-grow-1 d-flex flex-column">
     <div class="d-flex align-center mb-2">
       <v-icon size="20" color="grey-darken-1" class="mr-2">{{ componentData.icon || 'mdi-wallet-outline' }}</v-icon>
       <span class="text-body-2 text-grey-darken-1">{{ componentData.title }}</span>
