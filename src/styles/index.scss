@@ -3,6 +3,7 @@ $screen-narrow: 1280px;
 $screen-mobile-wide: 640px;
 
 @import '/src/styles/list.scss';
+@import '/src/styles/navbar.scss';
 @import '/src/styles/dashboard.scss';
 @import '/src/styles/edit.scss';
 
@@ -51,25 +52,6 @@ body {
     }
     .v-toolbar {
         display: none;
-    }
-}
-
-.navbar-container {
-    scrollbar-color: rgb(var(--v-theme-secondary)) rgb(var(--v-theme-secondary));
-    background-color: rgb(var(--v-theme-darken3)) !important;
-    color: #FFFFFF !important;
-    width: 255px;
-
-    .v-list-item__spacer {
-        width: 10px !important;
-    }
-    .navbar-link:not(.v-list-item--active) {
-        //background-color: rgb(var(--v-theme-darken3)) !important;
-        background-color: color-mix(
-            in srgb,
-            rgb(var(--v-theme-darken3)) 92%,
-            black
-        ) !important;
     }
 }
 

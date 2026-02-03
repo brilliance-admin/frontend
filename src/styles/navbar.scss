@@ -1,0 +1,38 @@
+
+// Выделение пункта навигации
+.navbar-container .v-list-item--active:not(.v-list-group__header) {
+  background: linear-gradient(135deg,
+    rgb(var(--v-theme-primary)),
+    color-mix(in srgb, rgb(var(--v-theme-primary)) 70%, black)
+  );
+}
+.navbar-container .v-list-item--active:not(.v-list-group__header) .v-list-item-title {
+  color: #ffffff;
+  font-weight: 600;
+}
+.navbar-container .v-list-item--active:not(.v-list-group__header) .v-icon {
+  color: #ffffff;
+}
+.navbar-container .v-list-item {
+  margin: 1px 6px;
+  border-radius: 4px !important;
+}
+.navbar-container .v-list-group__items {
+  --list-indent-size: 10px !important;
+}
+.navbar-container {
+  scrollbar-color: rgb(var(--v-theme-secondary)) rgb(var(--v-theme-secondary));
+  background-color: rgb(var(--v-theme-darken3)) !important;
+  color: #FFFFFF !important;
+  width: 255px;
+  .v-list-item__spacer {
+    width: 10px !important;
+  }
+  .navbar-link:not(.v-list-item--active) {
+    background-color: color-mix(
+      in srgb,
+      rgb(var(--v-theme-darken3)) 92%,
+      black
+    ) !important;
+  }
+}

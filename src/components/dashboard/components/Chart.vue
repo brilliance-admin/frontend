@@ -14,6 +14,8 @@ import { toast } from "vue3-toastify"
 import { useTheme } from "vuetify"
 import { nextTick } from "vue"
 import { Line as ChartLine, Bar, Bubble, Doughnut, Pie, PolarArea, Radar, Scatter } from "vue-chartjs";
+import gradient from 'chartjs-plugin-gradient'
+
 import {
   Chart as ChartJS,
   Title,
@@ -38,6 +40,7 @@ ChartJS.register(
   Filler,
   BarElement,
   ArcElement,
+  gradient,
 );
 const CHART_TYPES = {
   line: ChartLine,
@@ -54,7 +57,7 @@ const COLOR_KEYS = [
   'borderColor', 'backgroundColor', 'pointBorderColor',
   'pointBackgroundColor', 'hoverBackgroundColor', 'hoverBorderColor',
 ]
-const THEME_COLOR_RE = /^(primary|secondary|error|warning|info|success)(-fill)?$/
+const THEME_COLOR_RE = /^(primary|secondary|error|warning|info|success)(-fill|-zero)?$/
 
 function readThemeColors() {
   const style = getComputedStyle(document.documentElement)
@@ -74,7 +77,9 @@ function resolveColor(value) {
   const style = getComputedStyle(document.documentElement)
   const rgb = style.getPropertyValue(`--v-theme-${match[1]}`).trim()
   if (!rgb) return value
-  return match[2] ? `rgba(${rgb}, 0.08)` : `rgb(${rgb})`
+  return match[2] === '-fill' ? `rgba(${rgb}, 0.15)` :
+         match[2] === '-zero' ? `rgba(${rgb}, 0)` :
+         `rgb(${rgb})`
 }
 
 function buildOptions(opts, colors, chartType) {
@@ -155,6 +160,19 @@ export default {
       void this.colorVersion
       const data = JSON.parse(JSON.stringify(this.chartData.data))
       for (const ds of (data.datasets || [])) {
+
+        if (ds.gradient) {
+          for (const prop of ['backgroundColor', 'borderColor']) {
+            const g = ds.gradient[prop]
+            if (!g?.colors) continue
+            const resolved = {}
+            for (const [stop, color] of Object.entries(g.colors)) {
+              resolved[stop] = resolveColor(color)
+            }
+            ds.gradient[prop] = { ...g, colors: resolved }
+          }
+        }
+
         for (const key of COLOR_KEYS) {
           if (Array.isArray(ds[key])) {
             ds[key] = ds[key].map(resolveColor)

@@ -17,6 +17,8 @@
       </div>
     </div>
 
+    <Loader v-if="loading"/>
+
     <div v-if="responseData">
       <v-container class="dashboard-container">
         <DashboardContainer :component-data="responseData" />
@@ -32,6 +34,7 @@ import { CategorySchema } from '/src/api/schema'
 import { getDashboardData } from '/src/api/dashboard'
 
 import DashboardContainer from '/src/components/dashboard/DashboardContainer.vue'
+import Loader from '/src/components/Loader.vue'
 
 export default {
   props: {
@@ -40,6 +43,7 @@ export default {
   },
   components: {
     DashboardContainer,
+    Loader,
   },
   data() {
     return {
@@ -55,6 +59,8 @@ export default {
   methods: {
     updateDashboard() {
       this.loading = true
+      this.responseData = null
+
       getDashboardData({
         group: this.categorySchema.group,
         category: this.categorySchema.category,

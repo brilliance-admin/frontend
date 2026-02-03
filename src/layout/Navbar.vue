@@ -1,7 +1,8 @@
 <template>
   <v-navigation-drawer
     class="navbar-container"
-    :modelValue="drawer"
+    v-model="drawer"
+    :width="260"
   >
     <v-list-item class="logo-item">
       <router-link :to="getMainPage()" class="logo-link">
@@ -72,7 +73,7 @@
           :title="group.title"
           :subtitle="group.description"
           :density="navbarDensity()"
-          :prepend-icon="group.icon || 'mdi-open-in-new'"
+          :append-icon="group.icon || 'mdi-open-in-new'"
           :to="isAbsolute(group.link) ? undefined : group.link"
           :href="isAbsolute(group.link) ? group.link : undefined"
           target="_blank"
