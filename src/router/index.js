@@ -6,13 +6,10 @@ import Detail from '/src/views/Detail.vue'
 import Navigation from '/src/views/Navigation.vue'
 import Category from '/src/views/Category.vue'
 import Login from '/src/views/Login.vue'
+import Index from '/src/views/Index.vue'
 import Page404 from '/src/views/404.vue'
 
 const routes = [
-  {
-    path: '',
-    redirect: '/navigation',
-  },
   {
     path: '/login',
     component: Login,
@@ -22,9 +19,15 @@ const routes = [
     component: Page404,
   },
   {
-    path: '',
+    path: '/',
     component: Layout,
     children: [
+      {
+        path: '',
+        name: 'index',
+        props: true,
+        component: Index,
+      },
       {
         path: 'navigation',
         props: true,

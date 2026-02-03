@@ -12,7 +12,7 @@
           <DashboardContainer :component-data="component" />
         </template>
         <template v-else-if="component.component_type === 'chart'">
-          <v-col cols="12">
+          <v-col cols="12" no-gutters>
             <Chart :chart-data="component" />
           </v-col>
         </template>
