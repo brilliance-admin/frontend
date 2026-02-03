@@ -37,6 +37,12 @@
     padding: 24px 28px !important;
 }
 
+// Фикс цвета на тёмной поверхности (описание и текст под логином)
+[class*="theme--"][class*="dark" i]
+.login-window .v-card-item__content,.v-alert__content {
+    color: rgb(var(--v-theme-on-surface));
+}
+
 .login-form {
     .v-text-field {
         margin-bottom: 4px;
