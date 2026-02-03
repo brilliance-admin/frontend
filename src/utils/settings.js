@@ -6,6 +6,7 @@ var config_dataset = {
   static_prefix: '/static/custom_admin',
   version: '-',
   api_timeout_ms: 1000 * 5,
+  logo_image: '/logo-outline.png',
 }
 
 if (import.meta.env.PROD) {

@@ -6,6 +6,7 @@ $screen-mobile-wide: 640px;
 @import '/src/styles/navbar.scss';
 @import '/src/styles/dashboard.scss';
 @import '/src/styles/edit.scss';
+@import '/src/styles/login.scss';
 
 html,
 body {
@@ -99,24 +100,6 @@ body {
         width: 300px;
     }
 
-//    @media (max-width: $screen-narrow) {
-//        .filter-element {
-//            width: 200px;
-//        }
-//
-//        // Кнопка поиска без текста
-//        .filter-button {
-//            .v-btn__content {
-//                display: none;
-//            }
-//            .v-btn__prepend {
-//                margin-inline: 0;
-//            }
-//            .v-btn {
-//                min-width: 48px;
-//            }
-//        }
-//    }
     .filter-button {
         margin: 2px;
     }
@@ -184,17 +167,6 @@ body {
 .project-logo {
     margin: auto;
 }
-.login-window {
-    max-width: 400px;
-    min-width: 300px;
-    background-color: rgb(var(--v-theme-darken3)) !important;
-    .login-title {
-        padding: 10px;
-    }
-}
-.login-window > .v-card-item:nth-child(2) {
-    padding: 0 !important;
-}
 .create-dialog {
     max-width: $model-form-width;
 }
@@ -244,32 +216,11 @@ body {
     text-align: center;
 }
 
-.login-title {
-    font-weight: bold;
-    color: #FFFFFF;
-}
-
 .confirmation-text {
     word-break: break-word !important;
 }
 .selected-warning-count {
     padding-top: 10px;
-}
-
-.login-page {
-    .login-description {
-        margin-bottom: 15px;
-    }
-
-    [class*="theme--"][class*="dark" i]
-    .login-description .v-alert__content {
-        color: rgb(var(--v-theme-on-surface));
-    }
-
-    [class*="theme--"][class*="dark" i]
-    .v-card-item__content {
-        color: rgb(var(--v-theme-on-surface));
-    }
 }
 
 .top-right-icon {
@@ -386,4 +337,9 @@ body {
 
 .navbar-filters {
     margin: 10px;
+}
+
+.model-table {
+    user-select: none;
+    -moz-user-select: none;
 }

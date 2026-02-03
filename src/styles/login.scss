@@ -1,0 +1,70 @@
+.login-page {
+    .login-description {
+        margin-bottom: 15px;
+    }
+}
+
+.login-window {
+    min-width: 420px;
+    max-width: 420px;
+    background-color: rgb(var(--v-theme-darken3));
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+
+    .v-card-item {
+        padding: 16px;
+    }
+
+    .login-title {
+        font-weight: 600;
+        font-size: 1.4rem;
+        color: #FFFFFF;
+    }
+}
+
+.login-window > .v-card-item {
+    padding: unset !important;
+}
+.login-window .login-title {
+    padding: 16px;
+}
+.login-window .project-logo {
+    padding: 6px;
+}
+
+.login-window .bg-surface-light {
+    padding: 24px 28px !important;
+}
+
+.login-form {
+    .v-text-field {
+        margin-bottom: 4px;
+    }
+}
+
+.login-page .bg-surface-light .v-btn:not(.v-btn--icon) {
+    width: 100%;
+    height: 44px;
+    border-radius: 6px;
+    text-transform: none;
+    font-weight: 600;
+    letter-spacing: 0;
+    font-size: 1rem;
+    background: linear-gradient(160deg,
+                                rgb(var(--v-theme-primary)),
+                                rgb(var(--v-theme-darken3))
+);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 480px) {
+    .login-window {
+        min-width: 300px;
+        max-width: 100%;
+    }
+    .v-card-text {
+        padding: 10px 10px !important;
+    }
+}
