@@ -343,3 +343,36 @@ body {
     user-select: none;
     -moz-user-select: none;
 }
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 80px);
+    gap: 8px;
+}
+.theme-swatch {
+    width: 80px;
+    height: 40px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.15);
+    transition: border-color 0.2s;
+    display: flex;
+    overflow: hidden;
+}
+.theme-swatch:hover {
+    border-color: rgba(var(--v-theme-on-surface), 0.4);
+}
+.theme-swatch-active {
+    border-color: rgb(var(--v-theme-on-surface));
+    border-width: 1px;
+}
+.swatch-half {
+    width: 50%;
+    height: 100%;
+}
+.swatch-left {
+    border-radius: 4px 0 0 4px;
+}
+.swatch-right {
+    border-radius: 0 4px 4px 0;
+}

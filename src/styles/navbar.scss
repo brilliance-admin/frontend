@@ -36,3 +36,16 @@
     ) !important;
   }
 }
+
+.navbar-container .v-divider {
+  border: none;
+  height: 2px;
+  max-height: 2px;
+  opacity: 0.6;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--v-theme-primary)),
+    transparent
+  );
+}

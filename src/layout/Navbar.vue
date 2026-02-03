@@ -3,6 +3,7 @@
     class="navbar-container"
     v-model="drawer"
     :width="260"
+    :permanent="false"
   >
     <v-list-item class="logo-item">
       <router-link :to="getMainPage()" class="logo-link">
@@ -97,7 +98,7 @@ export default {
   },
   data() {
     return {
-      drawer: null,
+      drawer: true,
       openedGroups: [],
       categoryUrl: categoryUrl,
     }
