@@ -98,13 +98,19 @@ export default {
   },
   data() {
     return {
-      drawer: null,
+      drawer: window.innerWidth >= 1280,
       openedGroups: [],
       categoryUrl: categoryUrl,
     }
   },
   created() {
     this.openedGroups.push(this.$route.params.group)
+  },
+  mounted() {
+    const mq = window.matchMedia('(min-width: 1280px)')
+    mq.addEventListener('change', e => {
+      this.drawer = e.matches
+    })
   },
   watch: {
     $route(to, from) {

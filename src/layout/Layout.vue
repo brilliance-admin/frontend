@@ -14,7 +14,7 @@
       />
 
       <v-main class="page-container">
-        <Settings ref="settings"/>
+        <Settings ref="settings" :settings="settings" />
 
         <router-view v-slot="{ Component }">
           <Transition name="fade" mode="out-in">

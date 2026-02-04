@@ -35,6 +35,8 @@
         v-if="getFieldComponent(filter)"
         :is="getFieldComponent(filter)"
 
+        :ref="getRefString(filter_name)"
+
         density="compact"
         variant="solo"
 
@@ -110,14 +112,28 @@ export default {
     }
   },
   created() {
-    if (this.initFilters) {
-      this.filters = this.initFilters
+    if (this.filtersInit) {
+      this.filters = this.filtersInit
     }
-    if (this.initSearch) {
-      this.search = this.initSearch
+    if (this.searchInit) {
+      this.search = this.searchInit
     }
+    this.$nextTick(() => {
+      this.applyFiltersToFields()
+    })
   },
   methods: {
+    applyFiltersToFields() {
+      if (!this.filters || !Object.keys(this.filters).length) return
+      for (const name of Object.keys(this.fieldsInfo)) {
+        const ref = this.$refs[this.getRefString(name)]
+        if (!ref) continue
+        const field = ref[0] || ref
+        if (field && field.updateFormData) {
+          field.updateFormData(this.filters)
+        }
+      }
+    },
     getFieldComponent(filter) {
       if (['choice'].indexOf(filter.type) !== -1 || filter.choices) return ChoiceField
       if (['datetime'].indexOf(filter.type) !== -1) return DateTimeField
@@ -135,6 +151,9 @@ export default {
     },
     searchHelpHtml () {
       return this.searchHelp.replace(/\n/g, '<br>')
+    },
+    getRefString(slug) {
+      return `field_${slug}`
     },
   },
 }

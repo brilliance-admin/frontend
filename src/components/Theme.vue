@@ -3,7 +3,7 @@
     <v-label class="mb-2 font-weight-medium">{{ $t('themeSelection') }}</v-label>
     <div class="theme-grid">
       <div
-        v-for="name in themeNames"
+        v-for="name in getThemeList()"
         :key="name"
         class="theme-swatch"
         :class="{ 'theme-swatch-active': currentTheme === name }"
@@ -20,15 +20,10 @@
 import { ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
+import { getThemeList } from '/src/styles/themes'
 
 const theme = useTheme()
 const currentTheme = ref(theme.global.name.value)
-
-const themeNames = [
-  'blueLight', 'blueDark',
-  'greenLight', 'greenDark',
-  'deepPurpleLight', 'deepPurpleDark',
-]
 
 function getColor(name, key) {
   const t = theme.themes.value[name]

@@ -22,6 +22,10 @@
       <div class="settings-append">
         <v-label>Version:</v-label> {{ getConfig().version }}
       </div>
+
+      <div class="settings-append text-caption" v-if="description">
+        <p v-if="description" v-html="description"></p>
+      </div>
     </template>
 
   </v-navigation-drawer>
@@ -38,6 +42,7 @@ export default {
     Theme,
   },
   props: {
+    settings: { type: Object, required: true },
   },
   data(props) {
     return {
@@ -46,6 +51,11 @@ export default {
     }
   },
   created() {
+  },
+  computed: {
+    description() {
+      return this.settings?.description
+    },
   },
   methods: {
     getTinymcethemes() {
@@ -62,7 +72,7 @@ export default {
       settings.tinyMCETheme = value
       setLocalSettings(settings)
       this.emitter.emit("settings-changed", settings);
-    }
+    },
   },
 }
 </script>

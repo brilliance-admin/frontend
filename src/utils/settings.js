@@ -7,6 +7,7 @@ var config_dataset = {
   version: '-',
   api_timeout_ms: 1000 * 5,
   logo_image: '/logo-outline.png',
+  custom_themes: [],
 }
 
 if (import.meta.env.PROD) {
@@ -37,7 +38,7 @@ export const wysiwygTypes = {
 
 const defaultSettings = {
   page_size: 25,
-  theme: 'light',
+  theme: null,
   wysiwygSkin: 'dark-blue',
 }
 

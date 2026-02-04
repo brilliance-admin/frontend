@@ -33,6 +33,7 @@
                 <v-btn
                   icon="mdi-close"
                   @click="filtersOpen = false"
+                  color="secondary"
                 />
               </div>
               <Filters
@@ -60,6 +61,7 @@
 
           <v-btn
             v-else
+            color="secondary"
             icon="mdi-filter-variant"
             @click="filtersOpen = true"
           />
@@ -515,7 +517,7 @@ export default {
 
       // Deserialize filters
       const table_filters = this.categorySchema.getTableInfo().table_filters || {}
-      this.filters = extractFiltersFromQuery(this.$route, Object.keys(table_filters))
+      this.filters = extractFiltersFromQuery(this.$route, table_filters.fields || {})
     },
     serializeQuery() {
       // Change url params only if group presented

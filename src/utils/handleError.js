@@ -28,11 +28,11 @@ export function createHandleError(t) {
             })
         }
         else if (status >= 400 && status < 500) {
-            if (data?.code) {
-                toast(t(data.code), { theme: "auto", type: "error", position: "top-center" })
-            }
-            else if (data?.message) {
+            if (data?.message) {
                 toast(data.message, { theme: "auto", type: "error", position: "top-center" })
+            }
+            else if (data?.code) {
+                toast(t(data.code), { theme: "auto", type: "error", position: "top-center" })
             }
             else {
                 toast(String(data), { theme: "auto", type: "error", position: "top-center" })

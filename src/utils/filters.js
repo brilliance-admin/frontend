@@ -1,23 +1,35 @@
 const FILTER_PREFIX = 'f-'
 
+function castValue(value, fieldType) {
+  if (value === '' || value === null || value === undefined) return value
+  switch (fieldType) {
+    case 'integer':
+      return isFinite(value) ? Number(value) : value
+    case 'boolean':
+      if (value === 'true') return true
+      if (value === 'false') return false
+      return value
+    default:
+      return value
+  }
+}
+
 /**
  * Распаковывает фильтры из query (?f-id=1&f-created_at__from=...)
  * в идентичный shape фильтров
  */
-export function extractFiltersFromQuery(route, allowedKeys = []) {
+export function extractFiltersFromQuery(route, tableFiltersFields) {
   const query = route.query ?? route
   const filters = {}
   const objectKeys = new Set()
+  const allowedKeys = Object.keys(tableFiltersFields || {})
 
   // 1. определяем object-фильтры по наличию __
   for (const key of Object.keys(query)) {
     if (!key.startsWith(FILTER_PREFIX)) continue
-
     const cleanKey = key.slice(FILTER_PREFIX.length)
     if (!cleanKey.includes('__')) continue
-
     const root = cleanKey.split('__')[0]
-
     if (!allowedKeys.length || allowedKeys.includes(root)) {
       objectKeys.add(root)
     }
@@ -25,37 +37,32 @@ export function extractFiltersFromQuery(route, allowedKeys = []) {
 
   // 2. собираем фильтры
   for (const [rawKey, value] of Object.entries(query)) {
-    if (!rawKey.startsWith(FILTER_PREFIX)) {
-      continue
-    }
+    if (!rawKey.startsWith(FILTER_PREFIX)) continue
 
     const key = rawKey.slice(FILTER_PREFIX.length)
     const parts = key.split('__')
     const root = parts[0]
 
-    if (allowedKeys.length && !allowedKeys.includes(root)) {
-      continue
-    }
+    if (allowedKeys.length && !allowedKeys.includes(root)) continue
+
+    const fieldType = tableFiltersFields[root]?.type
 
     // object-фильтр
     if (objectKeys.has(root)) {
       if (!filters[root]) {
         filters[root] = {}
       }
-
       if (parts.length === 2) {
-        filters[root][parts[1]] = value
+        filters[root][parts[1]] = castValue(value, fieldType)
       }
-
       continue
     }
 
     // примитивный фильтр
     if (parts.length === 1) {
-      filters[root] = value
+      filters[root] = castValue(value, fieldType)
     }
   }
-
   return filters
 }
 

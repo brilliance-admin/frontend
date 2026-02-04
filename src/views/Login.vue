@@ -2,7 +2,7 @@
   <v-app>
 
     <v-main class="login-page">
-      <Settings ref="settings"/>
+      <Settings ref="settings" :settings="settings"/>
 
       <v-container fluid class="fill-height gradient-bg">
 
