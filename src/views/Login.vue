@@ -68,14 +68,13 @@
                     density="default"
                     :hideDetails="false"
                     :disabled="loading"
-
                     v-model="password"
                     :rules="[rules.required, rules.min_length(5)]"
                     :label="$t('password')"
                     :type="show ? 'text' : 'password'"
-                    :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                    :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                     required
-                    @click:append="show = !show"
+                    @click:append-inner="show = !show"
                     @keydown.enter.prevent="login"
                   ></v-text-field>
                 </v-form>
