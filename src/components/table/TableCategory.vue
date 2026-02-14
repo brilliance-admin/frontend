@@ -639,11 +639,17 @@ export default {
           )
         }
         else {
-          if (response.data.message) {
+          if (response.data.message && typeof response.data.message === 'object') {
             toast(response.data.message.text, {
               "type": response.data.message.type,
               "position": response.data.message.position,
               "dangerouslyHTMLString": true
+            })
+          }
+          else if (response.data.message && typeof response.data.message === 'string') {
+            toast(response.data.message, {
+              "type": "success",
+              "position": "top-center",
             })
           }
           else if (response.data.persistent_message) {

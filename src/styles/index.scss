@@ -14,6 +14,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Vuetify ставит overflow-y: scroll намеренно — чтобы при открытии диалогов/меню
+контент не "прыгал" на ширину скроллбара. */
+html {
+    overflow-y: auto !important;
+    scrollbar-gutter: stable;
+}
+
 .gradient-bg {
     background: rgb(var(--v-theme-darken2));
     background: radial-gradient(circle, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-darken4)) 100%) !important;
