@@ -9,6 +9,7 @@
     :loading="loading"
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
+    autocomplete="off"
   />
   <v-text-field
     v-else

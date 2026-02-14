@@ -104,7 +104,7 @@
       >
 
         <div
-          @click="handleClick(index, item)"
+          @click="handleClick($event, index, item)"
           :class="{ 'table-cell': true, 'table-link': index === 0 && canRetrieve() }"
         >
 
@@ -331,15 +331,17 @@
 
         <div class="action-description" v-html="getActionInfo().description"></div>
 
-        <FieldsContainer
-          ref="fieldscontainer"
-          formType="create"
-          :table-schema="getActionInfo().form_schema"
+        <div v-on:keydown.enter.prevent="applyAction">
+          <FieldsContainer
+            ref="fieldscontainer"
+            formType="create"
+            :table-schema="getActionInfo().form_schema"
 
-          :loading="actionLoading"
+            :loading="actionLoading"
 
-          @changed="value => actionFormData = value"
-        />
+            @changed="value => actionFormData = value"
+          />
+        </div>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -483,7 +485,7 @@ export default {
     canRetrieve() {
       return this.categorySchema.getTableInfo().can_retrieve
     },
-    handleClick(index, row) {
+    handleClick(event, index, row) {
       if (index == 0 && this.canRetrieve()) {
         const pkValue = row[this.categorySchema.getTableInfo().pk_name]
 
@@ -492,8 +494,10 @@ export default {
           return
         }
 
-        const url = detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
-        this.$router.push({ path: url } )
+        if (!event.ctrlKey) {
+          const url = detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
+          this.$router.push({ path: url } )
+        }
       }
     },
     deserializeQuery() {
