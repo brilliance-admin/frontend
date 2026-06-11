@@ -1,7 +1,7 @@
 <template>
   <div class="list-page">
 
-    <div class="list-above-block">
+    <div class="list-above-block" v-if="canCreate() || hasFilters()">
       <div class="header-row-filters">
 
         <!-- Вариант фильтров под широкие экраны -->
@@ -542,13 +542,14 @@ export default {
     async getListData() {
       this.loading = true
       getDataList({
+        group: this.categorySchema.group,
+        category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
+
         pageInfo: this.pageInfo,
         filters: this.filters,
         search: this.search,
         ordering: this.ordering,
-
-        group: this.categorySchema.group,
-        category: this.categorySchema.category,
       }).then(responseData => {
         this.pageData = responseData
         this.loading = false
@@ -627,6 +628,7 @@ export default {
       sendTableAction({
         group: this.categorySchema.group,
         category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
 
         action: this.actionSelected,
         pks: this.selected,

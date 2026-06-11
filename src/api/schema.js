@@ -48,10 +48,11 @@ export function detailUrl(group_slug, category_slug, pk) {
 }
 
 export class CategorySchema {
-  constructor(schema, group_slug, category_slug) {
+  constructor(schema, group_slug, category_slug, subcategory_slug) {
     this.schema = schema
     this.group_slug = group_slug
     this.category_slug = category_slug
+    this.subcategory_slug = subcategory_slug
   }
 
   get type() {
@@ -64,6 +65,10 @@ export class CategorySchema {
 
   get category() {
     return this.category_slug
+  }
+
+  get subcategory() {
+    return this.subcategory_slug
   }
 
   get title() {

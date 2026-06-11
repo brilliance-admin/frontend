@@ -12,7 +12,10 @@ const tableDataActionUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}
 export function getDataList(kwargs) {
   return new Promise((resolve, reject) => {
     const pageInfo = kwargs.pageInfo || {}
-    const url = tableDataListUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    let url = tableDataListUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    if (kwargs.subcategory) {
+      url = `${url}?subcategory=${kwargs.subcategory}`
+    }
     request({
       url: url,
       method: 'post',
@@ -37,7 +40,10 @@ export function getDataList(kwargs) {
 
 export function getTableCreate(kwargs) {
   return new Promise((resolve, reject) => {
-    const url = tableDataCreateUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    let url = tableDataCreateUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    if (kwargs.subcategory) {
+      url = `${url}?subcategory=${kwargs.subcategory}`
+    }
     request({
       url: url,
       method: 'post',
@@ -55,7 +61,10 @@ export function getTableCreate(kwargs) {
 
 export function getTableRetrieve(kwargs) {
   return new Promise((resolve, reject) => {
-    const url = tableDataRetriveUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{pk}', kwargs.pk)
+    let url = tableDataRetriveUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{pk}', kwargs.pk)
+    if (kwargs.subcategory) {
+      url = `${url}?subcategory=${kwargs.subcategory}`
+    }
     request({
       url: url,
       method: 'post',
@@ -83,8 +92,10 @@ export function downloadContent(data, fileName, type) {
 
 export async function sendTableUpdate(kwargs) {
   return new Promise((resolve, reject) => {
-    const url = tableDataUpdateUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{pk}', kwargs.pk)
-
+    let url = tableDataUpdateUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{pk}', kwargs.pk)
+    if (kwargs.subcategory) {
+      url = `${url}?subcategory=${kwargs.subcategory}`
+    }
     request({
       url: url,
       method: 'patch',
@@ -106,8 +117,10 @@ export async function sendTableUpdate(kwargs) {
 export async function sendTableAction(kwargs) {
   return new Promise((resolve, reject) => {
     console.log(`${kwargs.group}.${kwargs.category} Action "${kwargs.action}"`)
-    const url = tableDataActionUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{action}', kwargs.action)
-
+    let url = tableDataActionUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category).replace('{action}', kwargs.action)
+    if (kwargs.subcategory) {
+      url = `${url}?subcategory=${kwargs.subcategory}`
+    }
     request({
       url: url,
       method: 'post',

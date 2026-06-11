@@ -25,6 +25,23 @@
         background-color: rgb(var(--v-theme-light2));
     }
 }
+.edit-tabs-container {
+    height: 100%;
+}
+
+.edit-tabs-container--no-subcategories {
+    .table-tabs,
+    .v-divider {
+        display: none;
+    }
+}
+
+.detail-tab,.detail-tabs-window {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
 
 .edit-page-tabs {
     width: 100%;

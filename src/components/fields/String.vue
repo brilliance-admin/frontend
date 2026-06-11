@@ -2,14 +2,13 @@
   <v-textarea
     v-if="field.multilined"
     :clearable="true"
-    :label="field.label"
+    :placeholder="field.label"
     :model-value="value"
     :messages="field.help_text || []"
     :disabled="readOnly"
     :loading="loading"
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
-    autocomplete="off"
   />
   <v-text-field
     v-else
