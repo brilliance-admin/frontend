@@ -38,7 +38,9 @@ export default {
   name: 'TinyMCE',
   props: {
     ...defaultProps,
+    error: {type: [String, Object, Array], required: false},
   },
+  emits: ["changed"],
   data(props) {
     return {
       hasChange: false,

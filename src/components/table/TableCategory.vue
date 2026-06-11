@@ -12,7 +12,7 @@
             :filters-init="filters"
             :search-init="search"
             @filtered="handleFilter"
-            :loading="listLoading"
+            :loading="loading"
             :search-enabled="getTableInfo().search_enabled"
             :fields-info="getTableInfo().table_filters.fields"
             :search-help="getTableInfo().search_help"
@@ -41,7 +41,7 @@
                 :filters-init="filters"
                 :search-init="search"
                 @filtered="handleFilter"
-                :loading="listLoading"
+                :loading="loading"
                 :search-enabled="getTableInfo().search_enabled"
                 :fields-info="getTableInfo().table_filters.fields"
                 :search-help="getTableInfo().search_help"
@@ -103,8 +103,9 @@
         v-bind:key="index"
       >
 
-        <div
-          @click="handleClick($event, index, item)"
+        <component
+          :is="index === 0 && canRetrieve() ? 'RouterLink' : 'div'"
+          :to="index === 0 && canRetrieve() ? getDetailUrl(item) : undefined"
           :class="{ 'table-cell': true, 'table-link': index === 0 && canRetrieve() }"
         >
 
@@ -173,7 +174,7 @@
             <div :class="header.type" style="display: none" />
             <span class="cell-string">{{ item[header.key] }}</span>
           </template>
-        </div>
+        </component>
       </template>
 
       <template v-slot:bottom></template>
@@ -485,20 +486,16 @@ export default {
     canRetrieve() {
       return this.categorySchema.getTableInfo().can_retrieve
     },
-    handleClick(event, index, row) {
-      if (index == 0 && this.canRetrieve()) {
-        const pkValue = row[this.categorySchema.getTableInfo().pk_name]
+    getDetailUrl(row) {
+      const pkName = this.categorySchema.getTableInfo().pk_name
+      const pkValue = row[pkName]
 
-        if (!this.categorySchema.getTableInfo().pk_name || !pkValue) {
-          console.error(`PK value "${this.categorySchema.getTableInfo().pk_name}" not found in row:`, row)
-          return
-        }
-
-        if (!event.ctrlKey) {
-          const url = detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
-          this.$router.push({ path: url } )
-        }
+      if (!pkName || !pkValue) {
+        console.error(`PK value "${pkName}" not found in row:`, row)
+        return ''
       }
+
+      return detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
     },
     deserializeQuery() {
       // Change url params only if group presented

@@ -41,6 +41,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+    overflow-y: auto;
 }
 
 .edit-page-tabs {
@@ -177,6 +178,12 @@
         white-space: break-spaces;
         margin-bottom: 5px;
     }
+
+    &.field-readonly {
+        .v-field__input {
+            color: #9d9d9d;
+        }
+    }
 }
 .tinymce-disabled {
     .mce-top-part {
@@ -208,9 +215,51 @@
     padding: 3px;
 }
 .dial-list-card .dial-list-col .v-field-label {
-        white-space: nowrap;
+    white-space: nowrap;
 }
 [class*="theme--"][class*="dark" i]
 .dial-list-card .dial-list-list-card {
     background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
+}
+.table-title-inline {
+    display: none;
+}
+.field-inline-card {
+    padding: 10px;
+    background-color: rgba(var(--v-theme-secondary), 0.5) !important;
+
+    .v-card-title,.v-card-subtitle {
+        padding-left: 3px;
+    }
+    .v-container {
+        padding: 3px;
+    }
+}
+.field-inline-record {
+    background-color: rgb(var(--v-theme-light2)) !important;
+    margin-bottom: 10px;
+}
+.field-inline-record:last-child {
+    margin-bottom: 0;
+}
+.inline-record-layout {
+    display: flex;
+    align-items: flex-start;
+}
+.inline-record-layout .fields-container {
+    flex: 1 1 auto;
+}
+.inline-record-actions {
+    flex: 0 0 auto;
+    padding: 10px;
+}
+.inline-record-remove {
+    margin: 0 !important;
+}
+.inline-record-add-wrap {
+    display: flex;
+    justify-content: center;
+}
+.inline-record-add {
+    margin: 0 !important;
 }

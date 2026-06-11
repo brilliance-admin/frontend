@@ -127,7 +127,7 @@ body {
 .v-data-table__tr:nth-child(2n) {
     .v-data-table__td {
         background-color: rgb(var(--v-theme-surface));
-        filter: brightness(95%);
+        filter: brightness(97%);
     }
 }
 
@@ -434,17 +434,24 @@ body {
 
 input:autofill,
 input:-moz-autofill {
-  filter: none !important;
-  background-color: inherit !important;
-  color: inherit !important;
+    filter: none !important;
+    background-color: inherit !important;
+    color: inherit !important;
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  transition: background-color calc(infinity * 1s) step-end,
-              color calc(infinity * 1s) step-end;
-  -webkit-text-fill-color: inherit !important;
-  caret-color: inherit !important;
+    transition: background-color calc(infinity * 1s) step-end,
+                color calc(infinity * 1s) step-end;
+    -webkit-text-fill-color: inherit !important;
+    caret-color: inherit !important;
+}
+
+.v-card-subtitle {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    padding-bottom: 10px;
 }

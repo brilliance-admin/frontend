@@ -73,10 +73,13 @@ export default {
       return
     }
 
+    this.loading = true
     getSettings().then(settings => {
       this.settings = settings
+      this.getAdminSchema()
     }).catch(error => {
       console.error('Get admin settings error:', error)
+      this.loading = false
 
       const errorResult = this.$handleError(error)
       if (errorResult.persistentMessage) {
@@ -85,31 +88,32 @@ export default {
       }
       return
     })
-
-    getAdminSchema().then(adminSchema => {
-      this.adminSchema = adminSchema
-      this.loading = false
-    }).catch(error => {
-      this.loading = false
-      console.error('Get admin schema error:', error)
-
-      if (error.response && (error.response.status == 401 || error.response.status == 403)) {
-        removeToken()
-        this.$router.push({ path: '/login' })
-        return
-      }
-
-      const errorResult = this.$handleError(error)
-      if (errorResult.fieldErrors) {
-        this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
-      }
-      if (errorResult.persistentMessage) {
-        this.persistentMessageDialog = true
-        this.persistentMessage = errorResult.persistentMessage
-      }
-    })
   },
   methods: {
+    getAdminSchema() {
+      getAdminSchema().then(adminSchema => {
+        this.adminSchema = adminSchema
+        this.loading = false
+      }).catch(error => {
+        this.loading = false
+        console.error('Get admin schema error:', error)
+
+        if (error.response && (error.response.status == 401 || error.response.status == 403)) {
+          removeToken()
+          this.$router.push({ path: '/login' })
+          return
+        }
+
+        const errorResult = this.$handleError(error)
+        if (errorResult.fieldErrors) {
+          this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
+        }
+        if (errorResult.persistentMessage) {
+          this.persistentMessageDialog = true
+          this.persistentMessage = errorResult.persistentMessage
+        }
+      })
+    }
   }
 }
 </script>

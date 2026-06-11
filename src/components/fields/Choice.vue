@@ -3,11 +3,11 @@
   <v-select
     :density="density"
     :variant="variant"
-    :clearable="true"
+    :clearable="!readOnly"
     :label="field.label"
     :model-value="value"
     :messages="field.help_text || []"
-    :disabled="readOnly"
+    :readonly="readOnly"
     :loading="loading"
 
     :items="field.choices"

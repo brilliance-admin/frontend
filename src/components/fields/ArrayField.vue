@@ -11,7 +11,7 @@
       <v-text-field
         class="array-field-text-field flex-grow-1"
         :model-value="item"
-        :disabled="readOnly"
+        :readonly="readOnly"
         :variant="variant"
         :density="density"
         hide-details

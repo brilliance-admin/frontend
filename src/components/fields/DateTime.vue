@@ -1,6 +1,6 @@
 <template>
 
-  <v-dialog width="auto">
+  <v-dialog width="auto" :disabled="readOnly">
     <template v-slot:activator="{ props: activatorProps }">
       <v-text-field
         v-bind="activatorProps"
@@ -9,13 +9,13 @@
         :label="field.label"
         :model-value="displayValue"
         :messages="field.help_text || []"
-        :disabled="readOnly"
+        :readonly="readOnly"
         :loading="loading"
-        :clearable="true"
+        :clearable="!readOnly"
 
         @update:modelValue="updateDisplayValue"
       >
-        <template v-slot:append-inner>
+        <template v-slot:append-inner v-if="!readOnly">
           <v-icon :icon="icon" v-for="icon in getIcons()"/>
         </template>
       </v-text-field>
@@ -25,6 +25,7 @@
       <v-card>
         <v-text-field
           :model-value="displayValue"
+          :readonly="readOnly"
           @update:modelValue="updateDisplayValue"
           @keydown.enter.prevent="isActive.value = false"
         />

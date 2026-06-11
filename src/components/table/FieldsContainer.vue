@@ -36,7 +36,7 @@
         <div v-for="(field, field_slug) in tableSchema.fields" v-bind:key="field_slug">
 
           <v-row class="field-cell">
-            <div class="label-col">
+            <div :class="['label-col', `table-title-${field.type}`]">
               <v-list-subheader>
                 <span v-html="`<!-- Type: ${field.type} -->`"></span>
                 <p class="form-title">{{ field.label }}</p> <p v-if="field.required" class="required-title">*</p>
@@ -45,7 +45,7 @@
 
             <div
               class="form-field-container"
-              :class="{ 'is-required': field.required }"
+              :class="[{ 'is-required': field.required, 'field-readonly': readOnly || field.read_only }]"
             >
 
               <!-- Translations -->
@@ -90,7 +90,7 @@
                         @changed="value => _updateValue(value, translation.slug)"
                       />
                       <template v-else>
-                        {{ field }}
+                        Field "{{ field_slug}}" type not found: {{ field }}
                       </template>
                     </v-card>
                   </v-tabs-window-item>
@@ -113,15 +113,12 @@
                   :action-name="actionName"
                   :read-only="readOnly || field.read_only"
 
-                  :relation-name-filter="relationNameFilter"
-                  :filter-id="filterId"
-
                   :error="getError(field_slug)"
 
                   @changed="value => _updateValue(value, field_slug)"
                 />
                 <template v-else>
-                  {{ field }}
+                  Field "{{ field_slug}}" type not found: {{ field }}
                 </template>
               </template>
 
@@ -143,7 +140,6 @@
 
 <script>
 import { CategorySchema } from '/src/api/schema'
-import { getCustomField } from '/src/components/custom-fields/index.js'
 // Contains a list of tabs and a list of fields
 
 import BooleanField from '/src/components/fields/Boolean.vue'
@@ -156,6 +152,7 @@ import JSONEditorField from '/src/components/fields/JSONEditor.vue'
 import RelatedField from '/src/components/fields/Related.vue'
 import DateTimeField from '/src/components/fields/DateTime.vue'
 import ArrayField from '/src/components/fields/ArrayField.vue'
+import InlineField from '/src/components/fields/InlineField.vue'
 
 import TinyMCEField from '/src/components/fields/TinyMCE/index.vue'
 import CKEditor from '/src/components/fields/CKEditor.vue'
@@ -167,6 +164,7 @@ export default {
     categorySchema: {type: CategorySchema, required: true},
     tableSchema: {type: Object, required: true},
     loading: {type: Boolean, required: false},
+    actionName: {type: String, required: false},
     readOnly: {type: Boolean, required: false},
     formType: {
       type: String,
@@ -191,9 +189,6 @@ export default {
   },
   methods: {
     getFieldComponent(field, field_slug) {
-      const custom_field = getCustomField(this.viewname, field_slug)
-      if (custom_field) return custom_field
-
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
       if (['integer'].indexOf(field.type) !== -1) {
         if (field.choices) return ChoiceField
@@ -212,6 +207,7 @@ export default {
       if (['datetime', 'date', 'time'].indexOf(field.type) !== -1) return DateTimeField
       if (['related'].indexOf(field.type) !== -1) return RelatedField
       if (['array'].indexOf(field.type) !== -1) return ArrayField
+      if (['inline'].indexOf(field.type) !== -1) return InlineField
 
       if (field.type === 'json') {
         if (field.json_forms) return JSONFormsField

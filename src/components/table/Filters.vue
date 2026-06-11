@@ -91,9 +91,6 @@ import DateTimeField from '/src/components/fields/DateTime.vue'
 
 export default {
   props: {
-    group: {type: String, required: true},
-    category: {type: String, required: true},
-
     categorySchema: {type: CategorySchema, required: true},
     loading: {type: Boolean, required: false},
 

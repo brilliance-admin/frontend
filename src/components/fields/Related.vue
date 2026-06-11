@@ -4,18 +4,18 @@
     <v-autocomplete
       :density="density"
       :variant="variant"
-      :clearable="true"
+      :clearable="!isReadOnly()"
       v-model="value"
       :label="field.label"
       :messages="field.help_text || []"
-      :disabled="isReadOnly()"
+      :readonly="isReadOnly()"
       :placeholder="$t('inputStringForSearch')"
 
       :items="choices"
       :multiple="isMany()"
       :loading="loading || apiLoading"
       chips
-      closable-chips
+      :closable-chips="!isReadOnly()"
       persistent-hint
       no-filter
       hide-selected
@@ -62,7 +62,7 @@
               :label="$t('inputStringForSearch')"
               @update:modelValue="updateSearch"
               density="compact"
-              :disabled="isReadOnly()"
+                :readonly="isReadOnly()"
             />
 
             <v-card

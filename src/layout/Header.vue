@@ -12,9 +12,9 @@
 
     <v-btn icon @click.native="$emit('toggleSettings')"><v-icon>mdi-cog-outline</v-icon></v-btn>
 
-    <v-template v-if="settings && settings.languages">
+    <template v-if="settings && settings.languages">
       <Language :langs="settings.languages"/>
-    </v-template>
+    </template>
 
     {{ adminSchema.schema.profile.username }}
 

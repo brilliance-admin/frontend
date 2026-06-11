@@ -2,7 +2,7 @@
   <v-app>
 
     <v-main class="login-page">
-      <Settings ref="settings" :settings="settings"/>
+      <Settings v-if="settings" ref="settings" :settings="settings"/>
 
       <v-container fluid class="fill-height gradient-bg">
 
@@ -59,7 +59,7 @@
                     :disabled="loading"
 
                     v-model="username"
-                    :rules="[rules.required, rules.min_length(5)]"
+                    :rules="[rules.required(), rules.min_length(5)]"
                     :label="$t('username')"
                     required
                     @keydown.enter.prevent="login"
@@ -69,7 +69,7 @@
                     :hideDetails="false"
                     :disabled="loading"
                     v-model="password"
-                    :rules="[rules.required, rules.min_length(5)]"
+                    :rules="[rules.required(), rules.min_length(5)]"
                     :label="$t('password')"
                     :type="show ? 'text' : 'password'"
                     :append-inner-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
@@ -119,6 +119,7 @@ import Loader from '/src/components/Loader.vue'
 export default {
   data () {
     return {
+      settings: null,
       rules: {},
       username: '',
       password: '',

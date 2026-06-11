@@ -1,11 +1,11 @@
 <template>
   <v-textarea
     v-if="field.multilined"
-    :clearable="true"
+    :clearable="!readOnly"
     :placeholder="field.label"
     :model-value="value"
     :messages="field.help_text || []"
-    :disabled="readOnly"
+    :readonly="readOnly"
     :loading="loading"
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
@@ -14,14 +14,14 @@
     v-else
     :variant="variant"
     :density="density"
-    :clearable="true"
+    :clearable="!readOnly"
     :label="field.label"
     :model-value="value"
     :messages="field.help_text || []"
-    :disabled="readOnly"
+    :readonly="readOnly"
     :type="field.password && !showPassword ? 'password' : 'text'"
-    :append-inner-icon="field.password ? (showPassword ? 'mdi-eye' : 'mdi-eye-off') : undefined"
-    @click:append-inner="showPassword = !showPassword"
+    :append-inner-icon="field.password && !readOnly ? (showPassword ? 'mdi-eye' : 'mdi-eye-off') : undefined"
+    @click:append-inner="!readOnly && (showPassword = !showPassword)"
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
   />
