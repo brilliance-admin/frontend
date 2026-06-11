@@ -17,7 +17,10 @@
     :inset="false"
 
     @update:modelValue="onChange"
-  />
+  >
+    <template v-if="readOnly" #increment></template>
+    <template v-if="readOnly" #decrement></template>
+  </v-number-input>
 
 </template>
 

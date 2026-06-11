@@ -71,7 +71,7 @@ const greenDark = {
   colors: {
     surface: '#141A16',
     'on-surface': '#E2E8F0',
-    light2: '#2A3630',
+    light2: 'rgb(32, 41, 37)',
     light3: '#4ADE80',
     secondary: '#2A3F32',
     darken1: '#34D399',
@@ -109,7 +109,7 @@ const deepPurpleDark = {
   colors: {
     surface: '#141420',
     'on-surface': '#E2E8F0',
-    light2: '#2D2D4A',
+    light2: 'rgb(34, 34, 56)',
     light3: '#A78BFA',
     secondary: '#3D3A5C',
     darken1: '#8B5CF6',
