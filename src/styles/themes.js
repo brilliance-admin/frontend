@@ -9,6 +9,7 @@ const darkSurface = 'rgb(26, 29, 30)'
 const blueLight = {
   dark: false,
   colors: {
+    'surface-light': '#f8fafc',
     light2: '#eff2f6',
     light3: '#dee5ed',
     secondary: '#bdcbdb', // light-4
@@ -30,6 +31,7 @@ const blueDark = {
   dark: true,
   colors: {
     surface: darkSurface,
+    'surface-light': 'rgb(36, 39, 40)',
 
     light2: '#1f2223',
     light3: '#dee5ed',
@@ -52,6 +54,7 @@ const blueDark = {
 const greenLight = {
   dark: false,
   colors: {
+    'surface-light': '#f7fbf8',
     light2: '#E8F0EC',
     light3: '#A3CFB4',
     secondary: '#6BA583',
@@ -70,6 +73,7 @@ const greenDark = {
   dark: true,
   colors: {
     surface: '#141A16',
+    'surface-light': '#202622',
     'on-surface': '#E2E8F0',
     light2: 'rgb(32, 41, 37)',
     light3: '#4ADE80',
@@ -90,6 +94,7 @@ const greenDark = {
 const deepPurpleLight = {
   dark: false,
   colors: {
+    'surface-light': '#faf8fd',
     light2: '#F3F0FA',
     light3: '#C4B5FD',
     secondary: '#7E6BB0',
@@ -108,6 +113,7 @@ const deepPurpleDark = {
   dark: true,
   colors: {
     surface: '#141420',
+    'surface-light': 'rgb(26, 26, 39)',
     'on-surface': '#E2E8F0',
     light2: 'rgb(34, 34, 56)',
     light3: '#A78BFA',
