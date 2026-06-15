@@ -554,7 +554,7 @@ export default {
         this.loading = false
         console.error('Get list error:', error)
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadList'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }
@@ -673,7 +673,7 @@ export default {
         this.actionLoading = false
         console.error(`Admin action ${this.actionSelected} error:`, error)
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.runAction'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }

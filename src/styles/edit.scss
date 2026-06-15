@@ -225,7 +225,7 @@
     display: none;
 }
 .field-inline-card {
-    padding: 10px;
+    padding: 5px 10px;
     background-color: rgba(var(--v-theme-secondary), 0.5) !important;
 
     .v-card-title,.v-card-subtitle {
@@ -241,6 +241,13 @@
 }
 .field-inline-record:last-child {
     margin-bottom: 0;
+}
+.inline-record-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    text-align: center;
 }
 .inline-record-layout {
     display: flex;

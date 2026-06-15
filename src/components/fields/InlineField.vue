@@ -11,6 +11,14 @@
       </v-card-subtitle>
 
       <v-card
+        v-if="readOnly && value.length === 0"
+        variant="elevated"
+        class="field-inline-record inline-record-empty"
+      >
+        {{ $t('noRecords') }}
+      </v-card>
+
+      <v-card
         v-for="(item, index) in value"
         :key="item?.id ?? index"
         variant="elevated"
@@ -19,9 +27,10 @@
         <div class="inline-record-layout">
           <FieldsContainer
             ref="fieldscontainer"
-            form-type="edit"
+            :form-type="itemFormTypes[index] ?? 'edit'"
             :category-schema="categorySchema"
             :table-schema="field.inline_field_schema"
+            :inline-field-slug="fieldSlug"
 
             :loading="loading"
             :read-only="readOnly"
@@ -30,7 +39,7 @@
           />
           <div class="inline-record-actions">
             <v-btn
-              v-if="!readOnly"
+              v-if="!readOnly && canRemoveItem"
               class="inline-record-remove"
               icon="mdi-close"
               size="small"
@@ -42,7 +51,7 @@
         </div>
       </v-card>
 
-      <div v-if="!readOnly" class="inline-record-add-wrap">
+      <div v-if="!readOnly && canAddItem" class="inline-record-add-wrap">
         <v-btn
           class="inline-record-add"
           icon="mdi-plus"
@@ -80,15 +89,52 @@ export default {
   data(props) {
     return {
       value: [],
+      itemFormTypes: [],
     }
   },
   created() {
     validateProps(this, requiredFields)
-    this.value = this.field.initial || []
+    if (this.field.initial !== undefined && !Array.isArray(this.field.initial)) {
+      throw new Error(`InlineField initial value must be an array for field "${this.fieldSlug}"`)
+    }
+    this.value = Array.isArray(this.field.initial) ? this.field.initial : []
+    this.itemFormTypes = this.value.map(() => 'edit')
+
+    if (this.isRequired && this.value.length === 0) {
+      this.appendNewItem()
+    }
+  },
+  computed: {
+    isMany() {
+      return !!this.field.many
+    },
+    isRequired() {
+      return !!this.field.required
+    },
+    canAddItem() {
+      return this.isMany || this.value.length === 0
+    },
+    canRemoveItem() {
+      if (!this.isMany) return false
+      if (this.isRequired && this.value.length <= 1) return false
+      return true
+    },
   },
   methods: {
+    appendNewItem(formType = 'create') {
+      this.value = [...this.value, {}]
+      this.itemFormTypes = [...this.itemFormTypes, formType]
+    },
     updateFormData(initFormData) {
-      this.value = initFormData[this.fieldSlug] || []
+      if (!Array.isArray(initFormData[this.fieldSlug])) {
+        throw new Error(`InlineField form data must be an array for field "${this.fieldSlug}"`)
+      }
+      this.value = initFormData[this.fieldSlug]
+      this.itemFormTypes = this.value.map(() => 'edit')
+
+      if (this.isRequired && this.value.length === 0) {
+        this.appendNewItem()
+      }
 
       this.$nextTick(() => {
         const fieldscontainers = this.$refs.fieldscontainer || []
@@ -104,13 +150,22 @@ export default {
       this.$emit('changed', this.value)
     },
     removeItem(index) {
+      if (!this.canRemoveItem) {
+        throw new Error(`InlineField remove is forbidden for field "${this.fieldSlug}"`)
+      }
       const nextValue = this.value.slice()
+      const nextItemFormTypes = this.itemFormTypes.slice()
       nextValue.splice(index, 1)
+      nextItemFormTypes.splice(index, 1)
       this.value = nextValue
+      this.itemFormTypes = nextItemFormTypes
       this.$emit('changed', this.value)
     },
     addItem() {
-      this.value = [...this.value, {}]
+      if (!this.canAddItem) {
+        throw new Error(`InlineField add is forbidden for field "${this.fieldSlug}"`)
+      }
+      this.appendNewItem()
       this.$emit('changed', this.value)
     },
   },

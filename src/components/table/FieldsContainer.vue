@@ -33,105 +33,114 @@
         :text="groupInfo.title"
         :eager="true"
       >
-        <div v-for="(field, field_slug) in tableSchema.fields" v-bind:key="field_slug">
+        <template
+          v-for="(field, field_slug) in tableSchema.fields"
+          v-bind:key="field_slug"
+        >
+          <template
+            v-if="isDisplayField(field)"
+          >
 
-          <v-row class="field-cell">
-            <div :class="['label-col', `table-title-${field.type}`]">
-              <v-list-subheader>
-                <span v-html="`<!-- Type: ${field.type} -->`"></span>
-                <p class="form-title">{{ field.label }}</p> <p v-if="field.required" class="required-title">*</p>
-              </v-list-subheader>
-            </div>
+            <v-row class="field-cell">
+              <div :class="['label-col', `table-title-${field.type}`]">
+                <v-list-subheader>
+                  <span v-html="`<!-- type=${field.type} slug='${field_slug}' -->`"></span>
+                  <p class="form-title">{{ field.label }}</p> <p v-if="field.required" class="required-title">*</p>
+                </v-list-subheader>
+              </div>
 
-            <div
-              class="form-field-container"
-              :class="[{ 'is-required': field.required, 'field-readonly': readOnly || field.read_only }]"
-            >
+              <div
+                class="form-field-container"
+                :class="[{ 'is-required': field.required, 'field-readonly': readOnly || field.read_only }]"
+              >
 
-              <!-- Translations -->
-              <template v-if="Object.keys(translations).indexOf(field_slug) !== -1">
-                <v-tabs
-                  v-model="translationsTabs[field_slug]"
-                  bg-color="rgb(var(--v-theme-light2))"
-                >
-                  <v-tab
-                    v-for="translation in translations[field_slug]"
-                    :key="translation.lang_slug"
-                    :text="translation.lang_translation"
-                    :value="translation.lang_slug"
-                  ></v-tab>
-                </v-tabs>
-
-                <v-tabs-window v-model="translationsTabs[field_slug]">
-                  <v-tabs-window-item
-                    v-for="translation in translations[field_slug]"
-                    :key="translation.lang_slug"
-                    :value="translation.lang_slug"
-                    transition="fade"
-                    reverse-transition="fade"
-                    :eager="true"
+                <!-- Translations -->
+                <template v-if="Object.keys(translations).indexOf(field_slug) !== -1">
+                  <v-tabs
+                    v-model="translationsTabs[field_slug]"
+                    bg-color="rgb(var(--v-theme-light2))"
                   >
-                    <v-card flat>
-                      <component
-                        v-if="getFieldComponent(field, translation.slug)"
-                        :is="getFieldComponent(field, translation.slug)"
+                    <v-tab
+                      v-for="translation in translations[field_slug]"
+                      :key="translation.lang_slug"
+                      :text="translation.lang_translation"
+                      :value="translation.lang_slug"
+                    ></v-tab>
+                  </v-tabs>
 
-                        :category-schema="categorySchema"
+                  <v-tabs-window v-model="translationsTabs[field_slug]">
+                    <v-tabs-window-item
+                      v-for="translation in translations[field_slug]"
+                      :key="translation.lang_slug"
+                      :value="translation.lang_slug"
+                      transition="fade"
+                      reverse-transition="fade"
+                      :eager="true"
+                    >
+                      <v-card flat>
+                        <component
+                          v-if="getFieldComponent(field, translation.slug)"
+                          :is="getFieldComponent(field, translation.slug)"
 
-                        density="comfortable"
-                        variant="filled"
-                        :ref="getRefString(translation.slug)"
-                        :field="field"
-                        :field-slug="translation.slug"
-                        :loading="loading"
-                        :action-name="actionName"
-                        :read-only="readOnly || field.read_only"
+                          :category-schema="categorySchema"
 
-                        @changed="value => _updateValue(value, translation.slug)"
-                      />
-                      <template v-else>
-                        Field "{{ field_slug}}" type not found: {{ field }}
-                      </template>
-                    </v-card>
-                  </v-tabs-window-item>
-                </v-tabs-window>
-              </template>
+                          density="comfortable"
+                          variant="filled"
+                          :ref="getRefString(translation.slug)"
+                          :field="field"
+                          :field-slug="translation.slug"
+                          :inline-field-slug="inlineFieldSlug"
+                          :loading="loading"
+                          :action-name="actionName"
+                          :read-only="readOnly || field.read_only"
 
-              <template v-else>
-                <component
-                  v-if="getFieldComponent(field, field_slug)"
-                  :is="getFieldComponent(field, field_slug)"
-
-                  :category-schema="categorySchema"
-
-                  density="comfortable"
-                  variant="filled"
-                  :ref="getRefString(field_slug)"
-                  :field="field"
-                  :field-slug="field_slug"
-                  :loading="loading"
-                  :action-name="actionName"
-                  :read-only="readOnly || field.read_only"
-
-                  :error="getError(field_slug)"
-
-                  @changed="value => _updateValue(value, field_slug)"
-                />
-                <template v-else>
-                  Field "{{ field_slug}}" type not found: {{ field }}
+                          @changed="value => _updateValue(value, translation.slug)"
+                        />
+                        <template v-else>
+                          Field "{{ field_slug}}" type not found: {{ field }}
+                        </template>
+                      </v-card>
+                    </v-tabs-window-item>
+                  </v-tabs-window>
                 </template>
-              </template>
 
-              <template v-if="getError(field_slug)">
-                <p class="form-error">
-                  {{ formatError(getError(field_slug)) }}
-                </p>
-              </template>
+                <template v-else>
+                  <component
+                    v-if="getFieldComponent(field, field_slug)"
+                    :is="getFieldComponent(field, field_slug)"
 
-            </div>
-          </v-row>
+                    :category-schema="categorySchema"
 
-        </div>
+                    density="comfortable"
+                    variant="filled"
+                    :ref="getRefString(field_slug)"
+                    :field="field"
+                    :field-slug="field_slug"
+                    :inline-field-slug="inlineFieldSlug"
+                    :loading="loading"
+                    :action-name="actionName"
+                    :read-only="readOnly || field.read_only"
+
+                    :error="getError(field_slug)"
+
+                    @changed="value => _updateValue(value, field_slug)"
+                  />
+                  <template v-else>
+                    Field "{{ field_slug}}" type not found: {{ field }}
+                  </template>
+                </template>
+
+                <template v-if="getError(field_slug)">
+                  <p class="form-error">
+                    {{ formatError(getError(field_slug)) }}
+                  </p>
+                </template>
+
+              </div>
+            </v-row>
+
+          </template>
+        </template>
       </v-tabs-window-item>
     </v-tabs-window>
 
@@ -166,6 +175,7 @@ export default {
     loading: {type: Boolean, required: false},
     actionName: {type: String, required: false},
     readOnly: {type: Boolean, required: false},
+    inlineFieldSlug: {type: String, required: false},
     formType: {
       type: String,
       required: true,
@@ -188,6 +198,10 @@ export default {
   created() {
   },
   methods: {
+    isDisplayField(field) {
+      if (this.formType === 'create' && field.read_only) return false
+      return true
+    },
     getFieldComponent(field, field_slug) {
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
       if (['integer'].indexOf(field.type) !== -1) {

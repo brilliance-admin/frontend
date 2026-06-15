@@ -1,13 +1,21 @@
 import { toast } from "vue3-toastify"
 
 export function createHandleError(t) {
-    return function handleError(error) {
+    return function handleError(error, topMessage = null) {
         console.error(`API error url=${error.config.url}`)
         console.error(error)
 
+        const buildErrorMessage = (status, errorText) => {
+            return t('errorMessage', {
+                'title': topMessage ?? t('errorUnexpectedTitle'),
+                'status': status,
+                'errorText': errorText,
+            })
+        }
+
         if (!error?.response) {
             toast(
-                t('errorMessage', {'status': '-', 'errorText': String(error)}),
+                buildErrorMessage('-', String(error)),
                 { type: "error", position: "top-center", dangerouslyHTMLString: true }
             )
             return {}
@@ -42,7 +50,7 @@ export function createHandleError(t) {
         if (status >= 500) {
             console.error('Error:', data?.message ?? String(data))
             toast(
-                t('errorMessage', {'status': status, 'errorText': data?.message ?? String(data)}),
+                buildErrorMessage(status, data?.message ?? String(data)),
                 { type: "error", position: "top-center", dangerouslyHTMLString: true }
             )
         }

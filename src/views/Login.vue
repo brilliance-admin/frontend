@@ -149,7 +149,7 @@ export default {
       this.settingsLoading = false
       console.error('Get admin settings error:', error)
 
-      const errorResult = this.$handleError(error)
+      const errorResult = this.$handleError(error, this.$t('errorTitles.loadSettings'))
       if (errorResult.fieldErrors) {
         this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
       }
@@ -182,7 +182,7 @@ export default {
         this.loading = false
       }).catch(error => {
         this.loading = false
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.login'))
         if (errorResult.persistentMessage) {
           this.persistentMessage = errorResult.persistentMessage
         }

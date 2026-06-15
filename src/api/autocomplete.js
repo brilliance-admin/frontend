@@ -13,6 +13,7 @@ export function getTableAutocomplete(kwargs) {
       data: {
         search_string: kwargs.search_string,
         field_slug: kwargs.field_slug,
+        inline_field_slug: kwargs.inline_field_slug,
         is_filter: kwargs.is_filter,
         form_data: kwargs.form_data,
         existed_choices: kwargs.existed_choices,

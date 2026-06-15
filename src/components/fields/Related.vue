@@ -196,6 +196,7 @@ export default {
         search_string: this.search || '',
         limit: 30,
         field_slug: this.fieldSlug,
+        inline_field_slug: this.inlineFieldSlug,
         is_filter: this.isFilter,
         form_data: this.formData || {},
         existed_choices: existedChoices,
@@ -206,7 +207,10 @@ export default {
       }).catch(error => {
         this.apiLoading = false
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(
+          error,
+          this.$t('errorTitles.loadChoices', { field: this.fieldSlug })
+        )
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }

@@ -104,7 +104,7 @@ export default {
         }
         this.$emit('changed', newVal)
       }).catch(error => {
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.readFile'))
       })
     },
     isImage() {

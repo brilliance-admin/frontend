@@ -9,6 +9,7 @@ export const defaultProps = {
   isFilter: {type: Boolean, required: false},
   readOnly: {type: Boolean, required: false},
   actionName: {type: String, required: false},
+  inlineFieldSlug: {type: String, required: false},
 }
 
 const baseFields = {

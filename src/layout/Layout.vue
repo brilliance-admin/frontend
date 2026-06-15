@@ -81,7 +81,7 @@ export default {
       console.error('Get admin settings error:', error)
       this.loading = false
 
-      const errorResult = this.$handleError(error)
+      const errorResult = this.$handleError(error, this.$t('errorTitles.loadSettings'))
       if (errorResult.persistentMessage) {
         this.persistentMessageDialog = true
         this.persistentMessage = errorResult.persistentMessage
@@ -104,7 +104,7 @@ export default {
           return
         }
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadAdminSchema'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }

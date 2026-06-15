@@ -87,7 +87,7 @@ export default {
           return
         }
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadRecord'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }
@@ -123,7 +123,7 @@ export default {
       }).catch(error => {
         this.loading = false
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.updateRecord'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }

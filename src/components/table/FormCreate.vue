@@ -108,7 +108,7 @@ export default {
       }).catch(error => {
         this.loading = false
 
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.createRecord'))
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
         }

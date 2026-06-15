@@ -71,7 +71,7 @@ export default {
         this.responseData = response.data
       }).catch(error => {
         this.loading = false
-        const errorResult = this.$handleError(error)
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadDashboard'))
 
         if (errorResult.fieldErrors) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
