@@ -104,6 +104,16 @@ export default {
       this.appendNewItem()
     }
   },
+  watch: {
+    error: {
+      handler() {
+        this.$nextTick(() => {
+          this.applyInlineErrors()
+        })
+      },
+      deep: true,
+    },
+  },
   computed: {
     isMany() {
       return !!this.field.many
@@ -121,6 +131,14 @@ export default {
     },
   },
   methods: {
+    applyInlineErrors() {
+      const fieldscontainers = this.$refs.fieldscontainer || []
+      const lineErrors = Array.isArray(this.error?.message) ? this.error.message : []
+
+      fieldscontainers.forEach((fieldscontainer, index) => {
+        fieldscontainer.updateErrors(lineErrors[index] || {})
+      })
+    },
     appendNewItem(formType = 'create') {
       this.value = [...this.value, {}]
       this.itemFormTypes = [...this.itemFormTypes, formType]
@@ -141,6 +159,7 @@ export default {
         fieldscontainers.forEach((fieldscontainer, index) => {
           fieldscontainer.updateFormData(this.value[index] || {})
         })
+        this.applyInlineErrors()
       })
     },
     onChange(index, newValue) {
@@ -167,6 +186,9 @@ export default {
       }
       this.appendNewItem()
       this.$emit('changed', this.value)
+      this.$nextTick(() => {
+        this.applyInlineErrors()
+      })
     },
   },
 }

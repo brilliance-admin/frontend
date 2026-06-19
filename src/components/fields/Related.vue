@@ -192,6 +192,8 @@ export default {
       getTableAutocomplete({
         group: this.categorySchema.group,
         category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
 
         search_string: this.search || '',
         limit: 30,

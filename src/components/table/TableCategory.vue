@@ -14,7 +14,7 @@
             @filtered="handleFilter"
             :loading="loading"
             :search-enabled="getTableInfo().search_enabled"
-            :fields-info="getTableInfo().table_filters.fields"
+            :fields-info="getTableInfo().table_filters?.fields || {}"
             :search-help="getTableInfo().search_help"
           />
         </div>
@@ -43,7 +43,7 @@
                 @filtered="handleFilter"
                 :loading="loading"
                 :search-enabled="getTableInfo().search_enabled"
-                :fields-info="getTableInfo().table_filters.fields"
+                :fields-info="getTableInfo().table_filters?.fields || {}"
                 :search-help="getTableInfo().search_help"
               />
             </div>
@@ -75,6 +75,7 @@
             :title="categorySchema.title"
             :admin-schema="adminSchema"
             :category-schema="categorySchema"
+            :parent-pk="parentPk"
             @created="createdEvent"
           />
         </div>
@@ -384,6 +385,7 @@ export default {
   props: {
     adminSchema: {type: Object, required: true},
     categorySchema: {type: CategorySchema, required: true},
+    parentPk: {type: [String, Number], required: false},
   },
   components: {
     FieldsContainer,
@@ -474,7 +476,7 @@ export default {
       const table_filters = this.categorySchema.getTableInfo().table_filters
       return (
         this.categorySchema.getTableInfo().search_enabled ||
-        (table_filters && Object.keys(table_filters).length > 0)
+        (table_filters?.fields && Object.keys(table_filters.fields).length > 0)
       )
     },
     getTotalCount() {
@@ -495,7 +497,8 @@ export default {
         return ''
       }
 
-      return detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
+      const detailCategorySlug = this.categorySchema.subcategory || this.categorySchema.category
+      return detailUrl(this.categorySchema.group, detailCategorySlug, pkValue)
     },
     deserializeQuery() {
       // Change url params only if group presented
@@ -542,6 +545,7 @@ export default {
         group: this.categorySchema.group,
         category: this.categorySchema.category,
         subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
 
         pageInfo: this.pageInfo,
         filters: this.filters,
@@ -626,6 +630,7 @@ export default {
         group: this.categorySchema.group,
         category: this.categorySchema.category,
         subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
 
         action: this.actionSelected,
         pks: this.selected,

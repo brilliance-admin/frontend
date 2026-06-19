@@ -10,6 +10,7 @@ export const defaultProps = {
   readOnly: {type: Boolean, required: false},
   actionName: {type: String, required: false},
   inlineFieldSlug: {type: String, required: false},
+  parentPk: {type: [String, Number], required: false},
 }
 
 const baseFields = {

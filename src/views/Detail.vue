@@ -8,10 +8,10 @@
       class="table-tabs"
       bg-color="light2"
     >
-      <v-tab :value="null">{{ $t('mainTab') }}</v-tab>
+      <v-tab :value="0">{{ $t('mainTab') }}</v-tab>
 
-      <template v-for="(subcategorySchema, category_slug) in getSubcategories()">
-        <v-tab :value="category_slug">{{ subcategorySchema.title }}</v-tab>
+      <template v-for="(subcategorySchema, category_slug, index) in getSubcategories()">
+        <v-tab :value="index + 1">{{ subcategorySchema.title }}</v-tab>
       </template>
     </v-tabs>
 
@@ -24,7 +24,7 @@
 
       <!-- Main category -->
       <v-tabs-window-item
-        :value="null"
+        :value="0"
         class="detail-tab"
         :transition="false"
         :reverse-transition="false"
@@ -34,9 +34,9 @@
       </v-tabs-window-item>
 
       <!-- Subcategories -->
-      <template v-for="(subcategorySchema, category_slug) in getSubcategories()">
+      <template v-for="(subcategorySchema, category_slug, index) in getSubcategories()">
         <v-tabs-window-item
-          :value="category_slug"
+          :value="index + 1"
           class="detail-tab"
           :transition="false"
           :reverse-transition="false"
@@ -44,7 +44,7 @@
         >
 
             <template v-if="subcategorySchema.type === 'table'">
-              <TableCategory :admin-schema="adminSchema" :category-schema="subcategorySchema"/>
+              <TableCategory :admin-schema="adminSchema" :category-schema="subcategorySchema" :parent-pk="pk"/>
             </template>
 
             <template v-else-if="subcategorySchema.type === 'dashboard'">
@@ -83,7 +83,7 @@ export default {
   data() {
     return {
       categorySchema: null,
-      activeTab: null,
+      activeTab: 0,
     }
   },
   created() {
@@ -103,7 +103,9 @@ export default {
       immediate: true,
       handler(to, from) {
         const categorySchema = this.adminSchema.get_category(this.group, this.category)
+        if (!categorySchema) return
         document.title = `${categorySchema.title} #${this.pk} | ${this.settings?.title}`
+        this.deserializeQuery()
       }
     },
   },
@@ -129,18 +131,26 @@ export default {
       return Object.keys(this.categorySchema.getTableInfo().subcategories).length > 0
     },
     deserializeQuery() {
+      if (!this.categorySchema) return
+
       const subtab = this.$route.query.subtab
-      const subcategories = this.categorySchema.getTableInfo().subcategories
-      if (subtab && Object.keys(subcategories).includes(subtab)) {
-        this.activeTab = subtab
+      const subcategorySlugs = Object.keys(this.categorySchema.getTableInfo().subcategories)
+      const subtabIndex = subcategorySlugs.indexOf(subtab)
+
+      if (subtab && subtabIndex !== -1) {
+        this.activeTab = subtabIndex + 1
+      } else {
+        this.activeTab = 0
       }
     },
     serializeQuery() {
       let newQuery = {}
 
-      const subcategories = this.categorySchema.getTableInfo().subcategories
-      if (Object.keys(subcategories).includes(this.activeTab)) {
-        newQuery.subtab = this.activeTab
+      const subcategorySlugs = Object.keys(this.categorySchema.getTableInfo().subcategories)
+      const subtabSlug = subcategorySlugs[this.activeTab - 1]
+
+      if (this.activeTab > 0 && subtabSlug) {
+        newQuery.subtab = subtabSlug
       }
 
       this.$router.push({ query: newQuery })

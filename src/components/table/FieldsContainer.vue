@@ -93,6 +93,7 @@
                           :loading="loading"
                           :action-name="actionName"
                           :read-only="readOnly || field.read_only"
+                          :parent-pk="parentPk"
 
                           @changed="value => _updateValue(value, translation.slug)"
                         />
@@ -120,6 +121,7 @@
                     :loading="loading"
                     :action-name="actionName"
                     :read-only="readOnly || field.read_only"
+                    :parent-pk="parentPk"
 
                     :error="getError(field_slug)"
 
@@ -176,6 +178,7 @@ export default {
     actionName: {type: String, required: false},
     readOnly: {type: Boolean, required: false},
     inlineFieldSlug: {type: String, required: false},
+    parentPk: {type: [String, Number], required: false},
     formType: {
       type: String,
       required: true,
@@ -204,7 +207,7 @@ export default {
     },
     getFieldComponent(field, field_slug) {
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
-      if (['integer'].indexOf(field.type) !== -1) {
+      if (['integer', 'decimal'].indexOf(field.type) !== -1) {
         if (field.choices) return ChoiceField
         return NumberField
       }

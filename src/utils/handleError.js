@@ -43,14 +43,14 @@ export function createHandleError(t) {
                 toast(t(data.code), { theme: "auto", type: "error", position: "top-center" })
             }
             else {
-                toast(String(data), { theme: "auto", type: "error", position: "top-center" })
+              toast(data?.message || JSON.stringify(data), { theme: "auto", type: "error", position: "top-center" })
             }
         }
 
         if (status >= 500) {
-            console.error('Error:', data?.message ?? String(data))
+            console.error('Error:', data?.message ?? JSON.stringify(data))
             toast(
-                buildErrorMessage(status, data?.message ?? String(data)),
+                buildErrorMessage(status, data?.message ?? JSON.stringify(data)),
                 { type: "error", position: "top-center", dangerouslyHTMLString: true }
             )
         }

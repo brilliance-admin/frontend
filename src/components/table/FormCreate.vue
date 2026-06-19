@@ -36,6 +36,7 @@
           form-type="create"
           :category-schema="categorySchema"
           :table-schema="categorySchema.getTableInfo().table_schema"
+          :parent-pk="parentPk"
 
           :loading="loading"
 
@@ -73,6 +74,7 @@ export default {
     title: {type: String, required: true},
     adminSchema: {type: Object, required: true},
     categorySchema: {type: CategorySchema, required: true},
+    parentPk: {type: [String, Number], required: false},
   },
   components: {
     FieldsContainer,
@@ -95,6 +97,8 @@ export default {
       getTableCreate({
         group: this.categorySchema.group,
         category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
         data: this.formData,
       }).then(response => {
         this.loading = false

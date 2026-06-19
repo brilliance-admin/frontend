@@ -7,7 +7,19 @@ const tableDataAutocompleteUrl = urlJoin(config_dataset.backend_prefix, 'autocom
 
 export function getTableAutocomplete(kwargs) {
   return new Promise((resolve, reject) => {
-    const url = tableDataAutocompleteUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    let url = tableDataAutocompleteUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+    const params = new URLSearchParams()
+    if (kwargs.subcategory) {
+      params.set('subcategory', kwargs.subcategory)
+    }
+    if (kwargs.parent_pk !== undefined && kwargs.parent_pk !== null && kwargs.parent_pk !== '') {
+      params.set('parent_pk', kwargs.parent_pk)
+    }
+    const query = params.toString()
+    if (query) {
+      url = `${url}?${query}`
+    }
+
     request({
       url: url,
       data: {
@@ -19,6 +31,7 @@ export function getTableAutocomplete(kwargs) {
         existed_choices: kwargs.existed_choices,
         action_name: kwargs.action_name,
         limit: kwargs.limit,
+        parent_pk: kwargs.parent_pk,
       },
       method: 'post',
       timeout: config_dataset.api_timeout_ms,

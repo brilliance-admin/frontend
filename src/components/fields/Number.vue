@@ -11,6 +11,7 @@
 
     :max="field.max_value"
     :min="field.min_value"
+    :step="step"
 
     :reverse="false"
     :hideInput="false"
@@ -31,6 +32,7 @@ import { defaultProps, validateProps } from '/src/utils/fields.js'
 const requiredFields = {
   max_value: {type: Number, required: false},
   min_value: {type: Number, required: false},
+  scale: {type: Number, required: false},
 }
 
 export default {
@@ -49,6 +51,15 @@ export default {
   created() {
     validateProps(this, requiredFields)
     this.value = this.field.initial
+  },
+  computed: {
+    step() {
+      if (typeof this.field.scale !== 'number' || this.field.scale <= 0) {
+        return 1
+      }
+
+      return 1 / (10 ** this.field.scale)
+    },
   },
   methods: {
     updateFormData(initFormData) {

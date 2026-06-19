@@ -11,7 +11,7 @@
           :loading="loading"
 
           :search-enabled="getDashboardInfo().search_enabled"
-          :fields-info="getDashboardInfo().table_filters.fields"
+          :fields-info="getDashboardInfo().table_filters?.fields || {}"
           :search-help="getDashboardInfo().search_help"
         />
       </div>
@@ -86,7 +86,7 @@ export default {
       const table_filters = this.categorySchema.getDashboardInfo().table_filters
       return (
         this.categorySchema.getDashboardInfo().search_enabled ||
-        (table_filters && Object.keys(table_filters).length > 0)
+        (table_filters?.fields && Object.keys(table_filters.fields).length > 0)
       )
     },
     handleFilter(filters, search) {
