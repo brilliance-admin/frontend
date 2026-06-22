@@ -1,6 +1,27 @@
 <template>
+  <div
+    v-if="categorySchema && isNestedDetail"
+    class="edit-tabs-container d-flex edit-tabs-container--no-subcategories"
+    elevation="2"
+  >
+    <div class="detail-tabs-window">
+      <div class="detail-tab">
+        <FormUpdate
+          :admin-schema="adminSchema"
+          :category-schema="categorySchema"
+          :pk="detailPk"
+          :parent-pk="pk"
+          @closed="updateClosed"
+        />
+      </div>
+    </div>
+  </div>
 
-  <div :class="['edit-tabs-container', 'd-flex', {'edit-tabs-container--no-subcategories': !hasSubcategories()}]" elevation="2">
+  <div
+    v-else-if="categorySchema"
+    :class="['edit-tabs-container', 'd-flex', {'edit-tabs-container--no-subcategories': !hasSubcategories()}]"
+    elevation="2"
+  >
     <v-tabs
       v-model="activeTab"
       color="primary"
@@ -64,7 +85,7 @@
 </template>
 
 <script>
-import { categoryUrl, CategorySchema } from '/src/api/schema'
+import { categoryUrl, CategorySchema, detailUrl } from '/src/api/schema'
 import FormUpdate from '/src/components/table/FormUpdate.vue'
 import TableCategory from '/src/components/table/TableCategory.vue'
 
@@ -76,6 +97,8 @@ export default {
     group: {type: String, required: true},
     category: {type: String, required: true},
     pk: {type: String, required: false},
+    subcategory: {type: String, required: false},
+    subpk: {type: String, required: false},
   },
   components: {
     FormUpdate,
@@ -83,11 +106,36 @@ export default {
   data() {
     return {
       categorySchema: null,
+      parentCategorySchema: null,
       activeTab: 0,
     }
   },
+  computed: {
+    isNestedDetail() {
+      return !!(this.subcategory && this.subpk)
+    },
+    detailPk() {
+      return this.isNestedDetail ? this.subpk : this.pk
+    },
+  },
   created() {
-    this.categorySchema = this.adminSchema.get_category(this.group, this.category)
+    this.parentCategorySchema = this.adminSchema.get_category(this.group, this.category)
+    if (!this.parentCategorySchema) {
+      this.$router.push({ path: '/404' })
+      return
+    }
+
+    if (this.isNestedDetail) {
+      const nestedSchema = this.getSubcategories(this.parentCategorySchema)[this.subcategory]
+      if (!nestedSchema) {
+        this.$router.push({ path: '/404' })
+        return
+      }
+      this.categorySchema = nestedSchema
+    } else {
+      this.categorySchema = this.parentCategorySchema
+    }
+
     if (!this.categorySchema.getTableInfo().can_retrieve) {
       console.error(`Page retrieve "${this.group}.${this.category}" is not found`)
       this.$router.push({ path: '/404' })
@@ -102,26 +150,38 @@ export default {
     $route: {
       immediate: true,
       handler(to, from) {
-        const categorySchema = this.adminSchema.get_category(this.group, this.category)
+        const categorySchema = this.isNestedDetail
+          ? this.categorySchema
+          : this.adminSchema.get_category(this.group, this.category)
         if (!categorySchema) return
-        document.title = `${categorySchema.title} #${this.pk} | ${this.settings?.title}`
-        this.deserializeQuery()
+        document.title = `${categorySchema.title} #${this.detailPk} | ${this.settings?.title}`
+        if (!this.isNestedDetail) {
+          this.deserializeQuery()
+        }
       }
     },
   },
   methods: {
     updateClosed() {
+        if (this.isNestedDetail) {
+          this.$router.push({
+            path: detailUrl(this.group, this.category, this.pk),
+            query: {subtab: this.subcategory},
+          })
+          return
+        }
+
         const url = categoryUrl(this.categorySchema.group, this.categorySchema.category)
         this.$router.push({ path: url } )
     },
-    getSubcategories() {
+    getSubcategories(categorySchema = this.categorySchema) {
       let result = {}
-      const subcategories = this.categorySchema.getTableInfo().subcategories
+      const subcategories = categorySchema.getTableInfo().subcategories
       for (const [subcategory_slug, subcategorySchema] of Object.entries(subcategories)) {
         result[subcategory_slug] = new CategorySchema(
           subcategorySchema,
-          this.categorySchema.group,
-          this.categorySchema.category,
+          categorySchema.group,
+          categorySchema.category,
           subcategory_slug,
         )
       }

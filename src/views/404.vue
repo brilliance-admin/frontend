@@ -36,9 +36,6 @@
 import { config_dataset } from '/src/utils/settings'
 
 export default {
-  props: {
-    apiInfo: {type: Object, required: true},
-  },
   methods: {
     getLogo() {
       return config_dataset.logo_image

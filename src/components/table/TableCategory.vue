@@ -372,7 +372,7 @@
 
 <script>
 import { applyFiltersToQuery, extractFiltersFromQuery } from '/src/utils/filters'
-import { CategorySchema, detailUrl } from '/src/api/schema'
+import { CategorySchema, detailUrl, subDetailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
 import { getDataList, sendTableAction, downloadContent } from '/src/api/table'
 import { truncate } from '/src/utils'
@@ -497,8 +497,17 @@ export default {
         return ''
       }
 
-      const detailCategorySlug = this.categorySchema.subcategory || this.categorySchema.category
-      return detailUrl(this.categorySchema.group, detailCategorySlug, pkValue)
+      if (this.categorySchema.subcategory && this.parentPk) {
+        return subDetailUrl(
+          this.categorySchema.group,
+          this.categorySchema.category,
+          this.parentPk,
+          this.categorySchema.subcategory,
+          pkValue,
+        )
+      }
+
+      return detailUrl(this.categorySchema.group, this.categorySchema.category, pkValue)
     },
     deserializeQuery() {
       // Change url params only if group presented
@@ -528,6 +537,9 @@ export default {
       if (!this.categorySchema.group) return
 
       let newQuery = {}
+      if (this.categorySchema.subcategory) {
+        newQuery.subtab = this.categorySchema.subcategory
+      }
       if (this.pageInfo.page) newQuery.page = this.pageInfo.page
       if (this.pageInfo.limit) newQuery.limit = this.pageInfo.limit
 

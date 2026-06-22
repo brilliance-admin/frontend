@@ -50,6 +50,7 @@ export default {
     adminSchema: {type: Object, required: true},
     categorySchema: {type: CategorySchema, required: true},
     pk: {type: String, required: false},
+    parentPk: {type: [String, Number], required: false},
   },
   components: {
     FieldsContainer,
@@ -76,6 +77,8 @@ export default {
         group: this.categorySchema.group,
         category: this.categorySchema.category,
         pk: this.pk,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
       }).then(response => {
         this.loading = false
         this.formData = response.data.data
@@ -112,6 +115,8 @@ export default {
         group: this.categorySchema.group,
         category: this.categorySchema.category,
         pk: this.pk,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
         data: this.formData,
       }).then(response => {
         this.loading = false

@@ -45,6 +45,12 @@ const routes = [
         name: 'detail',
         component: Detail,
       },
+      {
+        path: ':group/:category/:pk/:subcategory/:subpk/',
+        props: true,
+        name: 'sub-detail',
+        component: Detail,
+      },
     ]
   },
   { path: '/:pathMatch(.*)*', redirect: '/404', hidden: true }

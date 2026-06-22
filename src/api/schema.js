@@ -47,6 +47,10 @@ export function detailUrl(group_slug, category_slug, pk) {
   return `/${group_slug}/${category_slug}/${pk}/`
 }
 
+export function subDetailUrl(group_slug, category_slug, pk, subcategory_slug, subpk) {
+  return `/${group_slug}/${category_slug}/${pk}/${subcategory_slug}/${subpk}/`
+}
+
 export class CategorySchema {
   constructor(schema, group_slug, category_slug, subcategory_slug) {
     this.schema = schema
