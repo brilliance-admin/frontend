@@ -142,6 +142,7 @@ export default {
       return
     }
     this.deserializeQuery()
+    this.updateDocumentTitle()
   },
   watch: {
     activeTab(value) {
@@ -150,18 +151,34 @@ export default {
     $route: {
       immediate: true,
       handler(to, from) {
-        const categorySchema = this.isNestedDetail
-          ? this.categorySchema
-          : this.adminSchema.get_category(this.group, this.category)
-        if (!categorySchema) return
-        document.title = `${categorySchema.title} #${this.detailPk} | ${this.settings?.title}`
-        if (!this.isNestedDetail) {
+        this.updateDocumentTitle()
+        if (!this.isNestedDetail && this.categorySchema) {
           this.deserializeQuery()
         }
       }
     },
   },
   methods: {
+    updateDocumentTitle() {
+      if (!this.parentCategorySchema) return
+
+      if (this.isNestedDetail) {
+        if (!this.categorySchema) return
+        document.title = `${this.categorySchema.title} #${this.subpk} - ${this.parentCategorySchema.title} #${this.pk} | ${this.settings?.title}`
+        return
+      }
+
+      const subtab = this.$route.query.subtab
+      if (subtab) {
+        const subcategorySchema = this.getSubcategories(this.parentCategorySchema)[subtab]
+        if (subcategorySchema) {
+          document.title = `${subcategorySchema.title} - ${this.parentCategorySchema.title} #${this.pk} | ${this.settings?.title}`
+          return
+        }
+      }
+
+      document.title = `${this.parentCategorySchema.title} #${this.pk} | ${this.settings?.title}`
+    },
     updateClosed() {
         if (this.isNestedDetail) {
           this.$router.push({
