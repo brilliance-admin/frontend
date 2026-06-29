@@ -15,6 +15,11 @@
 
         @update:modelValue="updateDisplayValue"
       >
+        <template #label>
+          <span>{{ field.label }}</span>
+          <span v-if="field.required" class="required-star">*</span>
+        </template>
+
         <template v-slot:append-inner v-if="!readOnly">
           <v-icon :icon="icon" v-for="icon in getIcons()"/>
         </template>
@@ -34,7 +39,7 @@
           inline
           auto-apply
           time-picker-inline
-          :format="format"
+          :format="formatDisplayValue"
           :dark="this.$vuetify.theme.current.dark"
 
           :range="isRange()"
@@ -79,7 +84,11 @@ export default {
     updateFormData(initFormData) {
       const value = initFormData[this.fieldSlug]
       if (value) {
-        this.value = new Date(moment(value))
+        if (this.isRange()) {
+          this.value = [new Date(moment(value.from)), new Date(moment(value.to))]
+        } else {
+          this.value = new Date(moment(value))
+        }
         this.displayValue = this.getFormattedValue()
       }
     },
@@ -111,26 +120,36 @@ export default {
     },
     updateDateTime(date) {
       this.displayValue = this.getFormattedValue()
-      this.$emit('changed', this.format(date))
+      this.$emit('changed', this.serializeValue(date))
     },
     updateDisplayValue(value) {
       this.displayValue = value
       if (!value) {
         this.value = value
-        this.$emit('changed', this.format(this.value))
+        this.$emit('changed', this.serializeValue(this.value))
         return
       }
 
       if (this.isRange()) {
         const values = value.split(' - ')
         this.value = [new Date(moment(values[0])), new Date(moment(values[1]))]
-        this.$emit('changed', this.format(this.value))
+        this.$emit('changed', this.serializeValue(this.value))
         return
       }
       this.value = new Date(moment(value))
-      this.$emit('changed', this.format(this.value))
+      this.$emit('changed', this.serializeValue(this.value))
     },
-    format(date) {
+    formatDisplayValue(date) {
+      if (!date) return ''
+
+      if (this.isRange()) {
+        const _from = moment(date[0]).format(this.getFormat())
+        const to = moment(date[1]).format(this.getFormat())
+        return `${_from} - ${to}`
+      }
+      return moment(date).format(this.getFormat())
+    },
+    serializeValue(date) {
       if (!date) return
 
       if (this.isRange()) {

@@ -1,4 +1,9 @@
 <template>
+  <div class="field-title-section">
+    <span class="field-title">{{ field.label }}</span>
+    <span v-if="field.required" class="required-star">*</span>
+  </div>
+
   <div :class="{ fullscreen: fullscreen, 'tinymce-disabled': readOnly }" class="tinymce-container" :style="{width:containerWidth}">
     <textarea :id="tinymceId" class="tinymce-textarea" />
   </div>

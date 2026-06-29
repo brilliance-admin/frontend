@@ -260,7 +260,10 @@ body {
 }
 
 .array-field-line {
-    margin-bottom: 4px !important;
+    margin: 0px 10px 4px 0px !important;
+}
+.array-field-line-add {
+    margin: 5px 0px;
 }
 .array-field-text-field .v-field__input {
     min-height: 40px;

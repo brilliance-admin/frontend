@@ -40,14 +40,9 @@
           <template
             v-if="isDisplayField(field)"
           >
+            <span v-html="`<!-- type=${field.type} slug='${field_slug}' -->`"></span>
 
             <v-row class="field-cell">
-              <div :class="['label-col', `table-title-${field.type}`]">
-                <v-list-subheader>
-                  <span v-html="`<!-- type=${field.type} slug='${field_slug}' -->`"></span>
-                  <p class="form-title">{{ field.label }}</p> <p v-if="field.required" class="required-title">*</p>
-                </v-list-subheader>
-              </div>
 
               <div
                 class="form-field-container"

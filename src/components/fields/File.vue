@@ -14,7 +14,12 @@
       :append-inner-icon="isImage() ? 'mdi-image' : 'mdi-file'"
 
       @update:modelValue="changeFile"
-    ></v-file-input>
+    >
+      <template #label>
+        <span class="field-title">{{ field.label }}</span>
+        <span v-if="field.required" class="required-star">*</span>
+      </template>
+    </v-file-input>
 
     <template v-if="isImage()">
       <v-img

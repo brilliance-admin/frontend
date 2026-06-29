@@ -1,9 +1,18 @@
 <template>
+  <div class="field-title-section">
+    <span class="field-title">{{ field.label }}</span>
+    <span v-if="field.required" class="required-star">*</span>
+  </div>
+
   <JsonEditorVue
     v-model="value"
     :class="{ 'jse-theme-dark': this.$vuetify.theme.current.dark, 'jse-readonly': readOnly }"
     :read-only="readOnly"
   />
+
+  <div v-if="field.help_text" class="field_help_text text-caption mt-1">
+    {{ field.help_text }}
+  </div>
 </template>
 
 <script>

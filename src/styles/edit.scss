@@ -63,6 +63,7 @@
 .fields-container {
     .field-cell {
         margin: 6px 0px 12px;
+        justify-content: center;
 
         // Заголовок
         .label-col {
@@ -73,7 +74,8 @@
         // Ввод данных
         .form-field-container {
             min-height: 50px;
-            flex: 1 1 auto;
+            flex: 0 1 920px;
+            width: 100%;
             min-width: 0;
         }
         @media (max-width: $screen-mobile-wide) {
@@ -111,11 +113,15 @@
         font-size: 15px;
         color: rgb(var(--v-theme-on-surface));
     }
-    .required-title {
-        font-weight: 600;
-        display: inline;
-        color: rgb(var(--v-theme-error));
-    }
+.required-title {
+    font-weight: 600;
+    display: inline;
+    color: rgb(var(--v-theme-error));
+}
+.required-star {
+    color: rgb(var(--v-theme-error));
+    margin-left: 2px;
+}
 }
 @media (max-width: $screen-mobile-wide) {
     .fields-container {
@@ -170,7 +176,7 @@
     padding: 10px 16px;
 }
 .form-field-container {
-    min-width: 300px !important;
+    max-width: 920px !important;
     .v-messages__message {
         display: inline-block;
         max-width: 100%;
@@ -180,8 +186,21 @@
     }
 
     &.field-readonly {
-        .v-field__input {
-            color: #9d9d9d;
+        .v-field__overlay,
+        .v-field__outline {
+            opacity: 0;
+        }
+
+        .v-field {
+            border-bottom: 1px solid #9d9d9d;
+        }
+
+        input,
+        textarea {
+            color: #9d9d9d !important;
+            -webkit-text-fill-color: #9d9d9d !important;
+            background: transparent !important;
+            text-decoration: none !important;
         }
     }
 }
@@ -269,4 +288,34 @@
 }
 .inline-record-add {
     margin: 0 !important;
+}
+
+.form-card {
+    margin: 16px;
+    background-color: rgb(var(--v-theme-surface-light)) !important;
+}
+
+.my-input :deep(.v-field-label) {
+    color: #ff5722;
+}
+.v-label.v-field-label {
+    opacity: 1;
+}
+.field-title {
+    color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+.field-title-section {
+    .field-title {
+        font-size: 14px;
+        font-weight: 500;
+    }
+    padding-bottom: 2px;
+}
+.field_help_text {
+    padding-left: 15px;
+    color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+}
+.array-field-card {
+    padding: 0px 10px;
+    background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
 }

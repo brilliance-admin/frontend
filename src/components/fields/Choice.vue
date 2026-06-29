@@ -4,7 +4,6 @@
     :density="density"
     :variant="variant"
     :clearable="!readOnly"
-    :label="field.label"
     :model-value="value"
     :messages="field.help_text || []"
     :readonly="readOnly"
@@ -16,7 +15,12 @@
     :return-object="false"
 
     @update:modelValue="onChange"
-  />
+  >
+    <template #label>
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </template>
+  </v-select>
 
 </template>
 

@@ -1,31 +1,44 @@
 <template>
   <v-textarea
     v-if="field.multilined"
+    :variant="variant"
+    :density="density"
     :clearable="!readOnly"
-    :placeholder="field.label"
     :model-value="value"
     :messages="field.help_text || []"
     :readonly="readOnly"
     :loading="loading"
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
-  />
-  <v-text-field
-    v-else
-    :variant="variant"
-    :density="density"
-    :clearable="!readOnly"
-    :label="field.label"
-    :model-value="value"
-    :messages="field.help_text || []"
-    :readonly="readOnly"
-    :type="field.password && !showPassword ? 'password' : 'text'"
-    :append-inner-icon="field.password && !readOnly ? (showPassword ? 'mdi-eye' : 'mdi-eye-off') : undefined"
-    @click:append-inner="!readOnly && (showPassword = !showPassword)"
-    @update:modelValue="onChange"
-    @keydown.enter.prevent="keydownEnter"
-  />
+  >
+    <template #label>
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </template>
+  </v-textarea>
+
+  <template v-else>
+    <v-text-field
+      :variant="variant"
+      :density="density"
+      :clearable="!readOnly"
+      :model-value="value"
+      :messages="field.help_text || []"
+      :readonly="readOnly"
+      :type="field.password && !showPassword ? 'password' : 'text'"
+      :append-inner-icon="field.password && !readOnly ? (showPassword ? 'mdi-eye' : 'mdi-eye-off') : undefined"
+      @click:append-inner="!readOnly && (showPassword = !showPassword)"
+      @update:modelValue="onChange"
+      @keydown.enter.prevent="keydownEnter"
+    >
+      <template #label>
+        <span class="field-title">{{ field.label }}</span>
+        <span v-if="field.required" class="required-star">*</span>
+      </template>
+    </v-text-field>
+  </template>
 </template>
+
 <script>
 import { defaultProps, validateProps } from '/src/utils/fields.js'
 const requiredFields = {

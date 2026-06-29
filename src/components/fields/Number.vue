@@ -3,7 +3,6 @@
     :density="density"
     :variant="variant"
     :clearable="!readOnly"
-    :label="field.label"
     :model-value="value"
     :messages="field.help_text || []"
     :readonly="readOnly"
@@ -19,6 +18,11 @@
 
     @update:modelValue="onChange"
   >
+    <template #label>
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </template>
+
     <template v-if="readOnly" #increment></template>
     <template v-if="readOnly" #decrement></template>
   </v-number-input>

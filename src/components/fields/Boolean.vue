@@ -12,7 +12,12 @@
     :loading="loading"
 
     @update:modelValue="onChange"
-  ></v-switch>
+  >
+    <template #label>
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </template>
+  </v-switch>
 
 </template>
 

@@ -3,7 +3,8 @@
     <v-card class="field-inline-card">
 
       <v-card-title>
-        <span>{{ field.label }}</span>
+        <span class="field-title">{{ field.label }}</span>
+        <span v-if="field.required" class="required-star">*</span>
       </v-card-title>
 
       <v-card-subtitle v-if="field.help_text">

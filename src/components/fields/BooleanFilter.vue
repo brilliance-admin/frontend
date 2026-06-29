@@ -16,7 +16,12 @@
     :return-object="false"
 
     @update:modelValue="onChange"
-  />
+  >
+    <template #label>
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </template>
+  </v-select>
 
 </template>
 

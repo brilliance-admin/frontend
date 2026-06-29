@@ -1,6 +1,35 @@
 <template>
 
   <div class="form-update">
+
+    <v-card class="form-card">
+      <v-card-title class="d-flex justify-space-between align-center flex-wrap ga-3">
+        <span>{{ getHeaderTitle() }}</span>
+
+        <div class="d-flex flex-wrap ga-2">
+          <v-btn
+            v-for="(actionInfo, actionKey) in getDetailActions()"
+            :key="actionKey"
+            size="default"
+            class="action-button"
+            :variant="actionInfo.variant || 'flat'"
+            :prepend-icon="actionInfo.icon"
+            :base-color="actionInfo.base_color || 'secondary'"
+            @click="runDetailAction(actionKey, actionInfo)"
+          >
+            {{ actionInfo.title }}
+          </v-btn>
+        </div>
+      </v-card-title>
+    </v-card>
+
+    <TableActionExecutor
+      ref="actionExecutor"
+      :category-schema="categorySchema"
+      :parent-pk="parentPk"
+      @success="handleActionSuccess"
+    />
+
     <FieldsContainer
       ref="fieldscontainer"
       form-type="edit"
@@ -40,10 +69,12 @@
 </template>
 
 <script>
-import { CategorySchema } from '/src/api/schema'
+import { categoryUrl, CategorySchema, detailUrl } from '/src/api/schema'
 import { getTableRetrieve, sendTableUpdate } from '/src/api/table'
+import { getBreadcrumbs } from '/src/utils/get-breadcrumb'
 import { toast } from "vue3-toastify"
 import FieldsContainer from '/src/components/table/FieldsContainer.vue'
+import TableActionExecutor from '/src/components/table/TableActionExecutor.vue'
 
 export default {
   props: {
@@ -54,6 +85,7 @@ export default {
   },
   components: {
     FieldsContainer,
+    TableActionExecutor,
   },
   emits: ["closed"],
   data() {
@@ -66,6 +98,57 @@ export default {
     this.retrieveData()
   },
   methods: {
+    getHeaderTitle() {
+      const breadcrumbs = getBreadcrumbs(this.adminSchema, this.$router, this.$route)
+      const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1]
+
+      if (lastBreadcrumb?.title) {
+        return lastBreadcrumb.title
+      }
+
+      if (this.pk) {
+        return `${this.categorySchema.title} #${this.pk}`
+      }
+
+      return this.categorySchema.title
+    },
+    getDetailActions() {
+      const actions = this.categorySchema.getTableInfo().actions || {}
+      return Object.fromEntries(
+        Object.entries(actions).filter(([, actionInfo]) => actionInfo.allow_empty_selection !== true)
+      )
+    },
+    runDetailAction(actionKey, actionInfo) {
+      if (!this.pk) {
+        throw new Error('Detail action requires record pk')
+      }
+
+      this.$refs.actionExecutor.run({
+        actionKey,
+        actionInfo,
+        pks: [this.pk],
+        sendToAll: false,
+        filters: {},
+        search: null,
+        totalCount: 1,
+      })
+    },
+    handleActionSuccess() {
+      this.retrieveData()
+    },
+    redirectToList() {
+      if (this.categorySchema.subcategory && this.parentPk) {
+        this.$router.push({
+          path: detailUrl(this.categorySchema.group, this.categorySchema.category, this.parentPk),
+          query: {subtab: this.categorySchema.subcategory},
+        })
+        return
+      }
+
+      this.$router.push({
+        path: categoryUrl(this.categorySchema.group, this.categorySchema.category),
+      })
+    },
     retrieveData() {
       if (!this.categorySchema.getTableInfo().can_retrieve) {
         console.error(`retrieve method is not found`)
@@ -85,6 +168,16 @@ export default {
         this.$refs.fieldscontainer.updateFormData(response.data.data)
       }).catch(error => {
         this.loading = false
+        if (error.response?.data?.code === 'record_not_found') {
+          toast(error.response.data.message, {
+            theme: "auto",
+            type: "warning",
+            position: "top-center",
+          })
+          this.redirectToList()
+          return
+        }
+
         if (error.response && error.response.status === 404) {
           this.$router.push({ path: '/404' })
           return
