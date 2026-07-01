@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'formset-card': hasDirectFields(node) }">
+  <div :class="{ 'formset-card': needFormsetCard(node) }">
     <div v-if="node.title || node.description" class="formset-header">
       <div v-if="node.title" class="formset-title">
         {{ node.title }}
@@ -135,9 +135,21 @@ export default {
     isFormsetNode(field) {
       return !!field && typeof field === 'object' && Array.isArray(field.fields)
     },
-    hasDirectFields(formset) {
+    needFormsetCard(formset) {
       if (!formset || !Array.isArray(formset.fields)) return false
-      return formset.fields.some(field => field && (typeof field === 'string' || !field.fields))
+      return formset.fields.some(field => {
+        if (!field) return false
+        if (typeof field === 'string') {
+          const schema = this.getField(field)
+          return !schema || schema.type !== 'inline'
+        }
+
+        if (field.fields) return false
+
+        const slug = field.field || field.slug || field.title
+        const schema = this.getField(slug)
+        return !schema || schema.type !== 'inline'
+      })
     },
     getFieldKey(field) {
       if (!field) return 'field-null'

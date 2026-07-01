@@ -2,7 +2,7 @@
 
   <div class="form-update">
 
-    <v-card class="form-card">
+    <v-card class="form-update-header formset-card">
       <v-card-title class="d-flex justify-space-between align-center flex-wrap ga-3">
         <span>{{ getHeaderTitle() }}</span>
 

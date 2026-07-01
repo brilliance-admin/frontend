@@ -25,7 +25,7 @@
     <v-tabs
       v-model="activeTab"
       color="primary"
-      direction="vertical"
+      :direction="isVeryNarrow ? 'horizontal' : 'vertical'"
       class="table-tabs"
       bg-color="light2"
     >
@@ -108,6 +108,7 @@ export default {
       categorySchema: null,
       parentCategorySchema: null,
       activeTab: 0,
+      isVeryNarrow: false,
     }
   },
   computed: {
@@ -143,6 +144,14 @@ export default {
     }
     this.deserializeQuery()
     this.updateDocumentTitle()
+  },
+  mounted() {
+    const mq = window.matchMedia('(max-width: 640px)')
+    this.isVeryNarrow = mq.matches
+
+    mq.addEventListener('change', e => {
+      this.isVeryNarrow = e.matches
+    })
   },
   watch: {
     activeTab(value) {
