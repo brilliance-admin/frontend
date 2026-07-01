@@ -5,6 +5,7 @@ export const defaultProps = {
   density: {type: String, required: true},
   field: {type: Object, required: true},
   fieldSlug: {type: String, required: true},
+  error: {required: false},
   loading: {type: Boolean, required: true},
   isFilter: {type: Boolean, required: false},
   readOnly: {type: Boolean, required: false},
