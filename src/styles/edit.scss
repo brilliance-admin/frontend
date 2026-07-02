@@ -78,7 +78,7 @@
 .fields-container {
     padding: 0px 16px;
     .field-cell {
-        margin: 6px 0px 12px;
+        margin: 0px 0px;
         justify-content: center;
 
         // Заголовок
@@ -330,6 +330,9 @@
 .inline-record-layout {
     display: flex;
     align-items: flex-start;
+    .fields-container {
+        padding: 0px;
+    }
 }
 .inline-record-layout .fields-container {
     flex: 1 1 auto;

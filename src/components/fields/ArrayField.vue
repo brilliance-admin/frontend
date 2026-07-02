@@ -1,5 +1,5 @@
 <template>
-  <v-card class="array-field-card" variant="elevated">
+      <v-card class="array-field-card" variant="elevated">
     <div class="array-fields">
 
       <div class="field-title-section">
@@ -70,15 +70,9 @@ export default {
   },
   methods: {
     normalizeIn(arr) {
-      if (this.field.array_type === 'json' || this.field.array_type === 'jsonb') {
-        return arr.map(v => typeof v === 'string' ? v : JSON.stringify(v))
-      }
       return arr.map(v => String(v))
     },
     normalizeOut(arr) {
-      if (this.field.array_type === 'json' || this.field.array_type === 'jsonb') {
-        return arr.map(v => JSON.parse(v))
-      }
       return arr
     },
     updateFormData(initFormData) {

@@ -2,8 +2,12 @@ import { toast } from "vue3-toastify"
 
 export function createHandleError(t) {
   return function handleError(error, topMessage = null) {
-    console.error(`API error url=${error.config.url}`)
-    console.error(error)
+    const errorUrl = error?.config?.url
+    if (errorUrl) {
+      console.error(`API error url=${errorUrl}`)
+    } else {
+      console.error(`Error: ${error?.message || String(error)}`)
+    }
 
     const buildErrorMessage = (status, errorText) => {
       return t('errorMessage', {

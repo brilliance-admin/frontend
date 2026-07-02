@@ -2,8 +2,15 @@
   <div>
     <v-card class="field-inline-card">
 
-      <v-card-title>
+      <v-card-title class="d-flex align-center">
         <span class="field-title">{{ field.label }}</span>
+        <v-chip
+          size="small"
+          variant="tonal"
+          class="inline-count-chip"
+        >
+          {{ value.length }}
+        </v-chip>
         <span v-if="field.required" class="required-star">*</span>
       </v-card-title>
 
@@ -96,12 +103,12 @@ export default {
   created() {
     validateProps(this, requiredFields)
     if (this.field.initial !== undefined && !Array.isArray(this.field.initial)) {
-      throw new Error(`InlineField initial value must be an array for field "${this.fieldSlug}"`)
+      throw new Error(`InlineField "${this.fieldSlug}" initial value must be an array`)
     }
     this.value = Array.isArray(this.field.initial) ? this.field.initial : []
     this.itemFormTypes = this.value.map(() => 'edit')
 
-    if (this.isRequired && this.value.length === 0) {
+    if (!this.readOnly && this.isRequired && this.value.length === 0) {
       this.appendNewItem()
     }
   },
@@ -133,7 +140,10 @@ export default {
   },
   methods: {
     applyInlineErrors() {
-      const fieldscontainers = this.$refs.fieldscontainer || []
+      const fieldscontainers = this.$refs.fieldscontainer
+      if (!Array.isArray(fieldscontainers)) {
+        throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
+      }
       const lineErrors = Array.isArray(this.error?.message) ? this.error.message : []
 
       fieldscontainers.forEach((fieldscontainer, index) => {
@@ -146,19 +156,26 @@ export default {
     },
     updateFormData(initFormData) {
       if (!Array.isArray(initFormData[this.fieldSlug])) {
-        throw new Error(`InlineField form data must be an array for field "${this.fieldSlug}"`)
+        throw new Error(`InlineField "${this.fieldSlug}" form data must be an array`)
       }
       this.value = initFormData[this.fieldSlug]
       this.itemFormTypes = this.value.map(() => 'edit')
 
-      if (this.isRequired && this.value.length === 0) {
+      if (!this.readOnly && this.isRequired && this.value.length === 0) {
         this.appendNewItem()
       }
 
       this.$nextTick(() => {
-        const fieldscontainers = this.$refs.fieldscontainer || []
+        const fieldscontainers = this.$refs.fieldscontainer
+        if (!Array.isArray(fieldscontainers)) {
+          throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
+        }
         fieldscontainers.forEach((fieldscontainer, index) => {
-          fieldscontainer.updateFormData(this.value[index] || {})
+          const item = this.value[index]
+          if (item === null || item === undefined) {
+            throw new Error(`InlineField "${this.fieldSlug}" item at index ${index} is empty`)
+          }
+          fieldscontainer.updateFormData(item)
         })
         this.applyInlineErrors()
       })
@@ -171,7 +188,7 @@ export default {
     },
     removeItem(index) {
       if (!this.canRemoveItem) {
-        throw new Error(`InlineField remove is forbidden for field "${this.fieldSlug}"`)
+        throw new Error(`InlineField "${this.fieldSlug}" remove is forbidden`)
       }
       const nextValue = this.value.slice()
       const nextItemFormTypes = this.itemFormTypes.slice()
@@ -183,7 +200,7 @@ export default {
     },
     addItem() {
       if (!this.canAddItem) {
-        throw new Error(`InlineField add is forbidden for field "${this.fieldSlug}"`)
+        throw new Error(`InlineField "${this.fieldSlug}" add is forbidden`)
       }
       this.appendNewItem()
       this.$emit('changed', this.value)
@@ -194,3 +211,11 @@ export default {
   },
 }
 </script>
+
+<style>
+.inline-count-chip {
+  margin-left: 8px;
+  margin-top: 0;
+  height: 20px;
+}
+</style>

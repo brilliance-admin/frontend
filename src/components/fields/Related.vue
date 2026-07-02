@@ -30,6 +30,11 @@
       @update:search="updateSearch"
       @update:modelValue="onChange"
     >
+      <template #label>
+        <span class="field-title">{{ field.label }}</span>
+        <span v-if="field.required" class="required-star">*</span>
+      </template>
+
       <template v-slot:chip="{ props, item }">
         <v-chip
           class="autocomplete-chip"

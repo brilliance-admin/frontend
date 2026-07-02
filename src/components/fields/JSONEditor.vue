@@ -39,7 +39,9 @@ export default {
       if (typeof val === 'string') {
         try {
           val = JSON.parse(val)
-        } catch (e) { }
+        } catch (e) {
+          throw new Error(`JSONEditor invalid JSON for field "${this.fieldSlug}": ${e.message}`)
+        }
       }
       this.$emit('changed', val)
     }
