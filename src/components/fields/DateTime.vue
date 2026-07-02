@@ -28,12 +28,28 @@
 
     <template v-slot:default="{ isActive }">
       <v-card>
+        <v-textarea
+          v-if="isRange()"
+          :model-value="displayValue"
+          :readonly="readOnly"
+          rows="2"
+          max-rows="2"
+          auto-grow
+          @update:modelValue="updateDisplayValue"
+          @keydown.enter.prevent="isActive.value = false"
+        />
         <v-text-field
+          v-else
           :model-value="displayValue"
           :readonly="readOnly"
           @update:modelValue="updateDisplayValue"
           @keydown.enter.prevent="isActive.value = false"
         />
+        <div v-if="isRange()" class="d-flex ga-2 pa-3">
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('day')">1 day</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('week')">Week</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('month')">Month</v-btn>
+        </div>
         <Datepicker
           v-model="value"
           inline
@@ -121,6 +137,18 @@ export default {
     updateDateTime(date) {
       this.displayValue = this.getFormattedValue()
       this.$emit('changed', this.serializeValue(date))
+    },
+    applyRangePreset(preset) {
+      const to = moment().endOf('day').toDate()
+      let from = null
+
+      if (preset === 'day') from = moment().subtract(1, 'day').startOf('day').toDate()
+      if (preset === 'week') from = moment().subtract(7, 'days').startOf('day').toDate()
+      if (preset === 'month') from = moment().subtract(1, 'month').startOf('day').toDate()
+
+      this.value = [from, to]
+      this.displayValue = this.getFormattedValue()
+      this.$emit('changed', this.serializeValue(this.value))
     },
     updateDisplayValue(value) {
       this.displayValue = value
