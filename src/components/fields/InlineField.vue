@@ -150,6 +150,18 @@ export default {
         fieldscontainer.updateErrors(lineErrors[index] || {})
       })
     },
+    assertInlineShape() {
+      const fieldscontainers = this.$refs.fieldscontainer
+      if (!Array.isArray(fieldscontainers)) {
+        throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
+      }
+
+      if (fieldscontainers.length !== this.value.length) {
+        throw new Error(
+          `InlineField "${this.fieldSlug}" shape mismatch: value=${this.value.length}, refs=${fieldscontainers.length}`,
+        )
+      }
+    },
     appendNewItem(formType = 'create') {
       this.value = [...this.value, {}]
       this.itemFormTypes = [...this.itemFormTypes, formType]
@@ -170,6 +182,12 @@ export default {
         if (!Array.isArray(fieldscontainers)) {
           throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
         }
+        if (fieldscontainers.length !== this.value.length) {
+          throw new Error(
+            `InlineField "${this.fieldSlug}" shape mismatch: value=${this.value.length}, refs=${fieldscontainers.length}`,
+          )
+        }
+        this.assertInlineShape()
         fieldscontainers.forEach((fieldscontainer, index) => {
           const item = this.value[index]
           if (item === null || item === undefined) {
@@ -184,6 +202,9 @@ export default {
       const nextValue = this.value.slice()
       nextValue[index] = newValue === undefined ? {} : newValue
       this.value = nextValue
+      this.$nextTick(() => {
+        this.assertInlineShape()
+      })
       this.$emit('changed', this.value)
     },
     removeItem(index) {
@@ -196,6 +217,9 @@ export default {
       nextItemFormTypes.splice(index, 1)
       this.value = nextValue
       this.itemFormTypes = nextItemFormTypes
+      this.$nextTick(() => {
+        this.assertInlineShape()
+      })
       this.$emit('changed', this.value)
     },
     addItem() {
@@ -205,6 +229,7 @@ export default {
       this.appendNewItem()
       this.$emit('changed', this.value)
       this.$nextTick(() => {
+        this.assertInlineShape()
         this.applyInlineErrors()
       })
     },

@@ -28,7 +28,7 @@
             :parent-pk="parentPk"
             :form-type="formType"
             :field-errors="fieldErrors"
-            @changed="$emit('changed', $event)"
+            @changed="value => _updateValue(value, getFieldKey(field))"
           />
         </div>
 
@@ -103,6 +103,11 @@ export default {
     formType: {type: String, required: true},
   },
   emits: ['changed'],
+  data() {
+    return {
+      formData: {},
+    }
+  },
   methods: {
     isDisplayField(field) {
       if (this.formType === 'create' && field.read_only) return false
@@ -177,21 +182,46 @@ export default {
       return error.message
     },
     _updateValue(value, field_slug) {
-      this.$emit('changed', value, field_slug)
+      if (!field_slug) {
+        throw new Error('FormsetNode _updateValue: field_slug is empty')
+      }
+
+      const nextValue = Array.isArray(this.formData)
+        ? this.formData.slice()
+        : {...this.formData}
+
+      nextValue[field_slug] = value
+      this.formData = nextValue
+      this.$emit('changed', nextValue)
     },
     updateFormData(newData) {
+      if (newData === null || newData === undefined) {
+        throw new Error('FormsetNode updateFormData: newData is empty')
+      }
+      if (typeof newData !== 'object' || Array.isArray(newData)) {
+        throw new Error(`FormsetNode updateFormData: expected object, got ${Array.isArray(newData) ? 'array' : typeof newData}`)
+      }
+
+      this.formData = newData
       for (const field of this.node.fields) {
         if (this.isFormsetNode(field)) {
           const child = this.$refs[this.getRefString(this.getFieldKey(field))]
-          if (child && child[0] && child[0].updateFormData) child[0].updateFormData(newData)
+          if (!child || !child[0] || !child[0].updateFormData) {
+            throw new Error(`FormsetNode updateFormData: child formset ref missing for "${this.getFieldKey(field)}"`)
+          }
+          child[0].updateFormData(newData)
           continue
         }
 
         const resolved = this.resolveField(field)
-        if (!resolved.slug) continue
+        if (!resolved.slug) {
+          throw new Error('FormsetNode updateFormData: resolved field slug is empty')
+        }
 
         const ref = this.$refs[this.getRefString(resolved.slug)]
-        if (!ref || !ref[0] || !ref[0].updateFormData) continue
+        if (!ref || !ref[0] || !ref[0].updateFormData) {
+          throw new Error(`FormsetNode updateFormData: field ref missing for "${resolved.slug}"`)
+        }
         ref[0].updateFormData(newData)
       }
     },

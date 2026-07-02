@@ -70,7 +70,11 @@ export default {
   },
   methods: {
     normalizeIn(arr) {
-      return arr.map(v => String(v))
+      return arr.map(v => {
+        if (typeof v === 'string') return v
+        if (v !== null && typeof v === 'object') return JSON.stringify(v)
+        return String(v)
+      })
     },
     normalizeOut(arr) {
       return arr
@@ -88,7 +92,7 @@ export default {
       this.emit()
     },
     updateItem(index, newValue) {
-      this.value[index] = String(newValue)
+      this.value[index] = typeof newValue === 'string' ? newValue : String(newValue)
       this.emit()
     },
     emit() {

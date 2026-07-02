@@ -146,14 +146,14 @@
 }
 
 .form-update-header {
-    margin: 16px;
+    margin: 16px !important;
     padding: 2px 5px !important;
 }
 .formset-card {
     background-color: rgb(var(--v-theme-surface-light)) !important;
-    padding: 16px 18px 18px;
+    padding: 16px 18px 8px;
     border-radius: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 4px;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
     .formset-header {
