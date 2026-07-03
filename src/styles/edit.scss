@@ -42,6 +42,13 @@
     .edit-tabs-container .v-divider {
         display: none;
     }
+    .formset-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .formset-grid-item {
+        grid-column: 1 / -1 !important;
+    }
 }
 
 .edit-tabs-container--no-subcategories {
@@ -104,10 +111,10 @@
     // Поля для тёмной темы
     .field-cell {
         .v-input[class*="dark" i]:not(.v-input--disabled) .v-field {
-            background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
+            background-color: rgba(var(--v-theme-on-surface), 0.02);
         }
         .v-input[class*="dark" i].v-input--disabled {
-            background-color: rgba(var(--v-theme-on-surface), 0.001) !important;
+            background-color: rgba(var(--v-theme-on-surface), 0.001);
         }
     }
 
@@ -154,7 +161,7 @@
     padding: 16px 18px 8px;
     border-radius: 8px;
     margin-bottom: 4px;
-    border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
     .formset-header {
         padding-bottom: 8px;
@@ -233,9 +240,6 @@
     .v-input {
         max-width: 920px !important;
     }
-    .array-field-card {
-        max-width: 920px !important;
-    }
     .v-messages__message {
         display: inline-block;
         max-width: 100%;
@@ -251,15 +255,20 @@
         }
 
         .v-field {
-            border-bottom: 1px solid #9d9d9d;
+            border-bottom: 1px solid #9d9d9d2b;
+            background-color: transparent !important;
         }
 
         input,
         textarea {
-            color: #9d9d9d !important;
-            -webkit-text-fill-color: #9d9d9d !important;
-            background: transparent !important;
+            color: rgb(var(--v-theme-on-surface)) !important;
+            -webkit-text-fill-color: rgb(var(--v-theme-on-surface)) !important;
             text-decoration: none !important;
+        }
+        .v-number-input{
+            .v-field__append-inner {
+                display: none;
+            }
         }
     }
 }
@@ -378,6 +387,7 @@
     color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
 .array-field-card {
+    max-width: 920px !important;
     padding: 0px 10px;
-    background-color: rgba(var(--v-theme-on-surface), 0.04) !important;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
 }

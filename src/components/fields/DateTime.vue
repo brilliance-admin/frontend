@@ -20,7 +20,7 @@
           <span v-if="field.required" class="required-star">*</span>
         </template>
 
-        <template v-slot:append-inner v-if="!readOnly">
+        <template v-slot:append-inner>
           <v-icon :icon="icon" v-for="icon in getIcons()"/>
         </template>
       </v-text-field>
