@@ -135,7 +135,7 @@ export default {
       if (['choice'].indexOf(filter.type) !== -1 || filter.choices) return ChoiceField
       if (['datetime'].indexOf(filter.type) !== -1) return DateTimeField
       if (['related'].indexOf(filter.type) !== -1) return RelatedField
-      if (['string'].indexOf(filter.type) !== -1) return StringField
+      if (['string', 'duration'].indexOf(filter.type) !== -1) return StringField
       if (['integer'].indexOf(filter.type) !== -1) return NumberField
       if (['boolean'].indexOf(filter.type) !== -1) return BooleanFilter
     },

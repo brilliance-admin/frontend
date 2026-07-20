@@ -178,7 +178,7 @@ export default {
 
       this.loading = true
       login(this.username, this.password).then(() => {
-        this.$router.push(this.settings.main_page || '/')
+        this.$router.push(this.settings.main_page || "/navigation")
         this.loading = false
       }).catch(error => {
         this.loading = false

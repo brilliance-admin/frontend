@@ -11,8 +11,9 @@ export default {
     settings: {type: Object, required: true},
   },
   mounted() {
-    if (this.settings?.main_page && this.settings.main_page !== '/') {
-      this.$router.replace(this.settings.main_page)
+    const main_page = this.settings?.main_page || "/navigation";
+    if (main_page && main_page !== '/') {
+      this.$router.replace(main_page)
     }
   },
   watch: {

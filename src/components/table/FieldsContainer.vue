@@ -29,6 +29,7 @@
 
 <script>
 import { CategorySchema } from '/src/api/schema'
+import { toast } from 'vue3-toastify'
 // Contains a list of tabs and a list of fields
 import FormsetNode from '/src/components/table/FormsetNode.vue'
 
@@ -78,7 +79,19 @@ export default {
       this.formData = newData
       const root = this.$refs.rootFormsetNode
       if (root && root.updateFormData) {
-        root.updateFormData(this.formData)
+        try {
+          root.updateFormData(this.formData)
+        } catch (error) {
+          console.warn('updateFormData error:', error)
+          toast(
+            error instanceof Error ? error.message : 'FieldsContainer updateFormData failed',
+            {
+              theme: 'auto',
+              type: 'warning',
+              position: 'top-center',
+            }
+          )
+        }
       }
     },
   },

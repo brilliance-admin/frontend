@@ -119,7 +119,7 @@ export default {
         if (field.choices) return ChoiceField
         return NumberField
       }
-      if (['field', 'string', 'email', 'url', 'slug'].indexOf(field.type) !== -1) {
+      if (['field', 'string', 'email', 'url', 'slug', 'duration'].indexOf(field.type) !== -1) {
         if (field.tinymce) return TinyMCEField
         if (field.ckeditor) return CKEditor
         if (field.choices) return ChoiceField
