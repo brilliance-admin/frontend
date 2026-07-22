@@ -111,7 +111,13 @@
         >
 
           <template v-if="header.type === 'string'">
-            {{ stripHtml(item[header.key]) }}
+            <span
+              v-if="header.field.allow_html"
+              v-html="item[header.key]"
+            />
+            <template v-else>
+              {{ stripHtml(item[header.key]) }}
+            </template>
           </template>
 
           <template v-else-if="header.type === 'related'">
