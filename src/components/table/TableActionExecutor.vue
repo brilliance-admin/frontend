@@ -112,7 +112,7 @@ export default {
   components: {
     FieldsContainer,
   },
-  emits: ['success', 'error', 'finished'],
+  emits: ['started', 'success', 'error', 'finished'],
   expose: ['run'],
   data() {
     return {
@@ -201,6 +201,7 @@ export default {
     },
     applyAction() {
       this.actionLoading = true
+      this.$emit('started')
       sendTableAction({
         group: this.categorySchema.group,
         category: this.categorySchema.category,
@@ -231,7 +232,12 @@ export default {
           this.persistentMessageDialog = true
           this.persistentMessage = response.data.persistent_message
         } else {
-          toast(this.$t('successAdminAction'))
+          toast(
+            this.$t('successAdminAction'),{
+              type: 'success',
+              position: 'top-center',
+            }
+          )
         }
 
         this.closeActionDialogs()

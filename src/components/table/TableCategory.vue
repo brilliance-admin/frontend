@@ -122,17 +122,12 @@
 
           <template v-else-if="header.type === 'related'">
             <template v-for="rel in formatRelated(item[header.key])" :key="rel.key">
-              <v-tooltip>
-                #{{ rel.key }} {{ rel.title }}
-                <template v-slot:activator="{ props }">
-                  <v-chip
-                    :size="header.field.size || 'default'"
-                    v-bind="props"
-                  >
-                    {{ truncate(rel.title, 30) }}
-                  </v-chip>
-                </template>
-              </v-tooltip>
+              <v-chip
+                :size="header.field.size || 'default'"
+                :title="`#${rel.key} ${rel.title}`"
+              >
+                {{ truncate(rel.title, 30) }}
+              </v-chip>
             </template>
           </template>
 
@@ -143,7 +138,7 @@
 
           <template v-else-if="header.type === 'choice'">
             <template v-if="item[header.key] !== null && item[header.key] !== undefined">
-              <template v-if="hasTagColors(header.field)">
+              <template v-if="getChoiceColor(item, header)">
                 <v-chip
                   class="table-choice-chip"
                   :size="header.field.size || 'default'"
@@ -294,84 +289,14 @@
 
     </div>
 
-    <v-dialog v-model="actionDialogConfirmation" max-width="500">
-      <v-card :disabled="actionLoading" :loading="actionLoading">
-
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ $t('confirmation') }}: {{ getActionInfo().title }}</span>
-
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            density="compact"
-            @click="actionDialogConfirmation = false"
-          ></v-btn>
-        </v-card-title>
-
-        <v-card-text>
-          <div class="confirmation-text">{{ getActionInfo().confirmation_text }}</div>
-          <v-label class="info selected-warning-count">{{ $t('selected') }} <p class="selected-count">{{ getSelectedCount()}}/{{ getTotalCount() }}</p></v-label>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn :text="$t('cancel')" variant="elevated" @click="actionDialogConfirmation = false" :disabled="actionLoading"></v-btn>
-          <v-btn :text="$t('confirm')" variant="tonal" color="primary" @click="applyAction" :disabled="actionLoading"></v-btn>
-        </v-card-actions>
-
-      </v-card>
-    </v-dialog>
-
-    <v-dialog persistent v-model="actionFormDialogOpen" class="action-form-dialog">
-      <v-card :disabled="actionLoading" :loading="actionLoading">
-
-        <v-card-title class="d-flex justify-space-between align-center">
-          <span>{{ getActionInfo().title }}</span>
-
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            density="compact"
-            @click="actionFormDialogOpen = false"
-          ></v-btn>
-        </v-card-title>
-
-        <div class="action-description" v-html="getActionInfo().description"></div>
-
-        <div v-on:keydown.enter.prevent="applyAction">
-          <FieldsContainer
-            ref="fieldscontainer"
-            formType="create"
-            :table-schema="getActionInfo().form_schema"
-
-            :loading="actionLoading"
-
-            @changed="value => actionFormData = value"
-          />
-        </div>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn :text="$t('cancel')" variant="elevated" @click="actionFormDialogOpen = false" :disabled="actionLoading"></v-btn>
-          <v-btn :text="$t('send')" variant="tonal" color="primary" @click="applyAction" :disabled="actionLoading"></v-btn>
-        </v-card-actions>
-
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="persistentMessageDialog" class="persistent-message-dialog">
-      <v-card>
-
-        <v-card-text v-html="persistentMessage"></v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn :text="$t('close')" variant="elevated" @click="persistentMessageDialog = false"></v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <TableActionExecutor
+      ref="actionExecutor"
+      :category-schema="categorySchema"
+      :parent-pk="parentPk"
+      @started="actionLoading = true"
+      @success="handleActionSuccess"
+      @finished="actionLoading = false"
+    />
 
   </div>
 </template>
@@ -380,12 +305,11 @@
 import { applyFiltersToQuery, extractFiltersFromQuery } from '/src/utils/filters'
 import { CategorySchema, detailUrl, subDetailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
-import { getDataList, sendTableAction, downloadContent } from '/src/api/table'
+import { getDataList } from '/src/api/table'
 import { truncate } from '/src/utils'
 import moment from 'moment'
-import { toast } from "vue3-toastify"
-import FieldsContainer from '/src/components/table/FieldsContainer.vue'
 import FormCreate from '/src/components/table/FormCreate.vue'
+import TableActionExecutor from '/src/components/table/TableActionExecutor.vue'
 
 export default {
   props: {
@@ -394,8 +318,8 @@ export default {
     parentPk: {type: [String, Number], required: false},
   },
   components: {
-    FieldsContainer,
     FormCreate,
+    TableActionExecutor,
   },
   data() {
     return {
@@ -410,14 +334,7 @@ export default {
       perPageOptions: [25, 50, 100, 150],
 
       actionToAll: false,
-      actionFormData: null,
-      actionDialogConfirmation: false,
-      actionFormDialogOpen: false,
-      actionSelected: null,
       actionLoading: false,
-
-      persistentMessageDialog: false,
-      persistentMessage: null,
 
       isNarrow: false,
     }
@@ -577,12 +494,8 @@ export default {
         console.error('Get list error:', error)
 
         const errorResult = this.$handleError(error, this.$t('errorTitles.loadList'))
-        if (errorResult.fieldErrors) {
+        if (errorResult.fieldErrors && this.$refs.fieldscontainer) {
           this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
-        }
-        if (errorResult.persistentMessage) {
-          this.persistentMessageDialog = true
-          this.persistentMessage = errorResult.persistentMessage
         }
       })
     },
@@ -615,96 +528,19 @@ export default {
       return Math.ceil((this.pageData.total_count || 0) / this.pageInfo.limit)
     },
     pressAction(actionInfo, actionKey) {
-      if (!actionInfo.allow_empty_selection && !this.actionToAll && this.selected.length === 0) {
-        toast(this.$t('actionNotAllowEmptySelection'), {
-          "limit": 3, "theme": "auto", "type": "warning", "position": "top-center",
-        })
-        return
-      }
-
-      this.actionFormData = null
-      this.actionMeta = null
-      this.actionSelected = actionKey
-
-      // Action form
-      if (actionInfo.form_schema) {
-        this.actionFormDialogOpen = true
-      } else {
-        // Confirmation window
-        if (actionInfo.confirmation_text) {
-          this.actionDialogConfirmation = true
-        }
-        else {
-          this.applyAction()
-        }
-      }
-    },
-    getActionInfo() {
-      return this.categorySchema.getTableInfo().actions[this.actionSelected]
-    },
-    applyAction() {
-      this.actionLoading = true
-      sendTableAction({
-        group: this.categorySchema.group,
-        category: this.categorySchema.category,
-        subcategory: this.categorySchema.subcategory,
-        parent_pk: this.parentPk,
-
-        action: this.actionSelected,
-        pks: this.selected,
-        formData: this.actionFormData || {},
+      this.$refs.actionExecutor.run({
+        actionKey,
+        actionInfo,
+        pks: [...this.selected],
         sendToAll: this.actionToAll,
         filters: this.filters,
         search: this.search,
-      }).then(response => {
-
-        if(response.headers['content-type'] !== 'application/json') {
-          const fileName = response.headers['pragma'] || `${moment().format('DD.MM.YYYY_HH:MM')}.csv`
-          downloadContent(
-            response.data, fileName, response.headers['content-type']
-          )
-        }
-        else {
-          if (response.data.message && typeof response.data.message === 'object') {
-            toast(response.data.message.text, {
-              "type": response.data.message.type,
-              "position": response.data.message.position,
-              "dangerouslyHTMLString": true
-            })
-          }
-          else if (response.data.message && typeof response.data.message === 'string') {
-            toast(response.data.message, {
-              "type": "success",
-              "position": "top-center",
-            })
-          }
-          else if (response.data.persistent_message) {
-            this.persistentMessageDialog = true
-            this.persistentMessage = response.data.persistent_message
-          }
-          else {
-            toast(this.$t("successAdminAction"))
-          }
-        }
-
-        this.actionDialogConfirmation = false
-        this.actionFormDialogOpen = false
-        this.actionLoading = false
-        this.selected = []
-        this.getListData()
-      }).catch(error => {
-        this.actionLoading = false
-        console.error(`Admin action ${this.actionSelected} error:`, error)
-
-        const errorResult = this.$handleError(error, this.$t('errorTitles.runAction'))
-        if (errorResult.fieldErrors) {
-          this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
-        }
-        if (errorResult.persistentMessage) {
-          this.persistentMessageDialog = true
-          this.persistentMessage = errorResult.persistentMessage
-        }
+        totalCount: this.getTotalCount(),
       })
+    },
+    handleActionSuccess() {
+      this.selected = []
+      this.getListData()
     },
     updateSortBy(options) {
       if (!options[0]) {
@@ -772,11 +608,6 @@ export default {
         count += Object.values(this.filters).filter(v => v !== null && v !== undefined).length
       }
       return count
-    },
-    hasTagColors(field) {
-      if (!Array.isArray(field.choices)) return false
-
-      return field.choices.some(c => c && typeof c === 'object' && 'tag_color' in c)
     },
   },
 }
