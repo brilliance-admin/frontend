@@ -1,7 +1,12 @@
 @media (min-width: $screen-narrow) {
   .dashboard-container {
-    max-width: inherit;
+      max-width: inherit;
   }
+}
+@media (max-width: $screen-narrow) {
+    .dashboard-container {
+        padding: 4px 0px !important;
+    }
 }
 @media (max-width: $screen-narrow) {
   .dashboard-value {

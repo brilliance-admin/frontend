@@ -9,6 +9,14 @@
     width="300"
     :touchless="true"
   >
+    <div class="drawer-header">
+      <v-btn
+        icon="mdi-close"
+        @click="drawer = false"
+        color="secondary"
+      />
+    </div>
+
     <Theme/>
 
     <div class="settings-section">

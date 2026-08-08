@@ -16,7 +16,6 @@
           <v-tooltip location="bottom">
             <template #activator="{ props }">
               <v-icon v-bind="props" icon="mdi-help-circle-outline" v-if="searchHelp"/>
-              <v-icon icon="mdi-magnify" />
             </template>
             <div v-html="searchHelpHtml()"></div>
           </v-tooltip>
@@ -69,6 +68,7 @@
 
     <div class="filter-button">
       <v-btn
+        class="filter-button-apply"
         @click="applyFilter"
         color="secondary"
         prepend-icon="mdi-magnify"

@@ -42,6 +42,7 @@ const messages = {
     general: 'General',
     noRecords: 'No records',
     inputStringForSearch: 'Enter a search string',
+    relatedCounter: 'Shown {shown} / Total {total}',
     themeSelection: 'Theme selection',
     tinyMCETheme: 'Text editor theme',
     $vuetify: {
@@ -57,6 +58,7 @@ const messages = {
     inline_nested: 'Some inline rows contain invalid values.',
     errorUnexpectedTitle: 'Unexpected server error!',
     errorMessage: '{title}\nPlease try again later or contact support.\nStatus: {status}\n\n{errorText}',
+    copyErrorText: 'Click to copy text',
     successAdminAction: 'The action has been completed successfully.',
     validationErrors: 'A validation error occurred while processing the request. Please try again later or contact support if the issue persists.\n\n{errors}',
     errorTitles: {
@@ -106,6 +108,7 @@ const messages = {
     general: 'Основное',
     noRecords: 'Нет записей',
     inputStringForSearch: 'Введите строку для поиска',
+    relatedCounter: 'Показано {shown} / Всего {total}',
     themeSelection: 'Выбор темы',
     tinyMCETheme: 'Тема редактора текста',
     $vuetify: {
@@ -121,6 +124,7 @@ const messages = {
     inline_nested: 'Некоторые строки инлайна заполнены некорректно.',
     errorUnexpectedTitle: 'Непредвиденная ошибка!',
     errorMessage: '{title}\nПожалуйста, попробуйте ещё раз позже или обратитесь в поддержку.\nСтатус: {status}\n\n{errorText}',
+    copyErrorText: 'Нажмите чтобы скопировать текст',
     successAdminAction: 'Действие успешно выполнено.',
     validationErrors: 'Ошибка валидации зпроса. Пожалуйста, попробуйте ещё раз позже или обратитесь в поддержку.\n\n{errors}',
     errorTitles: {

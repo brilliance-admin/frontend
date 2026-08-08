@@ -12,7 +12,7 @@
     @input="onChange"
   />
 
-  <div v-if="field.help_text" class="field_help_text text-caption mt-1">
+  <div v-if="field.help_text" class="field-help-text text-caption mt-1">
     {{ field.help_text }}
   </div>
 </template>

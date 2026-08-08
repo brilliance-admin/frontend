@@ -10,7 +10,7 @@
 
   <div class="v-input__details" v-if="field.help_text">
     <div class="v-messages">
-      <div class="v-messages__message">
+      <div class="v-messages__message field-help-text">
         {{ field.help_text }}
       </div>
     </div>

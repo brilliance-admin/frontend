@@ -29,7 +29,7 @@
             width="320"
           >
             <div class="navbar-filters">
-              <div class="filters-drawer-header">
+              <div class="drawer-header">
                 <v-btn
                   icon="mdi-close"
                   @click="filtersOpen = false"
@@ -55,6 +55,7 @@
             @click="filtersOpen = true"
           >
             <v-btn
+              color="secondary"
               icon="mdi-filter-variant"
             />
           </v-badge>

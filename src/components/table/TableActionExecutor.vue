@@ -233,7 +233,7 @@ export default {
           this.persistentMessage = response.data.persistent_message
         } else {
           toast(
-            this.$t('successAdminAction'),{
+            this.$t('successAdminAction'), {
               type: 'success',
               position: 'top-center',
             }

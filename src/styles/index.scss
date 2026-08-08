@@ -39,6 +39,22 @@ html {
   --jse-theme-color: rgb(var(--v-theme-primary));
   --jse-text-color-inverse: rgb(var(--v-theme-darken3));
 }
+
+.toast-copy-text {
+  cursor: pointer;
+  user-select: none;
+}
+
+.toast-copy-text:hover {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+}
+
+.toast-copy-text:active {
+  filter: brightness(80%);
+  transform: translateY(1px);
+}
+
 .jse-readonly {
     cursor: not-allowed;
     .jse-menu {
@@ -111,8 +127,10 @@ body {
         margin: 2px;
     }
 }
-.filters-drawer-header {
+.drawer-header {
+    display: flex;
     margin-bottom: 10px;
+    justify-content: end;
 }
 
 .table-button {
@@ -327,7 +345,8 @@ body {
 }
 
 .filters-drawer {
-  display: none;
+    display: none;
+    margin: 5px 10px;
 }
 
 @media (max-width: $screen-narrow) {
@@ -401,6 +420,9 @@ body {
 /* Уменьшить ширину полей фильтров */
 .filters-container .filter-element {
     width: 220px;
+}
+.filter-button-apply {
+    font-size: 0.9rem!important;
 }
 /* Приглушить label'ы внутри фильтров */
 .filters-container .v-field .v-label {

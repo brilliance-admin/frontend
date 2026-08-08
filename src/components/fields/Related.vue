@@ -126,7 +126,10 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <div v-if="field.help_text" class="field_help_text text-caption mt-1">
+    <div class="field-help-text text-caption mt-1">
+      {{ $t('relatedCounter', { shown: shownChoicesCount, total: totalChoicesCount }) }}
+    </div>
+    <div v-if="field.help_text" class="field-help-text text-caption mt-1">
       {{ field.help_text }}
     </div>
   </template>
@@ -148,6 +151,7 @@ export default {
       formData: null,
       apiLoading: false,
       choices: [],
+      totalChoicesCount: 0,
       search: '',
       init: false,
     }
@@ -167,6 +171,9 @@ export default {
     leftChoices() {
       const selectedKeys = new Set((this.value || []).map(i => i.key))
       return this.choices.filter(i => !selectedKeys.has(i.key))
+    },
+    shownChoicesCount() {
+      return this.isDualList() ? this.leftChoices.length : this.choices.length
     },
   },
   methods: {
@@ -218,6 +225,7 @@ export default {
         action_name: this.actionName,
       }).then(response => {
         this.choices = response.data.results
+        this.totalChoicesCount = response.data.total_count ?? this.choices.length
         this.apiLoading = false
       }).catch(error => {
         this.apiLoading = false
