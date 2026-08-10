@@ -7,7 +7,7 @@
       :clearable="!isReadOnly()"
       v-model="value"
       :label="field.label"
-      :messages="field.help_text || []"
+      :messages="getMessages()"
       :readonly="isReadOnly()"
       :placeholder="$t('inputStringForSearch')"
 
@@ -129,7 +129,7 @@
     <div class="field-help-text text-caption mt-1">
       {{ $t('relatedCounter', { shown: shownChoicesCount, total: totalChoicesCount }) }}
     </div>
-    <div v-if="field.help_text" class="field-help-text text-caption mt-1">
+    <div v-if="!isFilter && field.help_text" class="field-help-text text-caption mt-1">
       {{ field.help_text }}
     </div>
   </template>
@@ -180,6 +180,10 @@ export default {
     isReadOnly() {
       return this.readOnly
     },
+    getMessages() {
+      if (this.isFilter) return []
+      return this.field.help_text || []
+    },
     updateFormData(initFormData) {
       this.formData = initFormData
       this.value = initFormData[this.fieldSlug]
@@ -189,6 +193,10 @@ export default {
         this.init = true
         this.updateChoices()
       }
+    },
+    updateFormContext(formData) {
+      this.formData = formData
+      this.updateChoices()
     },
     updateSearch(search) {
       this.search = search

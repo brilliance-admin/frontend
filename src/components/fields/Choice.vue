@@ -5,7 +5,7 @@
     :variant="variant"
     :clearable="!readOnly"
     :model-value="value"
-    :messages="field.help_text || []"
+    :messages="getMessages()"
     :readonly="readOnly"
     :loading="loading"
 
@@ -88,6 +88,10 @@ export default {
     getChoiceChipColor(value) {
       const choice = this.field.choices?.find(c => c.value === value)
       return choice?.tag_color
+    },
+    getMessages() {
+      if (this.isFilter) return []
+      return this.field.help_text || []
     },
     updateFormData(initFormData) {
       const value = initFormData[this.fieldSlug]

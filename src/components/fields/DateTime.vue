@@ -8,7 +8,7 @@
         :variant="variant"
         :label="field.label"
         :model-value="displayValue"
-        :messages="field.help_text || []"
+        :messages="getMessages()"
         :readonly="readOnly"
         :loading="loading"
         :clearable="!readOnly"
@@ -64,6 +64,11 @@
 
           @update:model-value="updateDateTime"
         />
+        <div v-if="isTimePicker()" class="d-flex ga-2 pa-3">
+          <v-btn size="small" variant="tonal" @click="applyCurrentTime">Now</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyTimePreset(12, 0)">12:00</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyTimePreset(0, 0)">00:00</v-btn>
+        </div>
       </v-card>
     </template>
   </v-dialog>
@@ -97,16 +102,28 @@ export default {
     this.value = this.field.initial
   },
   methods: {
+    parseTime(value) {
+      const [hours = 0, minutes = 0, seconds = 0] = value.split(':').map(Number)
+      const date = new Date()
+      date.setHours(hours, minutes, seconds, 0)
+      return date
+    },
     updateFormData(initFormData) {
       const value = initFormData[this.fieldSlug]
       if (value) {
         if (this.isRange()) {
           this.value = [new Date(moment(value.from)), new Date(moment(value.to))]
+        } else if (this.isTimePicker()) {
+          this.value = this.parseTime(value)
         } else {
           this.value = new Date(moment(value))
         }
         this.displayValue = this.getFormattedValue()
       }
+    },
+    getMessages() {
+      if (this.isFilter) return []
+      return this.field.help_text || []
     },
     getFormattedValue() {
       if (!this.value) return ''
@@ -150,6 +167,19 @@ export default {
       this.displayValue = this.getFormattedValue()
       this.$emit('changed', this.serializeValue(this.value))
     },
+    applyCurrentTime() {
+      const date = new Date()
+      this.value = date
+      this.displayValue = this.getFormattedValue()
+      this.$emit('changed', this.serializeValue(this.value))
+    },
+    applyTimePreset(hours, minutes) {
+      const date = new Date()
+      date.setHours(hours, minutes, 0, 0)
+      this.value = date
+      this.displayValue = this.getFormattedValue()
+      this.$emit('changed', this.serializeValue(this.value))
+    },
     updateDisplayValue(value) {
       this.displayValue = value
       if (!value) {
@@ -164,7 +194,11 @@ export default {
         this.$emit('changed', this.serializeValue(this.value))
         return
       }
-      this.value = new Date(moment(value))
+      if (this.isTimePicker()) {
+        this.value = this.parseTime(value)
+      } else {
+        this.value = new Date(moment(value))
+      }
       this.$emit('changed', this.serializeValue(this.value))
     },
     formatDisplayValue(date) {
@@ -186,6 +220,7 @@ export default {
           'to': moment(date[1]).format('yyyy-MM-DDTHH:mm:ss'),
         }
       }
+      if (this.isTimePicker()) return moment(date).format('HH:mm')
       return moment(date).format('yyyy-MM-DDTHH:mm:ss')
     },
     isRange() {

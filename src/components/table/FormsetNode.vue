@@ -28,7 +28,7 @@
             :parent-pk="parentPk"
             :form-type="formType"
             :field-errors="fieldErrors"
-            @changed="value => _updateValue(value, getFieldKey(field))"
+            @changed="value => _mergeValue(value)"
           />
         </div>
 
@@ -87,6 +87,7 @@ import ArrayField from '/src/components/fields/ArrayField.vue'
 import InlineField from '/src/components/fields/InlineField.vue'
 import TinyMCEField from '/src/components/fields/TinyMCE/index.vue'
 import CKEditor from '/src/components/fields/CKEditor.vue'
+import { isChoiceField } from '/src/utils/fields'
 
 export default {
   name: 'FormsetNode',
@@ -115,17 +116,16 @@ export default {
     },
     getFieldComponent(field) {
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
+      if (isChoiceField(field)) return ChoiceField
       if (['integer', 'decimal'].indexOf(field.type) !== -1) {
-        if (field.choices) return ChoiceField
         return NumberField
       }
       if (['field', 'string', 'email', 'url', 'slug', 'duration'].indexOf(field.type) !== -1) {
         if (field.tinymce) return TinyMCEField
         if (field.ckeditor) return CKEditor
-        if (field.choices) return ChoiceField
         return StringField
       }
-      if (['list', 'choice'].indexOf(field.type) !== -1) return ChoiceField
+      if (['list'].indexOf(field.type) !== -1) return ChoiceField
       if (['image', 'file'].indexOf(field.type) !== -1) return FileField
       if (['datetime', 'date', 'time'].indexOf(field.type) !== -1) return DateTimeField
       if (['related'].indexOf(field.type) !== -1) return RelatedField
@@ -192,7 +192,42 @@ export default {
 
       nextValue[field_slug] = value
       this.formData = nextValue
+      this.updateChildrenFormContext()
       this.$emit('changed', nextValue)
+    },
+    _mergeValue(value) {
+      if (value === null || value === undefined) {
+        throw new Error('FormsetNode _mergeValue: value is empty')
+      }
+      if (typeof value !== 'object' || Array.isArray(value)) {
+        throw new Error(`FormsetNode _mergeValue: expected object, got ${Array.isArray(value) ? 'array' : typeof value}`)
+      }
+
+      const nextValue = {
+        ...this.formData,
+        ...value,
+      }
+      this.formData = nextValue
+      this.updateChildrenFormContext()
+      this.$emit('changed', nextValue)
+    },
+    updateChildrenFormContext() {
+      for (const field of this.node.fields) {
+        if (this.isFormsetNode(field)) {
+          const child = this.$refs[this.getRefString(this.getFieldKey(field))]
+          if (child && child[0] && child[0].updateChildrenFormContext) {
+            child[0].formData = this.formData
+            child[0].updateChildrenFormContext()
+          }
+          continue
+        }
+
+        const resolved = this.resolveField(field)
+        const ref = this.$refs[this.getRefString(resolved.slug)]
+        if (ref && ref[0] && ref[0].updateFormContext) {
+          ref[0].updateFormContext(this.formData)
+        }
+      }
     },
     updateFormData(newData) {
       if (newData === null || newData === undefined) {

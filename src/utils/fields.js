@@ -14,6 +14,10 @@ export const defaultProps = {
   parentPk: {type: [String, Number], required: false},
 }
 
+export function isChoiceField(field) {
+  return !!field && (field.type === 'choice' || !!field.choices)
+}
+
 const baseFields = {
   type: {type: String, required: true},
   required: {type: Boolean, required: false},

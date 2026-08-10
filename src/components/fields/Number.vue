@@ -4,7 +4,7 @@
     :variant="variant"
     :clearable="!readOnly"
     :model-value="value"
-    :messages="field.help_text || []"
+    :messages="getMessages()"
     :readonly="readOnly"
     :loading="loading"
 
@@ -68,6 +68,10 @@ export default {
   methods: {
     updateFormData(initFormData) {
       this.value = initFormData[this.fieldSlug]
+    },
+    getMessages() {
+      if (this.isFilter) return []
+      return this.field.help_text || []
     },
     onChange(newValue) {
       this.value = newValue === undefined ? null : newValue

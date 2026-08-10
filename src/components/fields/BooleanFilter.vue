@@ -6,7 +6,7 @@
     :clearable="!readOnly"
     :label="field.label"
     :model-value="value"
-    :messages="field.help_text || []"
+    :messages="[]"
     :readonly="readOnly"
     :loading="loading"
 

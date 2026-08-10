@@ -28,6 +28,7 @@
       v-for="(filter, filter_name) in fieldsInfo"
       v-bind:key="filter_name"
       class="filter-element"
+      :title="filter.help_text || null"
       v-on:keydown.enter.prevent="applyFilter"
     >
       <component
@@ -81,6 +82,7 @@
 
 <script>
 import { normalizeFilters } from '/src/utils/filters'
+import { isChoiceField } from '/src/utils/fields'
 import { CategorySchema } from '/src/api/schema'
 import BooleanFilter from '/src/components/fields/BooleanFilter.vue'
 import StringField from '/src/components/fields/String.vue'
@@ -132,7 +134,7 @@ export default {
       }
     },
     getFieldComponent(filter) {
-      if (['choice'].indexOf(filter.type) !== -1 || filter.choices) return ChoiceField
+      if (isChoiceField(filter)) return ChoiceField
       if (['datetime'].indexOf(filter.type) !== -1) return DateTimeField
       if (['related'].indexOf(filter.type) !== -1) return RelatedField
       if (['string', 'duration'].indexOf(filter.type) !== -1) return StringField

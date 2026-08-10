@@ -137,7 +137,7 @@
             <v-icon color="red-darken-2" icon="mdi-close" size="small" v-else/>
           </template>
 
-          <template v-else-if="header.type === 'choice'">
+          <template v-else-if="isChoiceField(header.field)">
             <template v-if="item[header.key] !== null && item[header.key] !== undefined">
               <template v-if="getChoiceColor(item, header)">
                 <v-chip
@@ -308,6 +308,7 @@ import { CategorySchema, detailUrl, subDetailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
 import { getDataList } from '/src/api/table'
 import { truncate } from '/src/utils'
+import { isChoiceField } from '/src/utils/fields'
 import moment from 'moment'
 import FormCreate from '/src/components/table/FormCreate.vue'
 import TableActionExecutor from '/src/components/table/TableActionExecutor.vue'
@@ -583,8 +584,13 @@ export default {
     getChoiceTitle(item, header) {
       const value = item[header.key]
       if (typeof value === 'object') return value.title
+      if (header.field.choices) {
+        const choice = header.field.choices.find(c => c.value === value)
+        if (choice) return choice.title
+      }
       return value
     },
+    isChoiceField,
     formatRelated(value) {
       if (!value) { return [] }
       if (Array.isArray(value)) { return value }

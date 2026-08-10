@@ -5,7 +5,7 @@
     :density="density"
     :clearable="!readOnly"
     :model-value="value"
-    :messages="field.help_text || []"
+    :messages="getMessages()"
     :readonly="readOnly"
     :loading="loading"
     @update:modelValue="onChange"
@@ -23,7 +23,7 @@
       :density="density"
       :clearable="!readOnly"
       :model-value="value"
-      :messages="field.help_text || []"
+      :messages="getMessages()"
       :readonly="readOnly"
       :type="field.password && !showPassword ? 'password' : 'text'"
       :append-inner-icon="field.password && !readOnly ? (showPassword ? 'mdi-eye' : 'mdi-eye-off') : undefined"
@@ -65,6 +65,10 @@ export default {
   methods: {
     updateFormData(initFormData) {
       this.value = initFormData[this.fieldSlug]
+    },
+    getMessages() {
+      if (this.isFilter) return []
+      return this.field.help_text || []
     },
     onChange(newValue) {
       this.value = newValue

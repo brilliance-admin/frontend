@@ -163,8 +163,29 @@ export default {
       }
     },
     appendNewItem(formType = 'create') {
-      this.value = [...this.value, {}]
+      const item = this.getNewItem(formType)
+      this.value = [...this.value, item]
       this.itemFormTypes = [...this.itemFormTypes, formType]
+    },
+    getNewItem(formType) {
+      if (formType !== 'create') {
+        return {}
+      }
+
+      return this.getDefaultItem()
+    },
+    getDefaultItem() {
+      const item = {}
+
+      for (const [slug, field] of Object.entries(this.field.inline_field_schema.fields)) {
+        if (field.read_only) continue
+
+        if (field.default !== undefined) {
+          item[slug] = field.default
+        }
+      }
+
+      return item
     },
     updateFormData(initFormData) {
       if (!Array.isArray(initFormData[this.fieldSlug])) {
