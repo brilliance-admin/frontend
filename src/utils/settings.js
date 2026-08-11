@@ -6,6 +6,7 @@ var config_dataset = {
   static_prefix: '/static/custom_admin',
   version: '-',
   api_timeout_ms: 1000 * 5,
+  backend_debug: undefined,
   logo_image: '/logo-outline.png',
   custom_themes: [],
 }
@@ -20,6 +21,7 @@ if (import.meta.env.PROD) {
   if (!config_dataset.backend_prefix) {
     config_dataset.backend_prefix = '/'
   }
+
 }
 
 console.assert(config_dataset.backend_prefix, "backend_prefix is required");
