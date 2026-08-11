@@ -39,6 +39,7 @@
             :category-schema="categorySchema"
             :table-schema="field.inline_field_schema"
             :inline-field-slug="fieldSlug"
+            :initial-form-data="item"
 
             :loading="loading"
             :read-only="readOnly"
@@ -115,9 +116,7 @@ export default {
   watch: {
     error: {
       handler() {
-        this.$nextTick(() => {
-          this.applyInlineErrors()
-        })
+        this.applyInlineErrors()
       },
       deep: true,
     },
@@ -140,27 +139,12 @@ export default {
   },
   methods: {
     applyInlineErrors() {
-      const fieldscontainers = this.$refs.fieldscontainer
-      if (!Array.isArray(fieldscontainers)) {
-        throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
-      }
+      const fieldscontainers = this.$refs.fieldscontainer || []
       const lineErrors = Array.isArray(this.error?.message) ? this.error.message : []
 
       fieldscontainers.forEach((fieldscontainer, index) => {
         fieldscontainer.updateErrors(lineErrors[index] || {})
       })
-    },
-    assertInlineShape() {
-      const fieldscontainers = this.$refs.fieldscontainer
-      if (!Array.isArray(fieldscontainers)) {
-        throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
-      }
-
-      if (fieldscontainers.length !== this.value.length) {
-        throw new Error(
-          `InlineField "${this.fieldSlug}" shape mismatch: value=${this.value.length}, refs=${fieldscontainers.length}`,
-        )
-      }
     },
     appendNewItem(formType = 'create') {
       const item = this.getNewItem(formType)
@@ -187,50 +171,39 @@ export default {
 
       return item
     },
+    applyDefaults(item) {
+      const defaults = this.getDefaultItem()
+      const result = {...defaults, ...item}
+
+      for (const [slug, value] of Object.entries(defaults)) {
+        if (result[slug] === null || result[slug] === undefined) {
+          result[slug] = value
+        }
+      }
+
+      return result
+    },
     updateFormData(initFormData) {
       if (!Array.isArray(initFormData[this.fieldSlug])) {
-        throw new Error(`InlineField "${this.fieldSlug}" form data must be an array`)
+        throw new Error(`updateFormData: InlineField "${this.fieldSlug}" form data must be an array`)
       }
-      this.value = initFormData[this.fieldSlug]
+      this.value = initFormData[this.fieldSlug].map(item => this.applyDefaults(item))
       this.itemFormTypes = this.value.map(() => 'edit')
 
       if (!this.readOnly && this.isRequired && this.value.length === 0) {
         this.appendNewItem()
       }
-
-      this.$nextTick(() => {
-        const fieldscontainers = this.$refs.fieldscontainer
-        if (!Array.isArray(fieldscontainers)) {
-          throw new Error(`InlineField "${this.fieldSlug}" fieldscontainer refs are missing`)
-        }
-        if (fieldscontainers.length !== this.value.length) {
-          throw new Error(
-            `InlineField "${this.fieldSlug}" shape mismatch: value=${this.value.length}, refs=${fieldscontainers.length}`,
-          )
-        }
-        this.assertInlineShape()
-        fieldscontainers.forEach((fieldscontainer, index) => {
-          const item = this.value[index]
-          if (item === null || item === undefined) {
-            throw new Error(`InlineField "${this.fieldSlug}" item at index ${index} is empty`)
-          }
-          fieldscontainer.updateFormData(item)
-        })
-        this.applyInlineErrors()
-      })
+      this.applyInlineErrors()
     },
     onChange(index, newValue) {
       const nextValue = this.value.slice()
       nextValue[index] = newValue === undefined ? {} : newValue
       this.value = nextValue
-      this.$nextTick(() => {
-        this.assertInlineShape()
-      })
       this.$emit('changed', this.value)
     },
     removeItem(index) {
       if (!this.canRemoveItem) {
-        throw new Error(`InlineField "${this.fieldSlug}" remove is forbidden`)
+        throw new Error(`removeItem: InlineField "${this.fieldSlug}" remove is forbidden`)
       }
       const nextValue = this.value.slice()
       const nextItemFormTypes = this.itemFormTypes.slice()
@@ -238,21 +211,15 @@ export default {
       nextItemFormTypes.splice(index, 1)
       this.value = nextValue
       this.itemFormTypes = nextItemFormTypes
-      this.$nextTick(() => {
-        this.assertInlineShape()
-      })
       this.$emit('changed', this.value)
     },
     addItem() {
       if (!this.canAddItem) {
-        throw new Error(`InlineField "${this.fieldSlug}" add is forbidden`)
+        throw new Error(`addItem: InlineField "${this.fieldSlug}" add is forbidden`)
       }
       this.appendNewItem()
       this.$emit('changed', this.value)
-      this.$nextTick(() => {
-        this.assertInlineShape()
-        this.applyInlineErrors()
-      })
+      this.applyInlineErrors()
     },
   },
 }

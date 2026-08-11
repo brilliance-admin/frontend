@@ -44,6 +44,7 @@ export default {
     readOnly: {type: Boolean, required: false},
     inlineFieldSlug: {type: String, required: false},
     parentPk: {type: [String, Number], required: false},
+    initialFormData: {type: Object, required: false},
     formType: {
       type: String,
       required: true,
@@ -60,6 +61,11 @@ export default {
     }
   },
   created() {
+  },
+  mounted() {
+    if (this.initialFormData) {
+      this.updateFormData(this.initialFormData)
+    }
   },
   methods: {
     getFormset() {

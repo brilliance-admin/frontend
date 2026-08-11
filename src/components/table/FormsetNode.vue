@@ -37,7 +37,7 @@
           class="field-cell formset-grid-item"
           :style="{ gridColumn: `span ${resolveField(field).col_span || 12}` }"
         >
-          <span v-html="`<!-- type=${resolveField(field).schema.type} slug='${resolveField(field).slug}' -->`"></span>
+          <span v-html="`<!-- type=${resolveField(field).schema.type} slug='${resolveField(field).slug}' default=${JSON.stringify(resolveField(field).schema.default)} -->`"></span>
           <div
             class="form-field-container"
             :class="[{ 'is-required': resolveField(field).schema.required, 'field-readonly': readOnly || resolveField(field).schema.read_only }]"

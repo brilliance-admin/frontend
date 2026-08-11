@@ -109,8 +109,12 @@ export function createHandleError(t) {
     }
     else if (status >= 400 && status < 500) {
       let message = data?.message || data?.detail
-      if (message) {
-        showToast(message, { theme: "auto", type: "error", position: "top-center" })
+      if (typeof message === 'string' && message) {
+        showCopyableServerErrorToast(
+          message,
+          message,
+          { theme: "auto", type: "error", position: "top-center" },
+        )
       }
       else if (data?.code) {
         showToast(t(data.code), { theme: "auto", type: "error", position: "top-center" })
