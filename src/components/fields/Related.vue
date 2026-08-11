@@ -28,6 +28,7 @@
 
       :search="search"
       @update:search="updateSearch"
+      @update:menu="onMenuUpdate"
       @update:modelValue="onChange"
     >
       <template #label>
@@ -71,6 +72,7 @@
               v-model="search"
               :label="$t('inputStringForSearch')"
               @update:modelValue="updateSearch"
+              @focus="refreshChoicesIfFormDataUpdated"
               density="compact"
                 :readonly="isReadOnly()"
             />
@@ -154,6 +156,7 @@ export default {
       totalChoicesCount: 0,
       search: '',
       init: false,
+      formDataUpdated: false,
     }
   },
   created() {
@@ -196,10 +199,20 @@ export default {
     },
     updateFormContext(formData) {
       this.formData = formData
-      this.updateChoices()
+      this.formDataUpdated = true
     },
     updateSearch(search) {
       this.search = search
+      this.updateChoices()
+    },
+    onMenuUpdate(isOpen) {
+      if (!isOpen) return
+      this.refreshChoicesIfFormDataUpdated()
+    },
+    refreshChoicesIfFormDataUpdated() {
+      if (!this.formDataUpdated) return
+
+      this.formDataUpdated = false
       this.updateChoices()
     },
     updateChoices() {

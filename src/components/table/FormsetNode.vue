@@ -252,6 +252,9 @@ export default {
         if (!resolved.slug) {
           throw new Error('FormsetNode updateFormData: resolved field slug is empty')
         }
+        if (!resolved.schema || !this.isDisplayField(resolved.schema)) {
+          continue
+        }
 
         const ref = this.$refs[this.getRefString(resolved.slug)]
         if (!ref || !ref[0] || !ref[0].updateFormData) {
