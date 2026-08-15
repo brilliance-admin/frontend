@@ -18,6 +18,16 @@ export function isChoiceField(field) {
   return !!field && (field.type === 'choice' || !!field.choices)
 }
 
+export function getAllowedExtentions(field) {
+  if (!field || !Array.isArray(field.allowed_extensions) || field.allowed_extensions.length === 0) {
+    return undefined
+  }
+
+  return field.allowed_extensions
+    .map(ext => `.${String(ext).replace(/^\./, '')}`)
+    .join(',')
+}
+
 const baseFields = {
   type: {type: String, required: true},
   required: {type: Boolean, required: false},

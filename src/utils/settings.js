@@ -1,8 +1,10 @@
 import Cookies from 'js-cookie'
+import urlJoin from 'url-join'
 
 const backend_domain = import.meta.env.VITE_APP_URL_PREFIX || 'http://localhost:8082'
 var config_dataset = {
-  backend_prefix: `${backend_domain}/admin/`,
+  base_url: backend_domain,
+  backend_prefix: `/admin/`,
   static_prefix: '/static/custom_admin',
   version: '-',
   api_timeout_ms: 1000 * 5,
@@ -13,18 +15,17 @@ var config_dataset = {
 
 if (import.meta.env.PROD) {
   config_dataset = JSON.parse(document.getElementById("settings").dataset.json)
-
-  if (!config_dataset.static_prefix) {
-    config_dataset.static_prefix = '/'
-  }
-
-  if (!config_dataset.backend_prefix) {
-    config_dataset.backend_prefix = '/'
-  }
-
 }
 
-console.assert(config_dataset.backend_prefix, "backend_prefix is required");
+export function getBackendApi() {
+  const base_url = config_dataset.base_url || window.location.origin
+  const backendPrefix = Object.prototype.hasOwnProperty.call(config_dataset, 'backend_prefix')
+    ? config_dataset.backend_prefix
+    : '/admin/'
+  console.assert(backendPrefix, "backend_prefix is required");
+  if (backendPrefix.startsWith('http://') || backendPrefix.startsWith('https://')) return backendPrefix
+  return urlJoin(base_url, backendPrefix)
+}
 
 export var config_dataset
 console.log('config_dataset', config_dataset, 'prod', import.meta.env.PROD)

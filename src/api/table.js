@@ -1,13 +1,13 @@
 import request from '/src/utils/request'
-import { config_dataset } from '/src/utils/settings'
+import { config_dataset, getBackendApi } from '/src/utils/settings'
 import { getLang } from '/src/utils/language'
 import urlJoin from 'url-join'
 
-const tableDataListUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/list/')
-const tableDataRetriveUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/retrieve/{pk}/')
-const tableDataCreateUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/create/')
-const tableDataUpdateUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/update/{pk}/')
-const tableDataActionUrl = urlJoin(config_dataset.backend_prefix, 'table/{group}/{category}/action/{action}/')
+const tableDataListUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/list/')
+const tableDataRetriveUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/retrieve/{pk}/')
+const tableDataCreateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/create/')
+const tableDataUpdateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/update/{pk}/')
+const tableDataActionUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/action/{action}/')
 
 function appendQueryParams(url, kwargs) {
   const params = new URLSearchParams()
@@ -35,7 +35,10 @@ function logDebugInfo(action, kwargs, data) {
   if (!debugInfo) return
 
   const category = getDebugCategory(kwargs)
-  console.log(`${action} ${category} SQL query count: ${debugInfo.db_query_count}`)
+  const serializeText = debugInfo.serialize_ms !== null && debugInfo.serialize_ms !== undefined
+    ? ` (serialize: ${debugInfo.serialize_ms}ms)`
+    : ''
+  console.log(`${action} ${category} SQL query count: ${debugInfo.db_query_count}${serializeText}`)
   for (const query of debugInfo.queries || []) {
     console.log(`${action} ${category} [${query.time_ms}ms] SQL: ${query.sql}`)
   }

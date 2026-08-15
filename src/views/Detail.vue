@@ -69,7 +69,7 @@
             </template>
 
             <template v-else-if="subcategorySchema.type === 'dashboard'">
-              <DashboardCategory :admin-schema="adminSchema" :category-schema="subcategorySchema"/>
+              <DashboardCategory :admin-schema="adminSchema" :category-schema="subcategorySchema" :parent-pk="pk"/>
             </template>
 
             <template v-else>

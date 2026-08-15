@@ -1,10 +1,10 @@
 import request from '/src/utils/request'
 import { setToken, removeToken } from '/src/utils/auth'
 import { getLang } from '/src/utils/language'
-import { config_dataset } from '/src/utils/settings'
+import { config_dataset, getBackendApi } from '/src/utils/settings'
 import urlJoin from 'url-join'
 
-const loginUrl = urlJoin(config_dataset.backend_prefix, 'auth/login/')
+const loginUrl = urlJoin(getBackendApi(), 'auth/login/')
 
 function loginApi(data) {
   var post_data = {
@@ -25,7 +25,7 @@ function loginApi(data) {
 }
 
 export function login(username, password) {
-  console.assert(config_dataset.backend_prefix, 'backend url is not set!')
+  console.assert(getBackendApi(), 'backend url is not set!')
 
   return new Promise((resolve, reject) => {
     loginApi(

@@ -1,10 +1,10 @@
 import axios from 'axios'
 
 import { getToken, removeToken } from '/src/utils/auth'
-import { config_dataset } from '/src/utils/settings'
+import { config_dataset, getBackendApi } from '/src/utils/settings'
 
 const service = axios.create({
-  baseURL: config_dataset.backend_prefix,
+  baseURL: getBackendApi(),
   timeout: null,
 })
 

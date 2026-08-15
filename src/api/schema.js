@@ -1,10 +1,10 @@
 import request from '/src/utils/request'
 import { getToken } from '/src/utils/auth'
 import { getLang } from '/src/utils/language'
-import { config_dataset } from '/src/utils/settings'
+import { config_dataset, getBackendApi } from '/src/utils/settings'
 import urlJoin from 'url-join'
 
-const schemeUrl = urlJoin(config_dataset.backend_prefix, 'schema/')
+const schemeUrl = urlJoin(getBackendApi(), 'schema/')
 
 export async function getAdminSchema() {
   return await new Promise((resolve, reject) => {

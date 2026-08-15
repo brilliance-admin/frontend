@@ -1,9 +1,9 @@
 import request from '/src/utils/request'
 import { getLang, setLang } from '/src/utils/language'
-import { config_dataset } from '/src/utils/settings'
+import { config_dataset, getBackendApi } from '/src/utils/settings'
 import urlJoin from 'url-join'
 
-const loginUrl = urlJoin(config_dataset.backend_prefix, 'get-settings/')
+const loginUrl = urlJoin(getBackendApi(), 'get-settings/')
 
 export async function getSettings() {
   return await new Promise((resolve, reject) => {

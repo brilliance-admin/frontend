@@ -40,6 +40,7 @@ export default {
   props: {
     adminSchema: {type: Object, required: true},
     categorySchema: {type: CategorySchema, required: true},
+    parentPk: {type: [String, Number], required: false},
   },
   components: {
     DashboardContainer,
@@ -64,6 +65,8 @@ export default {
       getDashboardData({
         group: this.categorySchema.group,
         category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
         filters: this.filters,
         search: this.search,
       }).then(response => {

@@ -85,6 +85,22 @@ function resolveColor(value) {
 function buildOptions(opts, colors, chartType) {
   const c = colors
   const hasScales = !NO_SCALES_TYPES.includes(chartType)
+  const scales = {}
+
+  for (const [scaleName, scaleOptions] of Object.entries(opts.scales || {})) {
+    const isVertical = scaleName !== 'x'
+    scales[scaleName] = {
+      ...scaleOptions,
+      ticks: { ...scaleOptions?.ticks, color: c.text },
+      ...(isVertical ? {
+        grid: { ...scaleOptions?.grid, color: c.grid },
+      } : {}),
+      ...(scaleOptions?.title ? {
+        title: { ...scaleOptions.title, color: c.text },
+      } : {}),
+    }
+  }
+
   return {
     ...opts,
     plugins: {
@@ -107,23 +123,7 @@ function buildOptions(opts, colors, chartType) {
       } : {}),
     },
     ...(hasScales ? {
-      scales: {
-        x: {
-          ...opts.scales?.x,
-          ticks: { ...opts.scales?.x?.ticks, color: c.text },
-          ...(opts.scales?.x?.title ? {
-            title: { ...opts.scales.x.title, color: c.text },
-          } : {}),
-        },
-        y: {
-          ...opts.scales?.y,
-          ticks: { ...opts.scales?.y?.ticks, color: c.text },
-          grid: { ...opts.scales?.y?.grid, color: c.grid },
-          ...(opts.scales?.y?.title ? {
-            title: { ...opts.scales.y.title, color: c.text },
-          } : {}),
-        },
-      },
+      scales,
     } : {}),
   }
 }

@@ -9,6 +9,7 @@
       :messages="field.help_text || []"
       :readonly="readOnly"
       :loading="loading"
+      :accept="getAllowedExtentions(field)"
 
       :prepend-icon="null"
       :append-inner-icon="isImage() ? 'mdi-image' : 'mdi-file'"
@@ -39,7 +40,7 @@
 </template>
 
 <script>
-import { defaultProps, validateProps } from '/src/utils/fields.js'
+import { defaultProps, getAllowedExtentions, validateProps } from '/src/utils/fields.js'
 
 const requiredFields = {}
 
@@ -60,6 +61,7 @@ export default {
     validateProps(this, requiredFields)
   },
   methods: {
+    getAllowedExtentions,
     updateFormData(initFormData) {
       let fileInfo = initFormData[this.fieldSlug] || {}
       this.url = fileInfo.url
