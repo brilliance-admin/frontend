@@ -19,12 +19,7 @@ if (import.meta.env.PROD) {
 
 export function getBackendApi() {
   const base_url = config_dataset.base_url || window.location.origin
-  const backendPrefix = Object.prototype.hasOwnProperty.call(config_dataset, 'backend_prefix')
-    ? config_dataset.backend_prefix
-    : '/admin/'
-  console.assert(backendPrefix, "backend_prefix is required");
-  if (backendPrefix.startsWith('http://') || backendPrefix.startsWith('https://')) return backendPrefix
-  return urlJoin(base_url, backendPrefix)
+  return urlJoin(base_url, config_dataset.backend_prefix)
 }
 
 export var config_dataset

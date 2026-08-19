@@ -84,7 +84,11 @@
     </div>
 
     <v-data-table
-      class="model-table"
+      :class="{
+        'model-table': true,
+        'model-table--fit-screen': isFitScreenEnabled(),
+      }"
+      :style="getTableStyle()"
       color="primary"
 
       v-model="selected"
@@ -92,6 +96,7 @@
       :headers="headers"
       :loading="loading"
       :show-select="isShowSelect()"
+      :density="getTableDensity()"
 
       :items-per-page="pageInfo.limit"
       :page="pageInfo.page"
@@ -563,6 +568,26 @@ export default {
     },
     getTableInfo() {
       return this.categorySchema.getTableInfo()
+    },
+    isFitScreenEnabled() {
+      return this.getTableInfo().options?.fit_screen === true
+    },
+    getTableDensity() {
+      return this.getTableInfo().options?.density || 'default'
+    },
+    getTableStyle() {
+      const options = this.getTableInfo().options || {}
+      const style = {}
+
+      if (options.font_size) {
+        style['--model-table-font-size'] = options.font_size
+      }
+
+      if (options.cell_padding) {
+        style['--model-table-cell-padding'] = options.cell_padding
+      }
+
+      return style
     },
     getChoiceValue(item, header) {
       const value = item[header.key]
