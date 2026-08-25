@@ -99,6 +99,13 @@
     }
 }
 
+.model-table--fixed-header {
+    .v-table__wrapper {
+        height: 100%;
+        overflow-y: auto;
+    }
+}
+
 .v-data-table[class*="dark" i].model-table {
     tbody .v-data-table__tr:hover .v-data-table__td {
         background-color: rgba(var(--v-theme-on-surface), 0.04);

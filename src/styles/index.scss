@@ -182,6 +182,9 @@ body {
 .v-label {
     white-space: normal;
 }
+.v-label .field-title {
+    white-space: nowrap;
+}
 
 .settings-container {
     .v-navigation-drawer__content {

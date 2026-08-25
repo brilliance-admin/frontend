@@ -29,6 +29,9 @@
     height: 100%;
 }
 
+.table-tabs {
+    min-width: 110px;
+}
 @media (max-width: $screen-mobile-wide) {
     .edit-tabs-container {
         flex-direction: column;
@@ -108,15 +111,6 @@
             }
         }
     }
-    // Поля для тёмной темы
-    .field-cell {
-        .v-input[class*="dark" i]:not(.v-input--disabled) .v-field {
-            background-color: rgba(var(--v-theme-on-surface), 0.02);
-        }
-        .v-input[class*="dark" i].v-input--disabled {
-            background-color: rgba(var(--v-theme-on-surface), 0.001);
-        }
-    }
 
     .container-tabs {
         background-color: rgb(var(--v-theme-secondary));
@@ -181,11 +175,7 @@
         color: rgba(var(--v-theme-on-surface), 0.68);
     }
 }
-.formset-grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 12px;
-}
+
 .formset-grid-item {
     min-width: 0;
 }
@@ -236,6 +226,15 @@
 .action-description {
     padding: 10px 16px;
 }
+
+.formset-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 10px;
+}
+.fields-container > div:not(.formset-card) > .formset-grid {
+  gap: 12px;
+}
 .form-field-container {
     .v-input {
         max-width: 920px !important;
@@ -248,6 +247,18 @@
         margin-bottom: 5px;
     }
 
+    &:not(.field-readonly) {
+        // Фон поля
+        .v-field {
+            background-color: rgba(var(--v-theme-on-surface), 0.02);
+            --v-field-padding-start: 10px;
+        }
+        // Поля для тёмной темы
+        .v-input[class*="dark" i] .v-field {
+            background-color: rgba(var(--v-theme-surface), 0.2) !important;
+        }
+    }
+
     &.field-readonly {
         .v-field__overlay,
         .v-field__outline {
@@ -257,6 +268,7 @@
         .v-field {
             border-bottom: 1px solid #9d9d9d2b;
             background-color: transparent !important;
+            --v-field-padding-start: 8px;
         }
 
         input,
@@ -366,15 +378,23 @@
     background-color: rgb(var(--v-theme-surface-light)) !important;
 }
 
-.my-input :deep(.v-field-label) {
-    color: #ff5722;
-}
 .v-label.v-field-label {
     opacity: 1;
 }
+
 .field-title {
     color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
+// Bool choice title
+.v-selection-control {
+    .field-title {
+        color: rgb(var(--v-theme-light));
+    }
+    .v-label {
+        opacity: 1;
+    }
+}
+
 .field-title-section {
     .field-title {
         font-size: 14px;

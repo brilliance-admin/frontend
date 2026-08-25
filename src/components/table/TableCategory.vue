@@ -87,6 +87,7 @@
       :class="{
         'model-table': true,
         'model-table--fit-screen': isFitScreenEnabled(),
+        'model-table--fixed-header': isFixedHeaderEnabled(),
       }"
       :style="getTableStyle()"
       color="primary"
@@ -97,6 +98,7 @@
       :loading="loading"
       :show-select="isShowSelect()"
       :density="getTableDensity()"
+      :fixed-header="getTableOptions().fixed_header"
 
       :items-per-page="pageInfo.limit"
       :page="pageInfo.page"
@@ -569,14 +571,20 @@ export default {
     getTableInfo() {
       return this.categorySchema.getTableInfo()
     },
+    getTableOptions() {
+      return this.getTableInfo().options || {}
+    },
     isFitScreenEnabled() {
-      return this.getTableInfo().options?.fit_screen === true
+      return this.getTableOptions().fit_screen === true
+    },
+    isFixedHeaderEnabled() {
+      return this.getTableOptions().fixed_header === true
     },
     getTableDensity() {
-      return this.getTableInfo().options?.density || 'default'
+      return this.getTableOptions().density || 'default'
     },
     getTableStyle() {
-      const options = this.getTableInfo().options || {}
+      const options = this.getTableOptions()
       const style = {}
 
       if (options.font_size) {
