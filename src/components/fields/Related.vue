@@ -145,6 +145,7 @@ import { getTableAutocomplete } from '/src/api/autocomplete'
 export default {
   props: {
     ...defaultProps,
+    formType: {type: String, required: false},
   },
   emits: ["changed"],
   data(props) {
@@ -163,7 +164,7 @@ export default {
     validateProps(this)
     this.value = this.field.initial
 
-    if (!this.readOnly) {
+    if (!this.readOnly && this.formType !== 'edit') {
       this.updateChoices()
     }
   },

@@ -63,6 +63,19 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
       filters[root] = castValue(value, fieldType)
     }
   }
+
+  for (const [key, value] of Object.entries(filters)) {
+    const field = tableFiltersFields[key]
+    if (!field?.many || !value || typeof value !== 'object' || Array.isArray(value)) continue
+
+    const keys = Array.isArray(value.key) ? value.key : [value.key]
+    const titles = Array.isArray(value.title) ? value.title : [value.title]
+    filters[key] = keys.map((item, index) => ({
+      key: item,
+      title: titles[index],
+    }))
+  }
+
   return filters
 }
 
@@ -70,8 +83,14 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
  * Упаковывает фильтры в query-формат (f- + __)
  * newQuery всегда новый и только дополняется
  */
-export function applyFiltersToQuery(newQuery, filters) {
+export function applyFiltersToQuery(newQuery, filters, tableFiltersFields = {}) {
   for (const [key, value] of Object.entries(filters)) {
+    if (tableFiltersFields[key]?.many) {
+      newQuery[`${FILTER_PREFIX}${key}__key`] = value.map(item => item.key)
+      newQuery[`${FILTER_PREFIX}${key}__title`] = value.map(item => item.title)
+      continue
+    }
+
     if (
       value !== null &&
       typeof value === 'object' &&

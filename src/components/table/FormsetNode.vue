@@ -56,6 +56,7 @@
               :action-name="actionName"
               :read-only="readOnly || resolveField(field).schema.read_only"
               :parent-pk="parentPk"
+              :form-type="formType"
               :error="getError(resolveField(field).slug)"
               @changed="value => _updateValue(value, resolveField(field).slug)"
             />

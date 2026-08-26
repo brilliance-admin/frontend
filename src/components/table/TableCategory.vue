@@ -479,7 +479,8 @@ export default {
       if (this.search) newQuery.search = this.search
 
       // Serialize filters
-      newQuery = applyFiltersToQuery(newQuery, this.filters)
+      const tableFilters = this.categorySchema.getTableInfo().table_filters || {}
+      newQuery = applyFiltersToQuery(newQuery, this.filters, tableFilters.fields || {})
 
       this.$router.push({name: this.$route.name, query: newQuery})
     },

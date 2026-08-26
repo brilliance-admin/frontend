@@ -9,6 +9,10 @@ export function getTableAutocomplete(kwargs) {
   return new Promise((resolve, reject) => {
     let url = tableDataAutocompleteUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
     const params = new URLSearchParams()
+    params.set('field_slug', kwargs.field_slug)
+    if (kwargs.inline_field_slug) {
+      params.set('inline_field_slug', kwargs.inline_field_slug)
+    }
     if (kwargs.subcategory) {
       params.set('subcategory', kwargs.subcategory)
     }
@@ -24,8 +28,6 @@ export function getTableAutocomplete(kwargs) {
       url: url,
       data: {
         search_string: kwargs.search_string,
-        field_slug: kwargs.field_slug,
-        inline_field_slug: kwargs.inline_field_slug,
         is_filter: kwargs.is_filter,
         form_data: kwargs.form_data,
         existed_choices: kwargs.existed_choices,
