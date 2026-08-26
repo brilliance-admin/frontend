@@ -45,6 +45,7 @@ const messages = {
     relatedCounter: 'Shown {shown} / Total {total}',
     themeSelection: 'Theme selection',
     tinyMCETheme: 'Text editor theme',
+    tinyMCEThemeHelp: 'Color scheme for fields with a visual editor.',
     $vuetify: {
       ...en,
       dataIterator: {
@@ -111,6 +112,7 @@ const messages = {
     relatedCounter: 'Показано {shown} / Всего {total}',
     themeSelection: 'Выбор темы',
     tinyMCETheme: 'Тема редактора текста',
+    tinyMCEThemeHelp: 'Цветовая схема полей с визуальным редактором.',
     $vuetify: {
       ...ru,
       dataIterator: {

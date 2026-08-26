@@ -23,6 +23,7 @@
       <v-label class="mb-2 font-weight-medium">{{ $t('tinyMCETheme') }}</v-label>
 
       <v-select :value="tinyMCETheme" :items="getTinymcethemes()" @update:modelValue="changeTinymcetheme"></v-select>
+      <div class="text-caption">{{ $t('tinyMCEThemeHelp') }}</div>
     </div>
 
 

@@ -69,6 +69,17 @@
 
     <div class="filter-button">
       <v-btn
+        v-if="isCompactApply"
+        class="filter-button-apply"
+        @click="applyFilter"
+        color="secondary"
+        icon="mdi-magnify"
+        :title="$t('apply')"
+        :aria-label="$t('apply')"
+        :disabled="loading"
+      />
+      <v-btn
+        v-else
         class="filter-button-apply"
         @click="applyFilter"
         color="secondary"
@@ -120,6 +131,11 @@ export default {
     this.$nextTick(() => {
       this.applyFiltersToFields()
     })
+  },
+  computed: {
+    isCompactApply() {
+      return Object.keys(this.fieldsInfo).length >= 6
+    },
   },
   methods: {
     applyFiltersToFields() {

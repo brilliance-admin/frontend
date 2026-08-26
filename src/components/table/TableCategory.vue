@@ -385,6 +385,9 @@ export default {
         headerData['key'] = slug
         headerData['type'] = field.type
         headerData['title'] = field.label
+        headerData['headerProps'] = {
+          title: field.help_text ? `${field.label}\n${field.help_text}` : field.label,
+        }
         headerData['align'] = headerData['align'] || 'left'
         headerData['sortable'] = tableInfo.ordering_fields.indexOf(slug) >= 0
         result.push(headerData)

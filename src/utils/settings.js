@@ -29,7 +29,7 @@ const SETTINGS_COOKIE_NAME = 'SETTINGS'
 const VIEWSETS_SETTINGS = 'VIEWSETS_SETTINGS'
 
 export const wysiwygTypes = {
-  'dark-blue': 'Dark Blue',
+  'dark-first': 'Dark First',
   'dark-slim': 'Dark Slim',
   'lightgray': 'Light Gray',
 }
@@ -37,7 +37,7 @@ export const wysiwygTypes = {
 const defaultSettings = {
   page_size: 25,
   theme: null,
-  wysiwygSkin: 'dark-blue',
+  wysiwygSkin: 'dark-first',
 }
 
 export function getLocalSettings() {
@@ -72,7 +72,7 @@ export function setViesetsSettings(viewname, settings) {
 
 export const tinyMCEThemes = [
   'lightgray',
-  'dark-blue',
+  'dark-first',
   'dark-slim',
 ]
 
