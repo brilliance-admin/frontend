@@ -39,7 +39,7 @@
       <template v-slot:chip="{ item }">
         <v-chip
           :class="relatedChipClass(item.raw)"
-          :href="relatedDetailUrl(item.raw)"
+          :href="relatedDetailHref(item.raw)"
           :link="hasRelatedDetail(item.raw)"
           :closable="!isReadOnly()"
           @mousedown.stop
@@ -254,15 +254,15 @@ export default {
       }
     },
     hasRelatedDetail(item) {
-      return Boolean(this.relatedDetailUrl(item))
+      return Boolean(this.relatedDetailRoute(item))
     },
     openRelatedDetail(event, item) {
       if (event.target.closest('.v-chip__close')) return
 
       if (event.ctrlKey || event.metaKey || event.shiftKey) return
 
-      const url = this.relatedDetailUrl(item)
-      if (!url) return
+      const route = this.relatedDetailRoute(item)
+      if (!route) return
 
       event.preventDefault()
 
@@ -271,9 +271,15 @@ export default {
         && !window.confirm(this.$t('leaveEditPage'))
       ) return
 
-      this.$router.push(url)
+      this.$router.push(route)
     },
-    relatedDetailUrl(item) {
+    relatedDetailHref(item) {
+      const route = this.relatedDetailRoute(item)
+      if (!route) return
+
+      return this.$router.resolve(route).href
+    },
+    relatedDetailRoute(item) {
       // В фильтре ссылка не нужна.
       if (this.isFilter) return undefined
 
