@@ -49,6 +49,9 @@
         display: flex;
         padding: var(--model-table-cell-padding, 0px 16px);
     }
+    .related-chip-link .v-chip__content:hover {
+        text-decoration: underline;
+    }
     .table-link {
         justify-content: start;
         align-items: center;

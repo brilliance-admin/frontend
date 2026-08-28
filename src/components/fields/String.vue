@@ -60,7 +60,7 @@ export default {
   },
   created() {
     validateProps(this, requiredFields)
-    this.value = this.field.initial
+    this.value = this.field.default
   },
   methods: {
     updateFormData(initFormData) {

@@ -19,6 +19,7 @@
           <FormsetNode
             :ref="getRefString(getFieldKey(field))"
             :node="field"
+            :admin-schema="adminSchema"
             :category-schema="categorySchema"
             :table-schema="tableSchema"
             :loading="loading"
@@ -45,6 +46,7 @@
             <component
               v-if="getFieldComponent(resolveField(field).schema, resolveField(field).slug)"
               :is="getFieldComponent(resolveField(field).schema, resolveField(field).slug)"
+              :admin-schema="adminSchema"
               :category-schema="categorySchema"
               density="comfortable"
               variant="filled"
@@ -94,6 +96,7 @@ export default {
   name: 'FormsetNode',
   props: {
     node: {type: Object, required: true},
+    adminSchema: {type: Object, required: false},
     categorySchema: {type: Object, required: true},
     tableSchema: {type: Object, required: true},
     fieldErrors: {type: Object, required: false},

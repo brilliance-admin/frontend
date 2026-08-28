@@ -12,6 +12,7 @@
     <FormsetNode
       ref="rootFormsetNode"
       :node="getFormset()"
+      :admin-schema="adminSchema"
       :category-schema="categorySchema"
       :table-schema="tableSchema"
       :loading="loading"
@@ -37,6 +38,7 @@ export default {
   name: 'FieldsContainer',
   components: { FormsetNode },
   props: {
+    adminSchema: {type: Object, required: false},
     categorySchema: {type: CategorySchema, required: true},
     tableSchema: {type: Object, required: true},
     loading: {type: Boolean, required: false},
@@ -65,9 +67,25 @@ export default {
   mounted() {
     if (this.initialFormData) {
       this.updateFormData(this.initialFormData)
+      return
+    }
+
+    if (this.formType === 'create') {
+      this.updateFormData(this.getDefaultFormData())
     }
   },
   methods: {
+    getDefaultFormData() {
+      const defaults = {}
+
+      for (const [slug, field] of Object.entries(this.tableSchema.fields)) {
+        if (field.default === undefined || field.default === null) continue
+
+        defaults[slug] = field.default
+      }
+
+      return defaults
+    },
     getFormset() {
       if (this.tableSchema.formset) return this.tableSchema.formset
 

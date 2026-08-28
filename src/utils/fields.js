@@ -1,4 +1,5 @@
 export const defaultProps = {
+  adminSchema: {type: Object, required: false},
   categorySchema: {type: Object, required: true},
 
   variant: {type: String, required: true},

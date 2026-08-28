@@ -113,9 +113,9 @@
       >
 
         <component
-          :is="index === 0 && canRetrieve() ? 'RouterLink' : 'div'"
-          :to="index === 0 && canRetrieve() ? getDetailUrl(item) : undefined"
-          :class="{ 'table-cell': true, 'table-link': index === 0 && canRetrieve() }"
+          :is="getCellProps(header, index, item).is"
+          :to="getCellProps(header, index, item).to"
+          :class="getCellProps(header, index, item).class"
         >
 
           <template v-if="header.type === 'string'">
@@ -131,6 +131,18 @@
           <template v-else-if="header.type === 'related'">
             <template v-for="rel in formatRelated(item[header.key])" :key="rel.key">
               <v-chip
+                v-if="header.field.related_group && header.field.related_category"
+                :to="detailUrl(header.field.related_group, header.field.related_category, rel.key)"
+                link
+                class="related-chip-link"
+                @click.stop
+                :size="header.field.size || 'default'"
+                :title="`#${rel.key} ${rel.title}`"
+              >
+                {{ truncate(rel.title, 30) }}
+              </v-chip>
+              <v-chip
+                v-else
                 :size="header.field.size || 'default'"
                 :title="`#${rel.key} ${rel.title}`"
               >
@@ -299,6 +311,7 @@
 
     <TableActionExecutor
       ref="actionExecutor"
+      :admin-schema="adminSchema"
       :category-schema="categorySchema"
       :parent-pk="parentPk"
       @started="actionLoading = true"
@@ -368,6 +381,21 @@ export default {
     this.getListData()
   },
   methods: {
+    detailUrl,
+    getCellProps(header, index, item) {
+      const props = {
+        is: 'div',
+        class: {'table-cell': true, 'table-link': false},
+      }
+
+      // A row detail link belongs only to its first non-related cell.
+      if (index !== 0 || !this.canRetrieve() || header.type === 'related') return props
+
+      props.is = 'RouterLink'
+      props.to = this.getDetailUrl(item)
+      props.class['table-link'] = true
+      return props
+    },
     getHeaders() {
       let result = []
 

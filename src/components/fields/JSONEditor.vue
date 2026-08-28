@@ -29,6 +29,7 @@ export default {
   },
   props: {
     ...defaultProps,
+    formType: {type: String, required: false},
   },
   emits: ["changed"],
   data(props) {

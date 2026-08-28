@@ -36,6 +36,7 @@
           <FieldsContainer
             ref="fieldscontainer"
             :form-type="itemFormTypes[index] ?? 'edit'"
+            :admin-schema="adminSchema"
             :category-schema="categorySchema"
             :table-schema="field.inline_field_schema"
             :inline-field-slug="fieldSlug"
@@ -103,10 +104,10 @@ export default {
   },
   created() {
     validateProps(this, requiredFields)
-    if (this.field.initial !== undefined && !Array.isArray(this.field.initial)) {
-      throw new Error(`InlineField "${this.fieldSlug}" initial value must be an array`)
+    if (this.field.default !== undefined && !Array.isArray(this.field.default)) {
+      throw new Error(`InlineField "${this.fieldSlug}" default value must be an array`)
     }
-    this.value = Array.isArray(this.field.initial) ? this.field.initial : []
+    this.value = Array.isArray(this.field.default) ? this.field.default : []
     this.itemFormTypes = this.value.map(() => 'edit')
 
     if (!this.readOnly && this.isRequired && this.value.length === 0) {

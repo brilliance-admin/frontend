@@ -43,6 +43,7 @@ export default {
   name: 'TinyMCE',
   props: {
     ...defaultProps,
+    formType: {type: String, required: false},
     error: {type: [String, Object, Array], required: false},
   },
   emits: ["changed"],

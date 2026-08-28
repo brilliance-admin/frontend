@@ -36,7 +36,7 @@ export default {
   },
   created() {
     validateProps(this)
-    this.value = this.field.initial ?? this.field.default
+    this.value = this.field.default
   },
   methods: {
     updateFormData(initFormData) {

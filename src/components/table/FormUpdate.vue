@@ -25,6 +25,7 @@
 
     <TableActionExecutor
       ref="actionExecutor"
+      :admin-schema="adminSchema"
       :category-schema="categorySchema"
       :parent-pk="parentPk"
       @success="handleActionSuccess"
@@ -33,6 +34,7 @@
     <FieldsContainer
       ref="fieldscontainer"
       form-type="edit"
+      :admin-schema="adminSchema"
       :category-schema="categorySchema"
       :table-schema="categorySchema.getTableInfo().table_schema"
 

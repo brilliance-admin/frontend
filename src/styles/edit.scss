@@ -125,6 +125,9 @@
             color: rgb(var(--v-theme-primary));
         }
     }
+    .autocomplete-chip-link .v-chip__content:hover {
+        text-decoration: underline;
+    }
     .form-title {
         display: inline;
         font-size: 15px;

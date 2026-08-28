@@ -36,10 +36,15 @@
         <span v-if="field.required" class="required-star">*</span>
       </template>
 
-      <template v-slot:chip="{ props, item }">
+      <template v-slot:chip="{ item }">
         <v-chip
-          class="autocomplete-chip"
-          v-bind="props"
+          :class="relatedChipClass(item.raw)"
+          :href="relatedDetailUrl(item.raw)"
+          :link="hasRelatedDetail(item.raw)"
+          :closable="!isReadOnly()"
+          @mousedown.stop
+          @click.stop="openRelatedDetail($event, item.raw)"
+          @click:close="removeChip(item.raw)"
           :text="item.raw.title"
         ></v-chip>
       </template>
@@ -49,6 +54,26 @@
           v-bind="props"
           :title="item.raw.title"
         ></v-list-item>
+      </template>
+
+      <template #append>
+        <FormCreate
+          v-if="canCreateRelated"
+          :title="relatedCategorySchema.title"
+          :admin-schema="adminSchema"
+          :category-schema="relatedCategorySchema"
+          @created="addCreatedRelated"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-plus"
+              size="small"
+              variant="flat"
+              color="secondary"
+            />
+          </template>
+        </FormCreate>
       </template>
     </v-autocomplete>
   </template>
@@ -141,11 +166,16 @@
 <script>
 import { defaultProps, validateProps } from '/src/utils/fields.js'
 import { getTableAutocomplete } from '/src/api/autocomplete'
+import { detailUrl } from '/src/api/schema'
+import FormCreate from '/src/components/table/FormCreate.vue'
 
 export default {
   props: {
     ...defaultProps,
     formType: {type: String, required: false},
+  },
+  components: {
+    FormCreate,
   },
   emits: ["changed"],
   data(props) {
@@ -162,13 +192,30 @@ export default {
   },
   created() {
     validateProps(this)
-    this.value = this.field.initial
+    this.value = this.field.default
 
     if (!this.readOnly && this.formType !== 'edit') {
       this.updateChoices()
     }
   },
   computed: {
+    relatedCategorySchema() {
+      if (!this.adminSchema) return
+      if (!this.field.related_group || !this.field.related_category) return
+
+      return this.adminSchema.get_category(
+        this.field.related_group,
+        this.field.related_category
+      )
+    },
+    canCreateRelated() {
+      // В фильтре и readonly-поле создание связи недоступно.
+      if (this.isFilter || this.isReadOnly()) return false
+
+      if (!this.relatedCategorySchema) return false
+
+      return this.relatedCategorySchema.getTableInfo().can_create
+    },
     rightChoices() {
       return this.value || []
     },
@@ -181,6 +228,64 @@ export default {
     },
   },
   methods: {
+    addCreatedRelated(createResult) {
+      const created = createResult.choice
+      if (!created) {
+        throw new Error('Created related record does not contain choice')
+      }
+
+      // В many новая связь добавляется к выбранным.
+      if (this.isMany()) {
+        this.value = [...(this.value || []), created]
+      }
+
+      // В одиночном поле новая связь заменяет текущую.
+      else {
+        this.value = created
+      }
+
+      this.onChange(this.value)
+      this.updateChoices()
+    },
+    relatedChipClass(item) {
+      return {
+        'autocomplete-chip': true,
+        'autocomplete-chip-link': this.hasRelatedDetail(item),
+      }
+    },
+    hasRelatedDetail(item) {
+      return Boolean(this.relatedDetailUrl(item))
+    },
+    openRelatedDetail(event, item) {
+      if (event.target.closest('.v-chip__close')) return
+
+      if (event.ctrlKey || event.metaKey || event.shiftKey) return
+
+      const url = this.relatedDetailUrl(item)
+      if (!url) return
+
+      event.preventDefault()
+
+      if (
+        this.formType === 'edit'
+        && !window.confirm(this.$t('leaveEditPage'))
+      ) return
+
+      this.$router.push(url)
+    },
+    relatedDetailUrl(item) {
+      // В фильтре ссылка не нужна.
+      if (this.isFilter) return undefined
+
+      // Без маршрута переход невозможен.
+      if (!this.field.related_group || !this.field.related_category) return undefined
+
+      return detailUrl(
+        this.field.related_group,
+        this.field.related_category,
+        item.key
+      )
+    },
     isReadOnly() {
       return this.readOnly
     },
@@ -288,6 +393,19 @@ export default {
       if (this.isReadOnly()) return
 
       this.value = this.value.filter(i => i.key !== item.key)
+      this.onChange(this.value)
+    },
+    removeChip(item) {
+      if (this.isReadOnly()) return
+
+      // У множественного поля удаляется только выбранная связь.
+      if (this.isMany()) {
+        this.removeItem(item)
+        return
+      }
+
+      // Одиночное поле очищается целиком.
+      this.value = null
       this.onChange(this.value)
     },
   },

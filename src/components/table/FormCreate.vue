@@ -7,13 +7,15 @@
     class="create-dialog"
   >
     <template v-slot:activator="{ props: activatorProps }">
-      <v-btn
-        v-bind="activatorProps"
-        color="primary"
-        @click="open = true"
-        icon="mdi-plus"
-        class="button-icon"
-      ></v-btn>
+      <slot name="activator" :props="activatorProps">
+        <v-btn
+          v-bind="activatorProps"
+          color="primary"
+          @click="open = true"
+          icon="mdi-plus"
+          class="button-icon"
+        ></v-btn>
+      </slot>
     </template>
 
     <template v-slot:default="{ isActive }">
@@ -34,6 +36,7 @@
         <FieldsContainer
           ref="fieldscontainer"
           form-type="create"
+          :admin-schema="adminSchema"
           :category-schema="categorySchema"
           :table-schema="categorySchema.getTableInfo().table_schema"
           :parent-pk="parentPk"
@@ -108,7 +111,7 @@ export default {
         }
         this.open = false
         this.formData = {}
-        this.$emit('created')
+        this.$emit('created', response.data)
       }).catch(error => {
         this.loading = false
 

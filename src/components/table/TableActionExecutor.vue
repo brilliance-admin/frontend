@@ -59,6 +59,8 @@
           <FieldsContainer
             ref="actionFieldsContainer"
             formType="create"
+            :admin-schema="adminSchema"
+            :category-schema="categorySchema"
             :table-schema="getActionInfo().form_schema"
             :loading="actionLoading"
             @changed="value => actionFormData = value"
@@ -106,6 +108,7 @@ import FieldsContainer from '/src/components/table/FieldsContainer.vue'
 
 export default {
   props: {
+    adminSchema: {type: Object, required: false},
     categorySchema: {type: CategorySchema, required: true},
     parentPk: {type: [String, Number], required: false},
   },
