@@ -44,7 +44,9 @@ export default {
   },
   created() {
     validateProps(this)
-    this.value = this.field.default
+    if (!this.isFilter) {
+      this.value = this.field.default
+    }
   },
   methods: {
     updateFormData(initFormData) {

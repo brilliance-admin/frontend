@@ -56,9 +56,8 @@
         ></v-list-item>
       </template>
 
-      <template #append>
+      <template v-if="canCreateRelated" #append>
         <FormCreate
-          v-if="canCreateRelated"
           :title="relatedCategorySchema.title"
           :admin-schema="adminSchema"
           :category-schema="relatedCategorySchema"
@@ -192,7 +191,9 @@ export default {
   },
   created() {
     validateProps(this)
-    this.value = this.field.default
+    if (!this.isFilter) {
+      this.value = this.field.default
+    }
 
     if (!this.readOnly && this.formType !== 'edit') {
       this.updateChoices()

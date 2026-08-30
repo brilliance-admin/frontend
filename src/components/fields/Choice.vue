@@ -80,7 +80,9 @@ export default {
   },
   created() {
     validateProps(this, requiredFields)
-    this.value = this.field.default
+    if (!this.isFilter) {
+      this.value = this.field.default
+    }
   },
   methods: {
     getChoiceChipColor(value) {
