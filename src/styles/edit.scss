@@ -166,6 +166,10 @@
     }
 }
 
+.v-overlay__content .v-list {
+    background-color: rgb(var(--v-theme-light2)) !important;
+}
+
 .form-update-header {
     margin: 10px 0px !important;
     .v-card-title {

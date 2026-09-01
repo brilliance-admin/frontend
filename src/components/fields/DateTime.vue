@@ -59,7 +59,7 @@
           :dark="this.$vuetify.theme.current.dark"
 
           :range="isRange()"
-          :enable-time-picker="isEnableTimePicker()"
+          :enable-time-picker="isDateTimePicker()"
           :time-picker="isTimePicker()"
 
           @update:model-value="updateDateTime"
@@ -137,18 +137,14 @@ export default {
       return moment(this.value).format(this.getFormat())
     },
     getFormat() {
-      if (this.isEnableTimePicker()) return 'YYYY-MM-DD HH:mm'
+      if (this.isDateTimePicker()) return 'YYYY-MM-DD HH:mm'
       if (this.isDate()) return 'YYYY-MM-DD'
       if (this.isTimePicker()) return 'HH:mm'
       console.error('DateTime bad type:', this.field.type)
     },
     getIcons() {
-      if (this.isEnableTimePicker()) {
-        if (this.isRange()) {
-          return ['mdi-calendar-expand-horizontal-outline', 'mdi-clock-time-eight-outline']
-        }
-        return ['mdi-calendar-range', 'mdi-clock-time-eight-outline']
-      }
+      if (this.isRange()) return ['mdi-calendar-expand-horizontal-outline']
+      if (this.isDateTimePicker()) return ['mdi-calendar-range']
       if (this.isTimePicker()) return ['mdi-clock-time-eight-outline']
       if (this.isDate()) return ['mdi-calendar-range']
       console.error('DateTime bad type:', this.field.type)
@@ -231,7 +227,7 @@ export default {
     isDate() {
       return this.field.include_date
     },
-    isEnableTimePicker() {
+    isDateTimePicker() {
       return this.field.include_date && this.field.include_time
     },
     isTimePicker() {

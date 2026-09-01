@@ -24,7 +24,7 @@
       item-value="key"
       item-title="title"
 
-      :append-inner-icon="isMany() ? 'mdi-relation-many-to-many' : 'mdi-relation-many-to-one'"
+      :append-inner-icon="isMany() ? 'mdi-share-variant' : null"
 
       :search="search"
       @update:search="updateSearch"
