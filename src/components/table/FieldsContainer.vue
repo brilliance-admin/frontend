@@ -79,6 +79,11 @@ export default {
       const defaults = {}
 
       for (const [slug, field] of Object.entries(this.tableSchema.fields)) {
+        if (field.type === 'multiple_choice' && field.default_all_selected) {
+          defaults[slug] = field.choices.map(choice => choice.value)
+          continue
+        }
+
         if (field.default === undefined || field.default === null) continue
 
         defaults[slug] = field.default

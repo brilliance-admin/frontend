@@ -417,6 +417,8 @@
     .field-title {
         color: rgb(var(--v-theme-light));
     }
+}
+.boolean-switch {
     .v-label {
         opacity: 1;
     }
@@ -433,8 +435,13 @@
     padding-left: 5px;
     color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
-.array-field-card {
+.group-field-card {
     max-width: 920px !important;
     padding: 0px 10px;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
+}
+.multiple-choice-options {
+    .v-selection-control {
+        min-height: 32px;
+    }
 }

@@ -81,6 +81,7 @@ import BooleanField from '/src/components/fields/Boolean.vue'
 import StringField from '/src/components/fields/String.vue'
 import NumberField from '/src/components/fields/Number.vue'
 import ChoiceField from '/src/components/fields/Choice.vue'
+import MultipleChoiceField from '/src/components/fields/MultipleChoice.vue'
 import FileField from '/src/components/fields/File.vue'
 import JSONFormsField from '/src/components/fields/JSONForms.vue'
 import JSONEditorField from '/src/components/fields/JSONEditor.vue'
@@ -120,6 +121,7 @@ export default {
     },
     getFieldComponent(field) {
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
+      if (field.type === 'multiple_choice') return MultipleChoiceField
       if (isChoiceField(field)) return ChoiceField
       if (['integer', 'decimal'].indexOf(field.type) !== -1) {
         return NumberField

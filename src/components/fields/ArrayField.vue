@@ -1,5 +1,5 @@
 <template>
-  <v-card class="array-field-card">
+  <v-card class="group-field-card">
 
     <div class="field-title-section">
       <span class="field-title">{{ field.label }}</span>

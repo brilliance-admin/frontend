@@ -99,6 +99,7 @@ import BooleanFilter from '/src/components/fields/BooleanFilter.vue'
 import StringField from '/src/components/fields/String.vue'
 import NumberField from '/src/components/fields/Number.vue'
 import ChoiceField from '/src/components/fields/Choice.vue'
+import MultipleChoiceField from '/src/components/fields/MultipleChoice.vue'
 import RelatedField from '/src/components/fields/Related.vue'
 import DateTimeField from '/src/components/fields/DateTime.vue'
 
@@ -150,6 +151,7 @@ export default {
       }
     },
     getFieldComponent(filter) {
+      if (filter.type === 'multiple_choice') return MultipleChoiceField
       if (isChoiceField(filter)) return ChoiceField
       if (['datetime'].indexOf(filter.type) !== -1) return DateTimeField
       if (['related'].indexOf(filter.type) !== -1) return RelatedField
