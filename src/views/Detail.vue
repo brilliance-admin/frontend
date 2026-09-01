@@ -29,10 +29,14 @@
       class="table-tabs"
       bg-color="light2"
     >
-      <v-tab :value="0">{{ $t('mainTab') }}</v-tab>
+      <v-tab :value="0" :title="$t('mainTab')">
+        <span class="detail-tab-title">{{ $t('mainTab') }}</span>
+      </v-tab>
 
       <template v-for="(subcategorySchema, category_slug, index) in getSubcategories()">
-        <v-tab :value="index + 1">{{ subcategorySchema.title }}</v-tab>
+        <v-tab :value="index + 1" :title="subcategorySchema.title">
+          <span class="detail-tab-title">{{ subcategorySchema.title }}</span>
+        </v-tab>
       </template>
     </v-tabs>
 

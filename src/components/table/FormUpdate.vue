@@ -2,26 +2,28 @@
 
   <div class="form-update">
 
-    <v-card class="form-update-header formset-card">
-      <v-card-title class="d-flex justify-space-between align-center flex-wrap ga-3">
-        <span>{{ getHeaderTitle() }}</span>
+    <div class="fields-container">
+      <v-card class="form-update-header formset-card">
+        <v-card-title class="d-flex justify-space-between align-center flex-wrap ga-3">
+          <span>{{ getHeaderTitle() }}</span>
 
-        <div class="d-flex flex-wrap ga-2">
-          <v-btn
-            v-for="(actionInfo, actionKey) in getDetailActions()"
-            :key="actionKey"
-            size="default"
-            class="action-button"
-            :variant="actionInfo.variant || 'flat'"
-            :prepend-icon="actionInfo.icon"
-            :base-color="actionInfo.base_color || 'secondary'"
-            @click="runDetailAction(actionKey, actionInfo)"
-          >
-            {{ actionInfo.title }}
-          </v-btn>
-        </div>
-      </v-card-title>
-    </v-card>
+          <div class="d-flex flex-wrap ga-2">
+            <v-btn
+              v-for="(actionInfo, actionKey) in getDetailActions()"
+              :key="actionKey"
+              size="default"
+              class="action-button"
+              :variant="actionInfo.variant || 'flat'"
+              :prepend-icon="actionInfo.icon"
+              :base-color="actionInfo.base_color || 'secondary'"
+              @click="runDetailAction(actionKey, actionInfo)"
+            >
+              {{ actionInfo.title }}
+            </v-btn>
+          </div>
+        </v-card-title>
+      </v-card>
+    </div>
 
     <TableActionExecutor
       ref="actionExecutor"
