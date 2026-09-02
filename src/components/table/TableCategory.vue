@@ -295,16 +295,76 @@
           </template>
         </v-tooltip>
 
-        <v-label class="info" v-if="!isNarrow">{{ getTotalCount() }}</v-label>
+        <v-label class="info" v-if="!isNarrow && getTotalCount() !== null">{{ getTotalCount() }}</v-label>
 
         <v-pagination
+          v-if="hasPagesCount()"
           class="list-pagination"
-          v-model="pageInfo.page"
-          :length="getPagesLength()"
-          :total-visible="isNarrow? 1 : 5"
+          :model-value="pageInfo.page"
+          :length="pageData.pages_count"
+          :total-visible="isNarrow ? 1 : 5"
           size="40"
-          @update:modelValue="value => changePagination(value)"
-        />
+          @update:modelValue="goToPage"
+        >
+          <template #item="{ isActive, page, props }">
+            <v-text-field
+              v-if="isActive && pageInputOpen"
+              ref="pageInput"
+              v-model="pageInput"
+              type="number"
+              min="1"
+              hide-details
+              density="compact"
+              @blur="pageInputOpen = false"
+              @keyup.enter="submitPageInput"
+            />
+            <v-btn
+              v-else-if="isActive"
+              v-bind="props"
+              @click.stop="openPageInput"
+            >
+              {{ page }}
+            </v-btn>
+            <v-btn v-else v-bind="props">{{ page }}</v-btn>
+          </template>
+        </v-pagination>
+
+        <template v-else>
+          <v-btn
+            class="list-pagination"
+            icon="mdi-chevron-left"
+            variant="text"
+            :disabled="pageInfo.page <= 1"
+            @click="goToPage(pageInfo.page - 1)"
+          />
+          <v-text-field
+            v-if="pageInputOpen"
+            ref="pageInput"
+            class="list-pagination"
+            v-model="pageInput"
+            type="number"
+            min="1"
+            hide-details
+            density="compact"
+            @blur="pageInputOpen = false"
+            @keyup.enter="submitPageInput"
+          />
+          <v-btn
+            v-else
+            class="list-pagination"
+            variant="text"
+            @click="openPageInput"
+          >
+            {{ pageInfo.page }}
+          </v-btn>
+          <v-btn
+            class="list-pagination"
+            icon="mdi-chevron-right"
+            variant="text"
+            :disabled="!hasNextPage()"
+            @click="goToPage(pageInfo.page + 1)"
+          />
+        </template>
       </div>
 
     </div>
@@ -359,6 +419,8 @@ export default {
       actionLoading: false,
 
       isNarrow: false,
+      pageInputOpen: false,
+      pageInput: '',
     }
   },
   mounted () {
@@ -443,7 +505,7 @@ export default {
       )
     },
     getTotalCount() {
-      return this.pageData.total_count || 0
+      return this.pageData.total_count ?? null
     },
     canCreate() {
       return this.categorySchema.getTableInfo().can_create
@@ -565,8 +627,29 @@ export default {
       this.serializeQuery()
       this.getListData()
     },
-    getPagesLength() {
-      return Math.ceil((this.pageData.total_count || 0) / this.pageInfo.limit)
+    hasNextPage() {
+      return (this.pageData.data || []).length === this.pageInfo.limit
+    },
+    hasPagesCount() {
+      return this.pageData.pages_count !== null && this.pageData.pages_count !== undefined
+    },
+    openPageInput() {
+      this.pageInput = String(this.pageInfo.page)
+      this.pageInputOpen = true
+      this.$nextTick(() => this.$refs.pageInput.focus())
+    },
+    submitPageInput() {
+      this.pageInputOpen = false
+      this.goToPage(Number(this.pageInput))
+    },
+    goToPage(page) {
+      if (!Number.isInteger(page) || page < 1) return
+      if (this.hasPagesCount()) {
+        page = Math.min(page, this.pageData.pages_count)
+      }
+      if (page === this.pageInfo.page) return
+      this.pageInfo.page = page
+      this.changePagination()
     },
     pressAction(actionInfo, actionKey) {
       this.$refs.actionExecutor.run({

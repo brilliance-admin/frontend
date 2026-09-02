@@ -17,7 +17,7 @@
           <div class="confirmation-text">{{ getActionInfo().confirmation_text }}</div>
           <v-label class="info selected-warning-count">
             {{ $t('selected') }}
-            <p class="selected-count">{{ getSelectedCount() }}/{{ actionContext.totalCount || 0 }}</p>
+            <p class="selected-count">{{ getSelectedCount() }}</p>
           </v-label>
         </v-card-text>
 
@@ -130,7 +130,7 @@ export default {
         sendToAll: false,
         filters: {},
         search: null,
-        totalCount: 0,
+        totalCount: null,
       },
 
       persistentMessageDialog: false,
@@ -138,7 +138,7 @@ export default {
     }
   },
   methods: {
-    run({actionKey, actionInfo, pks = [], sendToAll = false, filters = {}, search = null, totalCount = 0}) {
+    run({actionKey, actionInfo, pks = [], sendToAll = false, filters = {}, search = null, totalCount = null}) {
       if (!actionKey) {
         throw new Error('actionKey is required')
       }
@@ -194,7 +194,7 @@ export default {
     },
     getSelectedCount() {
       if (this.actionContext.sendToAll) {
-        return this.actionContext.totalCount || 0
+        return this.actionContext.totalCount || 'All'
       }
       return this.actionContext.pks.length
     },
