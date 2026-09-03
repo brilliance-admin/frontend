@@ -303,7 +303,9 @@
           :model-value="pageInfo.page"
           :length="pageData.pages_count"
           :total-visible="isNarrow ? 1 : 5"
+          density="compact"
           size="40"
+          variant="text"
           @update:modelValue="goToPage"
         >
           <template #item="{ isActive, page, props }">
@@ -315,17 +317,32 @@
               min="1"
               hide-details
               density="compact"
+              height="40"
+              variant="plain"
+              width="40"
               @blur="pageInputOpen = false"
               @keyup.enter="submitPageInput"
             />
             <v-btn
               v-else-if="isActive"
               v-bind="props"
+              :active="false"
+              density="compact"
+              size="40"
+              variant="text"
               @click.stop="openPageInput"
             >
               {{ page }}
             </v-btn>
-            <v-btn v-else v-bind="props">{{ page }}</v-btn>
+            <v-btn
+              v-else
+              v-bind="props"
+              density="compact"
+              size="40"
+              variant="text"
+            >
+              {{ page }}
+            </v-btn>
           </template>
         </v-pagination>
 
@@ -346,6 +363,9 @@
             min="1"
             hide-details
             density="compact"
+            height="40"
+            variant="plain"
+            width="40"
             @blur="pageInputOpen = false"
             @keyup.enter="submitPageInput"
           />

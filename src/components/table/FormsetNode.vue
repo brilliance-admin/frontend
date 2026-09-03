@@ -184,8 +184,8 @@ export default {
       if (this.fieldErrors) return this.fieldErrors[field_slug]
     },
     formatError(error) {
+      if (error.message) return error.message
       if (error.code) return this.$t(error.code)
-      return error.message
     },
     _updateValue(value, field_slug) {
       if (!field_slug) {
