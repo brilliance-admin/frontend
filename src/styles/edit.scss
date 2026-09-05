@@ -53,6 +53,9 @@
     align-items: center;
     justify-content: center;
 }
+.filters-container .filter-subtable__error {
+    color: rgb(var(--v-theme-error));
+}
 .filters-container .filter-subtable__header {
     display: grid;
     grid-template-columns: 1fr auto 1fr;

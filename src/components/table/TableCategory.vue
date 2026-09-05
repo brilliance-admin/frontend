@@ -8,15 +8,12 @@
         <div v-if="!isNarrow" class="filters-inline">
           <Filters
             v-if="hasFilters()"
+            ref="filters"
             :category-schema="categorySchema"
+            :parent-pk="parentPk"
             :filters-init="filters"
             :search-init="search"
-            :filter-subtable-charts="filterSubtableCharts"
-            :filter-subtable-loading="filterSubtableLoading"
             @filtered="handleFilter"
-            @active-subtable-changed="activeSubtableSlug = $event"
-            @subtable-unit-changed="setFilterSubtableUnit"
-            @subtable-refresh="loadFilterSubtable"
             :loading="loading"
             :search-enabled="getTableInfo().search_enabled"
             :fields-info="getTableInfo().table_filters?.fields || {}"
@@ -42,15 +39,12 @@
                 />
               </div>
               <Filters
+                ref="filters"
                 :category-schema="categorySchema"
+                :parent-pk="parentPk"
                 :filters-init="filters"
                 :search-init="search"
-                :filter-subtable-charts="filterSubtableCharts"
-                :filter-subtable-loading="filterSubtableLoading"
                 @filtered="handleFilter"
-                @active-subtable-changed="activeSubtableSlug = $event"
-                @subtable-unit-changed="setFilterSubtableUnit"
-                @subtable-refresh="loadFilterSubtable"
                 :loading="loading"
                 :search-enabled="getTableInfo().search_enabled"
                 :fields-info="getTableInfo().table_filters?.fields || {}"
@@ -416,7 +410,7 @@
 import { applyFiltersToQuery, extractFiltersFromQuery } from '/src/utils/filters'
 import { CategorySchema, detailUrl, subDetailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
-import { getDataList, getFilterSubtable } from '/src/api/table'
+import { getDataList } from '/src/api/table'
 import { truncate } from '/src/utils'
 import { isChoiceField } from '/src/utils/fields'
 import moment from 'moment'
@@ -443,11 +437,6 @@ export default {
       selected: [],
       search: null,
       filters: {},
-      activeSubtableSlug: null,
-      filterSubtableCharts: {},
-      filterSubtableUnits: {},
-      filterSubtableLoading: {},
-      filterSubtableAbortController: null,
       perPageOptions: [25, 50, 100, 150],
 
       actionToAll: false,
@@ -469,8 +458,8 @@ export default {
     this.popstateHandler = () => {
       this.$nextTick(() => {
         this.deserializeQuery()
-        this.loadFilterSubtable()
         this.getListData()
+        this.$nextTick(() => this.$refs.filters?.loadFilterSubtable())
       })
     }
     window.addEventListener('popstate', this.popstateHandler)
@@ -649,66 +638,13 @@ export default {
         }
       })
     },
-    setFilterSubtableUnit(fieldSlug, unitSize) {
-      this.filterSubtableUnits[fieldSlug] = unitSize
-    },
-    loadFilterSubtable() {
-      this.filterSubtableAbortController?.abort()
-      this.filterSubtableAbortController = null
-
-      const fields = this.getTableInfo().table_filters?.fields || {}
-
-      for (const [fieldSlug, field] of Object.entries(fields)) {
-        if (field.has_filter_subtable && fieldSlug !== this.activeSubtableSlug) {
-          this.filterSubtableCharts[fieldSlug] = null
-          this.filterSubtableLoading[fieldSlug] = false
-        }
-      }
-
-      const fieldSlug = this.activeSubtableSlug
-      const value = this.filters[fieldSlug]
-      if (!fieldSlug || !value?.from || !value?.to) {
-        if (fieldSlug) {
-          this.filterSubtableCharts[fieldSlug] = null
-          this.filterSubtableLoading[fieldSlug] = false
-        }
-        return Promise.resolve()
-      }
-
-      this.filterSubtableCharts[fieldSlug] = null
-      this.filterSubtableLoading[fieldSlug] = true
-      const controller = new AbortController()
-      this.filterSubtableAbortController = controller
-
-      return getFilterSubtable({
-        group: this.categorySchema.group,
-        category: this.categorySchema.category,
-        subcategory: this.categorySchema.subcategory,
-        parent_pk: this.parentPk,
-        fieldSlug: fieldSlug,
-        unitSize: this.filterSubtableUnits[fieldSlug] || '1hour',
-        filters: this.filters,
-        search: this.search,
-        signal: controller.signal,
-      }).then(responseData => {
-        if (this.filterSubtableAbortController !== controller) return
-        this.filterSubtableCharts[fieldSlug] = responseData.chart
-      }).catch(error => {
-        if (controller.signal.aborted) return
-        console.error('Get filter subtable error:', error)
-      }).finally(() => {
-        if (this.filterSubtableAbortController !== controller) return
-        this.filterSubtableLoading[fieldSlug] = false
-        this.filterSubtableAbortController = null
-      })
-    },
     async handleFilter(filters, search) {
       this.pageInfo.page = 1
       this.filters = filters
       this.search = search
       this.serializeQuery()
       await Promise.all([
-        this.loadFilterSubtable(),
+        this.$refs.filters?.loadFilterSubtable(),
         this.getListData(),
       ])
     },

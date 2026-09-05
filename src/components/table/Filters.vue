@@ -99,10 +99,11 @@
           :value="filters[filter_name]"
           :chart="filterSubtableCharts[filter_name]"
           :loading="filterSubtableLoading[filter_name]"
+          :error="filterSubtableErrors[filter_name]"
           @changed="value => updateSubtableValue(value, filter_name)"
           @close="closeSubtable(filter_name)"
-          @unit-changed="value => $emit('subtable-unit-changed', filter_name, value)"
-          @refresh="$emit('subtable-refresh')"
+          @unit-changed="value => setFilterSubtableUnit(filter_name, value)"
+          @refresh="loadFilterSubtable"
         >
           <slot
             name="filter-subtable"
@@ -122,6 +123,7 @@
 import { normalizeFilters } from '/src/utils/filters'
 import { isChoiceField } from '/src/utils/fields'
 import { CategorySchema } from '/src/api/schema'
+import { getFilterSubtable } from '/src/api/table'
 import BooleanFilter from '/src/components/fields/BooleanFilter.vue'
 import StringField from '/src/components/fields/String.vue'
 import NumberField from '/src/components/fields/Number.vue'
@@ -134,6 +136,7 @@ import FilterSubtable from '/src/components/table/FilterSubtable.vue'
 export default {
   props: {
     categorySchema: {type: CategorySchema, required: true},
+    parentPk: {type: [String, Number], required: false},
     loading: {type: Boolean, required: false},
 
     searchEnabled: {type: Boolean, required: false},
@@ -142,16 +145,19 @@ export default {
 
     filtersInit: {type: Object, required: false},
     searchInit: {type: String, required: false},
-    filterSubtableCharts: {type: Object, required: true},
-    filterSubtableLoading: {type: Object, required: true},
   },
-  emits: ["filtered", "active-subtable-changed", "subtable-unit-changed", "subtable-refresh"],
+  emits: ["filtered"],
   data() {
     return {
       filters: {},
       search: null,
       activeSubtableSlug: null,
       openedSubtableSlugs: {},
+      filterSubtableCharts: {},
+      filterSubtableUnits: {},
+      filterSubtableLoading: {},
+      filterSubtableErrors: {},
+      filterSubtableAbortController: null,
     }
   },
   created() {
@@ -161,9 +167,9 @@ export default {
     if (this.searchInit) {
       this.search = this.searchInit
     }
-    this.$nextTick(() => {
-      this.applyFiltersToFields()
-    })
+  },
+  mounted() {
+    this.applyFiltersToFields()
   },
   computed: {
     isCompactApply() {
@@ -220,16 +226,72 @@ export default {
       }
       this.openedSubtableSlugs[filter_name] = true
       this.activeSubtableSlug = filter_name
-      this.$emit('active-subtable-changed', filter_name)
+      this.loadFilterSubtable()
     },
     closeSubtable(filter_name) {
       if (this.activeSubtableSlug !== filter_name) return
       this.activeSubtableSlug = null
-      this.$emit('active-subtable-changed', null)
+    },
+    setFilterSubtableUnit(fieldSlug, unitSize) {
+      this.filterSubtableUnits[fieldSlug] = unitSize
+    },
+    loadFilterSubtable() {
+      this.filterSubtableAbortController?.abort()
+      this.filterSubtableAbortController = null
+
+      for (const [fieldSlug, field] of Object.entries(this.fieldsInfo)) {
+        if (field.has_filter_subtable && fieldSlug !== this.activeSubtableSlug) {
+          this.filterSubtableCharts[fieldSlug] = null
+          this.filterSubtableLoading[fieldSlug] = false
+          this.filterSubtableErrors[fieldSlug] = null
+        }
+      }
+
+      const fieldSlug = this.activeSubtableSlug
+      const filters = normalizeFilters(this.filters)
+      const value = filters[fieldSlug]
+      if (!fieldSlug || !value?.from || !value?.to) {
+        if (fieldSlug) {
+          this.filterSubtableCharts[fieldSlug] = null
+          this.filterSubtableLoading[fieldSlug] = false
+          this.filterSubtableErrors[fieldSlug] = null
+        }
+        return Promise.resolve()
+      }
+
+      this.filterSubtableCharts[fieldSlug] = null
+      this.filterSubtableLoading[fieldSlug] = true
+      this.filterSubtableErrors[fieldSlug] = null
+      const controller = new AbortController()
+      this.filterSubtableAbortController = controller
+
+      return getFilterSubtable({
+        group: this.categorySchema.group,
+        category: this.categorySchema.category,
+        subcategory: this.categorySchema.subcategory,
+        parent_pk: this.parentPk,
+        fieldSlug,
+        unitSize: this.filterSubtableUnits[fieldSlug] || '1hour',
+        filters,
+        search: this.search,
+        signal: controller.signal,
+      }).then(responseData => {
+        if (this.filterSubtableAbortController !== controller) return
+        this.filterSubtableCharts[fieldSlug] = responseData.chart
+      }).catch(error => {
+        if (controller.signal.aborted) return
+        console.error('Get filter subtable error:', error)
+        this.filterSubtableErrors[fieldSlug] = error.response?.data?.message || error.message
+      }).finally(() => {
+        if (this.filterSubtableAbortController !== controller) return
+        this.filterSubtableLoading[fieldSlug] = false
+        this.filterSubtableAbortController = null
+      })
     },
     applyFilter() {
       if (this.loading) return
-      this.$emit('filtered', normalizeFilters(this.filters), this.search)
+      this.filters = normalizeFilters(this.filters)
+      this.$emit('filtered', this.filters, this.search)
     },
     searchHelpHtml () {
       return this.searchHelp.replace(/\n/g, '<br>')

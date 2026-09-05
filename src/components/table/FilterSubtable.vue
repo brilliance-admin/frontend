@@ -32,6 +32,9 @@
         <v-progress-circular indeterminate color="primary" />
       </div>
       <Chart v-else-if="chart" :chart-data="chartData" />
+      <div v-else-if="error" class="filter-subtable__placeholder filter-subtable__error">
+        {{ error }}
+      </div>
       <div v-else-if="hasRange" class="filter-subtable__placeholder">
         {{ $t('filterSubtable.applyFilter') }}
       </div>
@@ -56,6 +59,7 @@ export default {
     value: {type: Object, required: false},
     chart: {type: Object, required: false},
     loading: {type: Boolean, required: true},
+    error: {type: String, required: false},
   },
   emits: ['changed', 'close', 'refresh', 'unit-changed'],
   data() {
