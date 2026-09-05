@@ -15,6 +15,7 @@ import { useTheme } from "vuetify"
 import { nextTick } from "vue"
 import { Line as ChartLine, Bar, Bubble, Doughnut, Pie, PolarArea, Radar, Scatter } from "vue-chartjs";
 import gradient from 'chartjs-plugin-gradient'
+import zoomPlugin from 'chartjs-plugin-zoom'
 
 import {
   Chart as ChartJS,
@@ -41,6 +42,7 @@ ChartJS.register(
   BarElement,
   ArcElement,
   gradient,
+  zoomPlugin,
 );
 const CHART_TYPES = {
   line: ChartLine,

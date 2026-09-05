@@ -43,6 +43,10 @@ const messages = {
     noRecords: 'No records',
     inputStringForSearch: 'Enter a search string',
     relatedCounter: 'Shown {shown} / Total {total}',
+    filterSubtable: {
+      selectRange: 'Select a filter range to display the chart.',
+      applyFilter: 'Apply the filter to load chart data.',
+    },
     leaveEditPage: 'Leave this page? All unsaved changes will be lost.',
     themeSelection: 'Theme selection',
     tinyMCETheme: 'Text editor theme',
@@ -111,6 +115,10 @@ const messages = {
     noRecords: 'Нет записей',
     inputStringForSearch: 'Введите строку для поиска',
     relatedCounter: 'Показано {shown} / Всего {total}',
+    filterSubtable: {
+      selectRange: 'Выберите промежуток фильтра для отображения графика.',
+      applyFilter: 'Примените фильтр для получения данных графика.',
+    },
     leaveEditPage: 'Покинуть страницу? Все несохранённые изменения будут потеряны.',
     themeSelection: 'Выбор темы',
     tinyMCETheme: 'Тема редактора текста',

@@ -21,7 +21,13 @@
         </template>
 
         <template v-slot:append-inner>
-          <v-icon :icon="icon" v-for="icon in getIcons()"/>
+          <v-btn
+            v-if="isFilter && field.has_filter_subtable"
+            icon="mdi-calendar-expand-horizontal-outline"
+            density="compact"
+            variant="text"
+            @click.stop="$emit('open-subtable')"
+          />
         </template>
       </v-text-field>
     </template>
@@ -89,7 +95,7 @@ export default {
   props: {
     ...defaultProps,
   },
-  emits: ["changed"],
+  emits: ["changed", "open-subtable"],
   data(props) {
     return {
       value: null,
@@ -140,13 +146,6 @@ export default {
       if (this.isDateTimePicker()) return 'YYYY-MM-DD HH:mm'
       if (this.isDate()) return 'YYYY-MM-DD'
       if (this.isTimePicker()) return 'HH:mm'
-      console.error('DateTime bad type:', this.field.type)
-    },
-    getIcons() {
-      if (this.isRange()) return ['mdi-calendar-expand-horizontal-outline']
-      if (this.isDateTimePicker()) return ['mdi-calendar-range']
-      if (this.isTimePicker()) return ['mdi-clock-time-eight-outline']
-      if (this.isDate()) return ['mdi-calendar-range']
       console.error('DateTime bad type:', this.field.type)
     },
     updateDateTime(date) {

@@ -8,6 +8,7 @@ const tableDataRetriveUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/r
 const tableDataCreateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/create/')
 const tableDataUpdateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/update/{pk}/')
 const tableDataActionUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/action/{action}/')
+const filterSubtableUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/filter-subtable/{field_slug}/')
 
 function appendQueryParams(url, kwargs) {
   const params = new URLSearchParams()
@@ -69,6 +70,31 @@ export function getDataList(kwargs) {
       logDebugInfo('List', kwargs, response.data)
       resolve(response.data)
     }).catch(error => reject(error))
+  })
+}
+
+export function getFilterSubtable(kwargs) {
+  return new Promise((resolve, reject) => {
+    let url = filterSubtableUrl
+      .replace('{group}', kwargs.group)
+      .replace('{category}', kwargs.category)
+      .replace('{field_slug}', kwargs.fieldSlug)
+    url = appendQueryParams(url, kwargs)
+    request({
+      url: url,
+      method: 'post',
+      data: {
+        unit_size: kwargs.unitSize,
+        filters: kwargs.filters,
+        search: kwargs.search,
+      },
+      headers: {
+        'Accept-Language': getLang(),
+        'Cache-Control': 'no-cache',
+      },
+      signal: kwargs.signal,
+      timeout: config_dataset.api_timeout_ms,
+    }).then(response => resolve(response.data)).catch(error => reject(error))
   })
 }
 

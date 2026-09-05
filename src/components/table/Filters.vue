@@ -48,6 +48,7 @@
         :is-filter="true"
 
         @changed="value => _updateValue(value, filter_name)"
+        @open-subtable="toggleSubtable(filter_name)"
       />
       <template v-else>
         {{ filter }}
@@ -87,6 +88,32 @@
         :disabled="loading"
       >{{ $t('apply') }}</v-btn>
     </div>
+
+    <div class="filter-subtables">
+      <template v-for="(filter, filter_name) in fieldsInfo" :key="filter_name">
+        <FilterSubtable
+          v-if="filter.has_filter_subtable && openedSubtableSlugs[filter_name]"
+          v-show="activeSubtableSlug === filter_name"
+          :field="filter"
+          :field-slug="filter_name"
+          :value="filters[filter_name]"
+          :chart="filterSubtableCharts[filter_name]"
+          :loading="filterSubtableLoading[filter_name]"
+          @changed="value => updateSubtableValue(value, filter_name)"
+          @close="closeSubtable(filter_name)"
+          @unit-changed="value => $emit('subtable-unit-changed', filter_name, value)"
+          @refresh="$emit('subtable-refresh')"
+        >
+          <slot
+            name="filter-subtable"
+            :field="filter"
+            :field-slug="filter_name"
+            :value="filters[filter_name]"
+            :update="value => _updateValue(value, filter_name)"
+          />
+        </FilterSubtable>
+      </template>
+    </div>
   </div>
 
 </template>
@@ -102,6 +129,7 @@ import ChoiceField from '/src/components/fields/Choice.vue'
 import MultipleChoiceField from '/src/components/fields/MultipleChoice.vue'
 import RelatedField from '/src/components/fields/Related.vue'
 import DateTimeField from '/src/components/fields/DateTime.vue'
+import FilterSubtable from '/src/components/table/FilterSubtable.vue'
 
 export default {
   props: {
@@ -114,12 +142,16 @@ export default {
 
     filtersInit: {type: Object, required: false},
     searchInit: {type: String, required: false},
+    filterSubtableCharts: {type: Object, required: true},
+    filterSubtableLoading: {type: Object, required: true},
   },
-  emits: ["filtered"],
+  emits: ["filtered", "active-subtable-changed", "subtable-unit-changed", "subtable-refresh"],
   data() {
     return {
       filters: {},
       search: null,
+      activeSubtableSlug: null,
+      openedSubtableSlugs: {},
     }
   },
   created() {
@@ -136,6 +168,18 @@ export default {
   computed: {
     isCompactApply() {
       return Object.keys(this.fieldsInfo).length >= 6
+    },
+  },
+  watch: {
+    filtersInit: {
+      handler(value) {
+        this.filters = value ? {...value} : {}
+        this.$nextTick(() => this.applyFiltersToFields())
+      },
+      deep: true,
+    },
+    searchInit(value) {
+      this.search = value || null
     },
   },
   methods: {
@@ -161,6 +205,27 @@ export default {
     },
     _updateValue(value, filter_name) {
       this.filters[filter_name] = value
+    },
+    updateSubtableValue(value, filter_name) {
+      this._updateValue(value, filter_name)
+      const ref = this.$refs[this.getRefString(filter_name)]
+      const field = ref[0] || ref
+      field.updateFormData(this.filters)
+      this.applyFilter()
+    },
+    toggleSubtable(filter_name) {
+      if (this.activeSubtableSlug === filter_name) {
+        this.closeSubtable(filter_name)
+        return
+      }
+      this.openedSubtableSlugs[filter_name] = true
+      this.activeSubtableSlug = filter_name
+      this.$emit('active-subtable-changed', filter_name)
+    },
+    closeSubtable(filter_name) {
+      if (this.activeSubtableSlug !== filter_name) return
+      this.activeSubtableSlug = null
+      this.$emit('active-subtable-changed', null)
     },
     applyFilter() {
       if (this.loading) return
