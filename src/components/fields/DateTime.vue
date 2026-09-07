@@ -52,9 +52,9 @@
           @keydown.enter.prevent="isActive.value = false"
         />
         <div v-if="isRange()" class="d-flex ga-2 pa-3">
-          <v-btn size="small" variant="tonal" @click="applyRangePreset('day')">1 day</v-btn>
-          <v-btn size="small" variant="tonal" @click="applyRangePreset('week')">Week</v-btn>
-          <v-btn size="small" variant="tonal" @click="applyRangePreset('month')">Month</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('1d')">1d</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('7d')">7d</v-btn>
+          <v-btn size="small" variant="tonal" @click="applyRangePreset('30d')">30d</v-btn>
         </div>
         <Datepicker
           v-model="value"
@@ -159,9 +159,9 @@ export default {
       const to = moment().endOf('day').toDate()
       let from = null
 
-      if (preset === 'day') from = moment().subtract(1, 'day').startOf('day').toDate()
-      if (preset === 'week') from = moment().subtract(7, 'days').startOf('day').toDate()
-      if (preset === 'month') from = moment().subtract(1, 'month').startOf('day').toDate()
+      if (preset === '1d') from = moment().startOf('day').toDate()
+      if (preset === '7d') from = moment().subtract(6, 'days').startOf('day').toDate()
+      if (preset === '30d') from = moment().subtract(29, 'days').startOf('day').toDate()
 
       this.value = [from, to]
       this.displayValue = this.getFormattedValue()

@@ -79,6 +79,12 @@ export default {
       const defaults = {}
 
       for (const [slug, field] of Object.entries(this.tableSchema.fields)) {
+        // InlineField requires an array even when an optional inline has no records yet.
+        if (field.type === 'inline' && (field.default === undefined || field.default === null)) {
+          defaults[slug] = []
+          continue
+        }
+
         if (field.type === 'multiple_choice' && field.default_all_selected) {
           defaults[slug] = field.choices.map(choice => choice.value)
           continue

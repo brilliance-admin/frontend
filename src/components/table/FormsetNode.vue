@@ -66,7 +66,7 @@
               Field "{{ resolveField(field).slug }}" type not found: {{ resolveField(field).schema }}
             </template>
 
-            <template v-if="getError(resolveField(field).slug)">
+            <template v-if="shouldShowFieldError(field)">
               <p class="form-error">{{ formatError(getError(resolveField(field).slug)) }}</p>
             </template>
           </div>
@@ -182,6 +182,10 @@ export default {
     },
     getError(field_slug) {
       if (this.fieldErrors) return this.fieldErrors[field_slug]
+    },
+    shouldShowFieldError(field) {
+      const resolved = this.resolveField(field)
+      return resolved.schema.type !== 'inline' && !!this.getError(resolved.slug)
     },
     formatError(error) {
       if (error.message) return error.message

@@ -153,7 +153,12 @@
       </v-card-text>
     </v-card>
     <div class="field-help-text text-caption mt-1">
-      {{ $t('relatedCounter', { shown: shownChoicesCount, total: totalChoicesCount }) }}
+      <template v-if="totalChoicesCount !== null">
+        {{ $t('relatedCounter', { shown: currentChoicesCount, total: totalChoicesCount }) }}
+      </template>
+      <template v-else>
+        {{ $t('relatedCurrentCounter', { shown: currentChoicesCount }) }}
+      </template>
     </div>
     <div v-if="!isFilter && field.help_text" class="field-help-text text-caption mt-1">
       {{ field.help_text }}
@@ -183,7 +188,8 @@ export default {
       formData: null,
       apiLoading: false,
       choices: [],
-      totalChoicesCount: 0,
+      currentChoicesCount: 0,
+      totalChoicesCount: null,
       search: '',
       init: false,
       formDataUpdated: false,
@@ -223,9 +229,6 @@ export default {
     leftChoices() {
       const selectedKeys = new Set((this.value || []).map(i => i.key))
       return this.choices.filter(i => !selectedKeys.has(i.key))
-    },
-    shownChoicesCount() {
-      return this.isDualList() ? this.leftChoices.length : this.choices.length
     },
   },
   methods: {
@@ -358,8 +361,9 @@ export default {
         existed_choices: existedChoices,
         action_name: this.actionName,
       }).then(response => {
-        this.choices = response.data.results
-        this.totalChoicesCount = response.data.total_count ?? this.choices.length
+        this.choices = response.data.records
+        this.currentChoicesCount = response.data.current_count
+        this.totalChoicesCount = response.data.total_count
         this.apiLoading = false
       }).catch(error => {
         this.apiLoading = false

@@ -8,6 +8,7 @@
       :model-value="value"
       :messages="field.help_text || []"
       :readonly="readOnly"
+      :clearable="!readOnly"
       :loading="loading"
       :accept="getAllowedExtentions(field)"
 
@@ -71,7 +72,7 @@ export default {
         this.url = URL.createObjectURL(this.value)
       }
       else if (fileInfo.url) {
-        this.value = new File([""], fileInfo.name);
+        this.value = new File([""], fileInfo.name || fileInfo.url);
       }
     },
     dataURLtoFile(dataurl, filename) {
@@ -94,6 +95,8 @@ export default {
       })
     },
     changeFile(file) {
+      if (this.readOnly) return
+
       this.value = file
       this.url = null
       if (!file) {

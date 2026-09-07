@@ -43,6 +43,7 @@ const messages = {
     noRecords: 'No records',
     inputStringForSearch: 'Enter a search string',
     relatedCounter: 'Shown {shown} / Total {total}',
+    relatedCurrentCounter: 'Shown {shown}',
     filterSubtable: {
       selectRange: 'Select a "{field}" filter range to display the chart.',
       applyFilter: 'Apply the filter to load chart data.',
@@ -115,6 +116,7 @@ const messages = {
     noRecords: 'Нет записей',
     inputStringForSearch: 'Введите строку для поиска',
     relatedCounter: 'Показано {shown} / Всего {total}',
+    relatedCurrentCounter: 'Показано {shown}',
     filterSubtable: {
       selectRange: 'Выберите диапазон фильтра "{field}" для отображения графика.',
       applyFilter: 'Примените фильтр для получения данных графика.',
