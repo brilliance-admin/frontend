@@ -69,7 +69,7 @@ export default {
   },
   async created() {
     if (!getToken()) {
-      this.$router.push({ path: '/login' })
+      this.redirectToLogin()
       return
     }
 
@@ -90,6 +90,14 @@ export default {
     })
   },
   methods: {
+    redirectToLogin() {
+      if (this.$route.path.replace(/\/+$/, '') === '/login') return
+
+      this.$router.replace({
+        path: '/login/',
+        query: { next: this.$router.resolve(this.$route.fullPath).href },
+      })
+    },
     getAdminSchema() {
       getAdminSchema().then(adminSchema => {
         this.adminSchema = adminSchema
@@ -100,7 +108,7 @@ export default {
 
         if (error.response && (error.response.status == 401 || error.response.status == 403)) {
           removeToken()
-          this.$router.push({ path: '/login' })
+          this.redirectToLogin()
           return
         }
 

@@ -90,6 +90,7 @@
 <script>
 import { categoryUrl } from '/src/api/schema'
 import { config_dataset } from '/src/utils/settings'
+import { getMainPage } from '/src/utils/router'
 
 export default {
   props: {
@@ -125,7 +126,7 @@ export default {
       return config_dataset.logo_image
     },
     getMainPage() {
-      return this.settings.main_page || "/navigation"
+      return getMainPage(this.settings)
     },
     navbarDensity() {
       return this.settings.navbar_density || "default"

@@ -493,6 +493,13 @@
     }
 }
 .boolean-switch {
+    min-width: 0;
+
+    // The selection control is a grid item and otherwise expands to its label width.
+    .v-selection-control {
+        min-width: 0;
+    }
+
     .v-label {
         opacity: 1;
     }

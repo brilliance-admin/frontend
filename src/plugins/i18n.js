@@ -44,7 +44,7 @@ const messages = {
     inputStringForSearch: 'Enter a search string',
     relatedCounter: 'Shown {shown} / Total {total}',
     filterSubtable: {
-      selectRange: 'Select a filter range to display the chart.',
+      selectRange: 'Select a "{field}" filter range to display the chart.',
       applyFilter: 'Apply the filter to load chart data.',
     },
     leaveEditPage: 'Leave this page? All unsaved changes will be lost.',
@@ -116,7 +116,7 @@ const messages = {
     inputStringForSearch: 'Введите строку для поиска',
     relatedCounter: 'Показано {shown} / Всего {total}',
     filterSubtable: {
-      selectRange: 'Выберите промежуток фильтра для отображения графика.',
+      selectRange: 'Выберите диапазон фильтра "{field}" для отображения графика.',
       applyFilter: 'Примените фильтр для получения данных графика.',
     },
     leaveEditPage: 'Покинуть страницу? Все несохранённые изменения будут потеряны.',

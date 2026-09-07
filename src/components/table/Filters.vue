@@ -97,13 +97,14 @@
           :field="filter"
           :field-slug="filter_name"
           :value="filters[filter_name]"
+          :unit-size="filterSubtableUnits[filter_name] || '1hour'"
           :chart="filterSubtableCharts[filter_name]"
           :loading="filterSubtableLoading[filter_name]"
           :error="filterSubtableErrors[filter_name]"
           @changed="value => updateSubtableValue(value, filter_name)"
           @close="closeSubtable(filter_name)"
           @unit-changed="value => setFilterSubtableUnit(filter_name, value)"
-          @refresh="loadFilterSubtable"
+          @refresh="refreshFilterSubtable"
         >
           <slot
             name="filter-subtable"
@@ -120,7 +121,7 @@
 </template>
 
 <script>
-import { normalizeFilters } from '/src/utils/filters'
+import { applyFiltersToQuery, extractFiltersFromQuery, normalizeFilters } from '/src/utils/filters'
 import { isChoiceField } from '/src/utils/fields'
 import { CategorySchema } from '/src/api/schema'
 import { getFilterSubtable } from '/src/api/table'
@@ -143,8 +144,6 @@ export default {
     searchHelp: {type: String, required: false},
     fieldsInfo: {type: Object, required: true},
 
-    filtersInit: {type: Object, required: false},
-    searchInit: {type: String, required: false},
   },
   emits: ["filtered"],
   data() {
@@ -160,37 +159,86 @@ export default {
       filterSubtableAbortController: null,
     }
   },
-  created() {
-    if (this.filtersInit) {
-      this.filters = this.filtersInit
-    }
-    if (this.searchInit) {
-      this.search = this.searchInit
-    }
-  },
   mounted() {
-    this.applyFiltersToFields()
+    this.deserializeQuery(this.$route)
   },
   computed: {
     isCompactApply() {
       return Object.keys(this.fieldsInfo).length >= 6
     },
+    filterQuery() {
+      return this.getFilterQuery(this.$route.query)
+    },
   },
   watch: {
-    filtersInit: {
-      handler(value) {
-        this.filters = value ? {...value} : {}
-        this.$nextTick(() => this.applyFiltersToFields())
-      },
-      deep: true,
-    },
-    searchInit(value) {
-      this.search = value || null
+    filterQuery() {
+      this.deserializeQuery(this.$route)
     },
   },
   methods: {
+    getFilterQuery(query) {
+      return Object.keys(query)
+        .filter(key => (
+          key === 'search' ||
+          key === 'filter_subtable' ||
+          key === 'filter_subtable_unit' ||
+          key.startsWith('f-')
+        ))
+        .sort()
+        .map(key => `${key}:${JSON.stringify(query[key])}`)
+        .join('&')
+    },
+    deserializeQuery(route) {
+      const search = route.query.search || null
+      const filters = extractFiltersFromQuery(route, this.fieldsInfo)
+
+      const slug = route.query.filter_subtable
+      const unitSize = route.query.filter_subtable_unit
+      const field = typeof slug === 'string' ? this.fieldsInfo[slug] : null
+      const activeSubtableSlug = field?.has_filter_subtable ? slug : null
+      const filterSubtableUnit = activeSubtableSlug && ['10min', '1hour', '1day'].includes(unitSize)
+        ? unitSize
+        : '1hour'
+
+      this.search = search
+      this.filters = filters
+
+      if (activeSubtableSlug) {
+        this.openedSubtableSlugs[slug] = true
+        this.activeSubtableSlug = slug
+        this.filterSubtableUnits[slug] = filterSubtableUnit
+      } else {
+        this.activeSubtableSlug = null
+      }
+
+      this.$nextTick(() => this.applyFiltersToFields())
+      return this.loadFilterSubtable()
+    },
+    serializeQuery() {
+      let query = {}
+      if (this.search) query.search = this.search
+
+      query = applyFiltersToQuery(query, this.filters, this.fieldsInfo)
+
+      if (this.activeSubtableSlug) {
+        query.filter_subtable = this.activeSubtableSlug
+        query.filter_subtable_unit = this.filterSubtableUnits[this.activeSubtableSlug] || '1hour'
+      }
+
+      return query
+    },
+    getFilters() {
+      return normalizeFilters(this.filters)
+    },
+    getSearch() {
+      return this.search
+    },
+    getFiltersCount() {
+      let count = this.search ? 1 : 0
+      count += Object.values(this.getFilters()).length
+      return count
+    },
     applyFiltersToFields() {
-      if (!this.filters || !Object.keys(this.filters).length) return
       for (const name of Object.keys(this.fieldsInfo)) {
         const ref = this.$refs[this.getRefString(name)]
         if (!ref) continue
@@ -219,6 +267,15 @@ export default {
       field.updateFormData(this.filters)
       this.applyFilter()
     },
+    refreshFilterSubtable() {
+      const queryChanged = this.filterQuery !== this.getFilterQuery(this.serializeQuery())
+      if (queryChanged) {
+        this.applyFilter()
+        return
+      }
+
+      this.loadFilterSubtable()
+    },
     toggleSubtable(filter_name) {
       if (this.activeSubtableSlug === filter_name) {
         this.closeSubtable(filter_name)
@@ -226,7 +283,6 @@ export default {
       }
       this.openedSubtableSlugs[filter_name] = true
       this.activeSubtableSlug = filter_name
-      this.loadFilterSubtable()
     },
     closeSubtable(filter_name) {
       if (this.activeSubtableSlug !== filter_name) return
@@ -248,7 +304,7 @@ export default {
       }
 
       const fieldSlug = this.activeSubtableSlug
-      const filters = normalizeFilters(this.filters)
+      const filters = this.getFilters()
       const value = filters[fieldSlug]
       if (!fieldSlug || !value?.from || !value?.to) {
         if (fieldSlug) {
@@ -290,8 +346,8 @@ export default {
     },
     applyFilter() {
       if (this.loading) return
-      this.filters = normalizeFilters(this.filters)
-      this.$emit('filtered', this.filters, this.search)
+      this.filters = this.getFilters()
+      this.$emit('filtered')
     },
     searchHelpHtml () {
       return this.searchHelp.replace(/\n/g, '<br>')

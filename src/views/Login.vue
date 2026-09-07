@@ -111,6 +111,7 @@ import { getSettings } from '/src/api/settings'
 import { createRules } from '/src/utils/validationRules'
 import { login } from '/src/api/user'
 import { config_dataset } from '/src/utils/settings'
+import { getMainPage } from '/src/utils/router'
 
 import Settings from '/src/components/Settings.vue'
 import Language from '/src/components/Language.vue'
@@ -172,13 +173,29 @@ export default {
     getDescription() {
       return this.settings.description
     },
+    getNextPage() {
+      const next = this.$route.query.next
+      if (typeof next !== 'string') return getMainPage(this.settings)
+
+      // Parse the full admin URL saved before the login redirect.
+      const nextUrl = new URL(next, window.location.origin)
+      const base = this.$router.options.history.base.replace(/\/$/, '')
+
+      // Do not redirect outside the current admin application.
+      if (nextUrl.origin !== window.location.origin || !nextUrl.pathname.startsWith(`${base}/`)) {
+        return getMainPage(this.settings)
+      }
+
+      const route = `${nextUrl.pathname.slice(base.length) || '/'}${nextUrl.search}${nextUrl.hash}`
+      return route
+    },
     async login() {
       const isValid = await this.$refs.loginForm.validate()
       if (!isValid.valid) return
 
       this.loading = true
       login(this.username, this.password).then(() => {
-        this.$router.push(this.settings.main_page || "/navigation")
+        this.$router.replace(this.getNextPage())
         this.loading = false
       }).catch(error => {
         this.loading = false

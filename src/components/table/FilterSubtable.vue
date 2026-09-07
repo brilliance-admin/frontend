@@ -39,7 +39,7 @@
         {{ $t('filterSubtable.applyFilter') }}
       </div>
       <div v-else class="filter-subtable__placeholder">
-        {{ $t('filterSubtable.selectRange') }}
+        {{ $t('filterSubtable.selectRange', { field: field.label }) }}
       </div>
       <slot :field="field" :field-slug="fieldSlug" />
     </v-card-text>
@@ -57,17 +57,21 @@ export default {
     field: {type: Object, required: true},
     fieldSlug: {type: String, required: true},
     value: {type: Object, required: false},
+    unitSize: {type: String, required: true},
     chart: {type: Object, required: false},
     loading: {type: Boolean, required: true},
     error: {type: String, required: false},
   },
   emits: ['changed', 'close', 'refresh', 'unit-changed'],
-  data() {
-    return {
-      unit: '1hour',
-    }
-  },
   computed: {
+    unit: {
+      get() {
+        return this.unitSize
+      },
+      set(value) {
+        this.$emit('unit-changed', value)
+      },
+    },
     hasRange() {
       return this.value?.from !== undefined && this.value?.to !== undefined
     },
@@ -107,11 +111,6 @@ export default {
           },
         },
       }
-    },
-  },
-  watch: {
-    unit(value) {
-      this.$emit('unit-changed', value)
     },
   },
   methods: {

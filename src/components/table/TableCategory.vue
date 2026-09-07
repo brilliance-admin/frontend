@@ -11,8 +11,6 @@
             ref="filters"
             :category-schema="categorySchema"
             :parent-pk="parentPk"
-            :filters-init="filters"
-            :search-init="search"
             @filtered="handleFilter"
             :loading="loading"
             :search-enabled="getTableInfo().search_enabled"
@@ -42,8 +40,6 @@
                 ref="filters"
                 :category-schema="categorySchema"
                 :parent-pk="parentPk"
-                :filters-init="filters"
-                :search-init="search"
                 @filtered="handleFilter"
                 :loading="loading"
                 :search-enabled="getTableInfo().search_enabled"
@@ -407,12 +403,12 @@
 </template>
 
 <script>
-import { applyFiltersToQuery, extractFiltersFromQuery } from '/src/utils/filters'
 import { CategorySchema, detailUrl, subDetailUrl } from '/src/api/schema'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
 import { getDataList } from '/src/api/table'
 import { truncate } from '/src/utils'
 import { isChoiceField } from '/src/utils/fields'
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import moment from 'moment'
 import FormCreate from '/src/components/table/FormCreate.vue'
 import TableActionExecutor from '/src/components/table/TableActionExecutor.vue'
@@ -435,8 +431,6 @@ export default {
       pageInfo: {},
       headers: {},
       selected: [],
-      search: null,
-      filters: {},
       perPageOptions: [25, 50, 100, 150],
 
       actionToAll: false,
@@ -447,6 +441,11 @@ export default {
       pageInput: '',
     }
   },
+  watch: {
+    '$route.fullPath'() {
+      this.syncRoute()
+    },
+  },
   mounted () {
     const mq = window.matchMedia('(max-width: 1280px)')
     this.isNarrow = mq.matches
@@ -455,17 +454,9 @@ export default {
       this.isNarrow = e.matches
     })
 
-    this.popstateHandler = () => {
-      this.$nextTick(() => {
-        this.deserializeQuery()
-        this.getListData()
-        this.$nextTick(() => this.$refs.filters?.loadFilterSubtable())
-      })
-    }
-    window.addEventListener('popstate', this.popstateHandler)
-  },
-  beforeUnmount() {
-    window.removeEventListener('popstate', this.popstateHandler)
+    this.$nextTick(() => {
+      this.syncRoute()
+    })
   },
   created() {
     this.headers = this.getHeaders()
@@ -475,8 +466,6 @@ export default {
       limit: getLocalSettings().page_size || 25,
     }
 
-    this.deserializeQuery()
-    this.getListData()
   },
   methods: {
     detailUrl,
@@ -586,14 +575,13 @@ export default {
       const ordering = this.$route.query.ordering
       if (ordering) this.ordering = ordering
 
-      const search = this.$route.query.search
-      if (search) this.search = search
-
-      // Deserialize filters
-      const table_filters = this.categorySchema.getTableInfo().table_filters || {}
-      this.filters = extractFiltersFromQuery(this.$route, table_filters.fields || {})
     },
-    serializeQuery() {
+    async syncRoute() {
+      this.deserializeQuery()
+      await this.$nextTick()
+      await this.getListData()
+    },
+    async serializeQuery() {
       // Change url params only if group presented
       if (!this.categorySchema.group) return
 
@@ -605,13 +593,12 @@ export default {
       if (this.pageInfo.limit) newQuery.limit = this.pageInfo.limit
 
       if (this.ordering) newQuery.ordering = this.ordering
-      if (this.search) newQuery.search = this.search
+      Object.assign(newQuery, this.$refs.filters?.serializeQuery())
 
-      // Serialize filters
-      const tableFilters = this.categorySchema.getTableInfo().table_filters || {}
-      newQuery = applyFiltersToQuery(newQuery, this.filters, tableFilters.fields || {})
-
-      this.$router.push({name: this.$route.name, query: newQuery})
+      const result = await this.$router.push({name: this.$route.name, query: newQuery})
+      if (isNavigationFailure(result, NavigationFailureType.duplicated)) {
+        return this.syncRoute()
+      }
     },
     getListData() {
       this.loading = true
@@ -622,8 +609,8 @@ export default {
         parent_pk: this.parentPk,
 
         pageInfo: this.pageInfo,
-        filters: this.filters,
-        search: this.search,
+        filters: this.$refs.filters?.getFilters() || {},
+        search: this.$refs.filters?.getSearch() || null,
         ordering: this.ordering,
       }).then(responseData => {
         this.pageData = responseData
@@ -638,15 +625,9 @@ export default {
         }
       })
     },
-    async handleFilter(filters, search) {
+    async handleFilter() {
       this.pageInfo.page = 1
-      this.filters = filters
-      this.search = search
-      this.serializeQuery()
-      await Promise.all([
-        this.$refs.filters?.loadFilterSubtable(),
-        this.getListData(),
-      ])
+      await this.serializeQuery()
     },
     hasActons() {
       if (!this.categorySchema.getTableInfo().actions) {
@@ -664,7 +645,6 @@ export default {
 
       this.selected = []
       this.serializeQuery()
-      this.getListData()
     },
     hasNextPage() {
       return (this.pageData.data || []).length === this.pageInfo.limit
@@ -696,8 +676,8 @@ export default {
         actionInfo,
         pks: [...this.selected],
         sendToAll: this.actionToAll,
-        filters: this.filters,
-        search: this.search,
+        filters: this.$refs.filters?.getFilters() || {},
+        search: this.$refs.filters?.getSearch() || null,
         totalCount: this.getTotalCount(),
       })
     },
@@ -715,7 +695,6 @@ export default {
       }
 
       this.serializeQuery()
-      this.getListData()
     },
     formatDateTime(dateString) {
       if (dateString) {
@@ -785,7 +764,6 @@ export default {
     },
     createdEvent() {
       this.serializeQuery()
-      this.getListData()
     },
     stripHtml(html) {
       const div = document.createElement('div')
@@ -794,14 +772,7 @@ export default {
     },
     truncate,
     getFiltersCount() {
-      var count = 0
-      if (this.search) {
-        count += 1
-      }
-      if (this.filters) {
-        count += Object.values(this.filters).filter(v => v !== null && v !== undefined).length
-      }
-      return count
+      return this.$refs.filters?.getFiltersCount() || 0
     },
   },
 }

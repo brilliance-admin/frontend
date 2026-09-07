@@ -11,7 +11,7 @@ import Page404 from '/src/views/404.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: '/login/',
     component: Login,
   },
   {
