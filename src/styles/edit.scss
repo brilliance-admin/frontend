@@ -250,6 +250,9 @@
         padding: 6px;
     }
 }
+.form-update-header.v-card {
+    padding: 8px;
+}
 
 .formset-card {
     background-color: rgb(var(--v-theme-surface-light)) !important;
@@ -257,23 +260,11 @@
     border-radius: 8px;
     margin-bottom: 4px;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.1);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
-    .formset-header {
-        padding-bottom: 8px;
-        margin-bottom: 12px;
-        border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.12);
-    }
-    .formset-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        line-height: 1.3;
-        color: rgba(var(--v-theme-on-surface), 0.92);
-        margin-bottom: 4px;
-    }
-    .formset-description {
-        font-size: 0.875rem;
-        line-height: 1.4;
-        color: rgba(var(--v-theme-on-surface), 0.68);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+
+    > .formset-header {
+        margin: -16px -18px 12px;
+        border-radius: 8px 8px 0 0;
     }
 }
 
@@ -421,12 +412,15 @@
 .dial-list-card .dial-list-list-card {
     background-color: rgba(var(--v-theme-on-surface), 0.02) !important;
 }
+
+// Inlines
 .table-title-inline {
     display: none;
 }
 .field-inline-card {
     padding: 5px 10px;
-    background-color: rgba(var(--v-theme-secondary), 0.5) !important;
+    border-radius: 8px;
+    background-color: rgba(var(--v-theme-secondary), 0.8) !important;
 
     .v-card-title,.v-card-subtitle {
         padding-left: 3px;
@@ -435,9 +429,27 @@
         padding: 3px;
     }
 }
+.formset-header {
+    background-color: rgba(var(--v-theme-secondary), 0.8) !important;
+}
 .field-inline-record {
     background-color: rgb(var(--v-theme-surface-light)) !important;
+    border-radius: 8px;
     margin-bottom: 10px;
+}
+.field-inline-record .formset-card {
+    box-shadow: none;
+    margin: 0;
+}
+// Only records with named child formsets need visible separation between sections.
+.formset-inline--sectioned {
+    padding: 8px;
+}
+.formset-inline--sectioned > .formset-grid {
+    gap: 8px;
+}
+.field-inline-record .formset-card > .formset-header {
+    background-color: rgba(var(--v-theme-secondary), 0.45) !important;
 }
 .field-inline-record:last-child {
     margin-bottom: 0;
@@ -471,6 +483,8 @@
     justify-content: center;
 }
 .inline-record-add {
+    background-color: rgb(var(--v-theme-surface-light)) !important;
+    color: rgb(var(--v-theme-on-surface-light)) !important;
     margin: 0 !important;
 }
 

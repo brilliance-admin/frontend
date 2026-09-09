@@ -34,10 +34,6 @@ html {
   --toastify-toast-width: 640px;
   --toastify-toast-min-height: 64px;
   --toastify-toast-max-height: 800px;
-
-  --jse-menu-color: rgb(var(--v-theme-surface));
-  --jse-theme-color: rgb(var(--v-theme-primary));
-  --jse-text-color-inverse: rgb(var(--v-theme-darken3));
 }
 
 .toast-copy-text {
@@ -55,15 +51,21 @@ html {
   transform: translateY(1px);
 }
 
+:root {
+    --jse-theme-color: rgb(var(--v-theme-light3));
+    --jse-text-color-inverse: rgb(var(--v-theme-darken3));
+    --jse-menu-color: #687177;
+}
 .jse-readonly {
     cursor: not-allowed;
     .jse-menu {
         // display: none !important;
     }
 }
-
-.jse-menu {
-    background: rgb(var(--v-theme-primary)) !important;
+.jse-theme-dark .jse-menu {
+    background: rgb(var(--v-theme-light1)) !important;
+    --jse-menu-color: #687177;
+    
 }
 
 body {

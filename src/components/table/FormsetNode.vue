@@ -1,13 +1,16 @@
 <template>
-  <div :class="{ 'formset-card': needFormsetCard(node) }">
-    <div v-if="node.title || node.description" class="formset-header">
-      <div v-if="node.title" class="formset-title">
-        {{ node.title }}
-      </div>
-      <div v-if="node.description" class="formset-description">
+  <div :class="{
+    'formset-card': needFormsetCard(node),
+    'formset-inline--sectioned': inlineFieldSlug && hasNamedChildFormset(node),
+  }">
+    <v-card v-if="node.title || node.description" flat class="field-inline-card formset-header">
+      <v-card-title v-if="node.title" class="formset-title">
+        <span class="field-title">{{ node.title }}</span>
+      </v-card-title>
+      <v-card-subtitle v-if="node.description" class="formset-description">
         {{ node.description }}
-      </div>
-    </div>
+      </v-card-subtitle>
+    </v-card>
 
     <div class="formset-grid">
       <template v-for="field in node.fields" v-bind:key="getFieldKey(field)">
@@ -145,6 +148,12 @@ export default {
     },
     isFormsetNode(field) {
       return !!field && typeof field === 'object' && Array.isArray(field.fields)
+    },
+    hasNamedChildFormset(formset) {
+      // A named child formset is a separate section, so its inline record needs inner spacing.
+      return formset.fields.some(field =>
+        this.isFormsetNode(field) && (field.title || field.description),
+      )
     },
     needFormsetCard(formset) {
       if (!formset || !Array.isArray(formset.fields)) return false

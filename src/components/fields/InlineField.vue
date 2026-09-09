@@ -47,9 +47,8 @@
 
             @changed="newValue => onChange(index, newValue)"
           />
-          <div class="inline-record-actions">
+          <div v-if="!readOnly && canRemoveItem" class="inline-record-actions">
             <v-btn
-              v-if="!readOnly && canRemoveItem"
               class="inline-record-remove"
               icon="mdi-close"
               size="small"
@@ -67,7 +66,6 @@
           icon="mdi-plus"
           size="small"
           variant="flat"
-          color="secondary"
           @click="addItem"
         />
       </div>
