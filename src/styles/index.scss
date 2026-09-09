@@ -53,11 +53,18 @@ html {
 
 :root {
     --jse-theme-color: rgb(var(--v-theme-light3));
+    --jse-theme-color-highlight: rgb(var(--v-theme-darken1));
     --jse-text-color-inverse: rgb(var(--v-theme-darken3));
     --jse-menu-color: #687177;
 }
 .jse-readonly {
     cursor: not-allowed;
+
+    .jse-main {
+        height: auto !important;
+        min-height: 0 !important;
+    }
+
     .jse-menu {
         // display: none !important;
     }
@@ -65,7 +72,18 @@ html {
 .jse-theme-dark .jse-menu {
     background: rgb(var(--v-theme-light1)) !important;
     --jse-menu-color: #687177;
-    
+    --jse-theme-color: rgb(var(--v-theme-light3));
+}
+.jse-theme-dark {
+    --jse-theme-color-highlight: rgb(var(--v-theme-darken1));
+}
+.jse-menu .jse-button.jse-selected {
+    background: rgb(var(--v-theme-secondary)) !important;
+    color: rgb(var(--v-theme-on-secondary)) !important;
+}
+.jse-menu .jse-button:hover,
+.jse-menu .jse-button:focus {
+    color: rgb(var(--v-theme-on-darken1));
 }
 
 body {
