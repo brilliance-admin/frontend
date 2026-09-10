@@ -9,6 +9,7 @@
       :label="field.label"
       :messages="getMessages()"
       :readonly="isReadOnly()"
+      :menu-icon="isReadOnly() ? null : undefined"
       :placeholder="$t('inputStringForSearch')"
 
       :items="choices"
