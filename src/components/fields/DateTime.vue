@@ -23,6 +23,7 @@
         <template v-slot:append-inner>
           <v-btn
             v-if="isFilter && field.has_filter_subtable"
+            class="filter-subtable-trigger"
             icon="mdi-chart-line"
             density="compact"
             variant="text"

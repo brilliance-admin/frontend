@@ -79,6 +79,10 @@ export class CategorySchema {
     return this.schema['title']
   }
 
+  get icon() {
+    return this.schema['icon']
+  }
+
   getTableInfo() {
     return this.schema['table_info']
   }

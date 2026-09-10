@@ -32,6 +32,15 @@
     }
 }
 
+.choice-selection-text {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 // FilterSubtable
 .filters-container .filter-subtables {
     flex-basis: 100%;
@@ -79,6 +88,14 @@
 .filters-container .filter-subtable__actions {
     display: flex;
 }
+
+.filter-subtable-trigger.v-btn {
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+    border-radius: 50%;
+}
+
 .filters-container .filter-subtable__controls {
     display: flex;
 }
@@ -119,13 +136,33 @@
         min-width: 0;
     }
 
-    .detail-tab-title {
-        display: block;
+    .detail-tab-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         width: 100%;
+        min-width: 0;
+    }
+
+    .detail-tab-title {
+        flex: 1;
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    .detail-tab-count.v-chip {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .detail-tab-count .v-chip__content {
+        justify-content: center;
+        padding: 0;
     }
 }
 @media (max-width: $screen-mobile-wide) {
@@ -154,6 +191,16 @@
     .table-tabs,
     .v-divider {
         display: none;
+    }
+
+    .detail-tabs-window {
+        margin-left: 160px;
+    }
+
+    @media (max-width: $screen-mobile-wide) {
+        .detail-tabs-window {
+            margin-left: 0;
+        }
     }
 }
 
@@ -420,7 +467,6 @@
 .field-inline-card {
     padding: 5px 10px;
     border-radius: 8px;
-    background-color: rgba(var(--v-theme-secondary), 0.8) !important;
 
     .v-card-title,.v-card-subtitle {
         padding-left: 3px;
@@ -429,7 +475,10 @@
         padding: 3px;
     }
 }
-.formset-header {
+.field-inline-card:not(.formset-header) {
+    background-color: rgba(var(--v-theme-secondary), 0.8) !important;
+}
+.formset-header:not([class*="bg-"]) {
     background-color: rgba(var(--v-theme-primary), 0.48) !important;
 }
 .field-inline-record {

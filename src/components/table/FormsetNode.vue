@@ -3,7 +3,12 @@
     'formset-card': needFormsetCard(node),
     'formset-inline--sectioned': inlineFieldSlug && hasNamedChildFormset(node),
   }">
-    <v-card v-if="node.title || node.description" flat class="field-inline-card formset-header">
+    <v-card
+      v-if="node.title || node.description"
+      flat
+      :color="node.header_bg_color"
+      class="field-inline-card formset-header"
+    >
       <v-card-title v-if="node.title" class="formset-title">
         <span class="field-title">{{ node.title }}</span>
       </v-card-title>

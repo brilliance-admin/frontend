@@ -7,6 +7,7 @@
     :model-value="value"
     :messages="getMessages()"
     :readonly="readOnly"
+    :menu-icon="readOnly ? null : undefined"
     :loading="loading"
 
     :items="field.choices"
@@ -28,7 +29,7 @@
         </v-chip>
       </template>
       <template v-else>
-        <span>{{ item.raw?.title ?? item.title }}</span>
+        <span class="choice-selection-text">{{ item.raw?.title ?? item.title }}</span>
       </template>
     </template>
 

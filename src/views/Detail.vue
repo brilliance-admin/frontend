@@ -35,7 +35,18 @@
 
       <template v-for="(subcategorySchema, category_slug, index) in getSubcategories()">
         <v-tab :value="index + 1" :title="subcategorySchema.title">
-          <span class="detail-tab-title">{{ subcategorySchema.title }}</span>
+          <div class="detail-tab-content">
+            <v-icon v-if="subcategorySchema.icon" size="18">{{ subcategorySchema.icon }}</v-icon>
+            <span class="detail-tab-title">{{ subcategorySchema.title }}</span>
+            <v-chip
+              v-if="tabCounts[category_slug] !== undefined"
+              size="small"
+              variant="tonal"
+              class="detail-tab-count"
+            >
+              {{ tabCounts[category_slug] }}
+            </v-chip>
+          </div>
         </v-tab>
       </template>
     </v-tabs>
@@ -55,7 +66,13 @@
         :reverse-transition="false"
         :eager="true"
       >
-        <FormUpdate :admin-schema="adminSchema" :category-schema="categorySchema" :pk="pk" @closed="updateClosed"/>
+        <FormUpdate
+          :admin-schema="adminSchema"
+          :category-schema="categorySchema"
+          :pk="pk"
+          @closed="updateClosed"
+          @retrieved="result => tabCounts = result.tab_counts"
+        />
       </v-tabs-window-item>
 
       <!-- Subcategories -->
@@ -113,6 +130,7 @@ export default {
       parentCategorySchema: null,
       activeTab: 0,
       isVeryNarrow: false,
+      tabCounts: {},
     }
   },
   computed: {

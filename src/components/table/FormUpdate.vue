@@ -91,7 +91,7 @@ export default {
     FieldsContainer,
     TableActionExecutor,
   },
-  emits: ["closed"],
+  emits: ["closed", "retrieved"],
   data() {
     return {
       loading: true,
@@ -170,6 +170,7 @@ export default {
         this.loading = false
         this.formData = response.data.data
         this.$refs.fieldscontainer.updateFormData(response.data.data)
+        this.$emit('retrieved', response.data)
       }).catch(error => {
         this.loading = false
         if (error.response?.data?.code === 'record_not_found') {
