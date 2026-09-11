@@ -145,7 +145,11 @@ export default {
       return this.tableSchema.list_display.map(slug => {
         const field = this.tableSchema.fields[slug]
         if (!field) {
-          throw new Error(`Table field from listDisplay not found: ${slug}`)
+          throw new Error(
+            `Invalid table schema: list_display contains "${slug}", but fields does not. `
+            + `list_display: [${this.tableSchema.list_display.join(', ')}]. `
+            + `fields: [${Object.keys(this.tableSchema.fields).join(', ')}]`,
+          )
         }
 
         const header = {...(field.header || {})}
@@ -183,7 +187,14 @@ export default {
       }
     },
     formatDateTime(value) {
-      return value ? moment(value).format('YYYY-MM-DD HH:mm') : undefined
+      if (!value) return undefined
+
+      const date = moment(value)
+
+      if (date.millisecond()) return date.format('YYYY-MM-DD HH:mm:ss.SSS')
+      if (date.second()) return date.format('YYYY-MM-DD HH:mm:ss')
+
+      return date.format('YYYY-MM-DD HH:mm')
     },
     formatRelated(value) {
       if (!value) return []

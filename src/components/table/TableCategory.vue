@@ -526,7 +526,11 @@ export default {
       for (const slug of tableInfo.table_schema.list_display) {
         const field = tableInfo.table_schema.fields[slug]
         if (!field) {
-          console.error('Table field from listDisplay not found:', slug)
+          console.error(
+            `Invalid table schema: list_display contains "${slug}", but fields does not. `
+            + `list_display: [${tableInfo.table_schema.list_display.join(', ')}]. `
+            + `fields: [${Object.keys(tableInfo.table_schema.fields).join(', ')}]`,
+          )
           continue
         }
 

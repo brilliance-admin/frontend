@@ -140,14 +140,19 @@ export default {
     getFormattedValue() {
       if (!this.value) return ''
       if (this.isRange()) {
-        const _from = moment(this.value[0]).format(this.getFormat())
-        const to = moment(this.value[1]).format(this.getFormat())
+        const _from = moment(this.value[0]).format(this.getFormat(this.value[0]))
+        const to = moment(this.value[1]).format(this.getFormat(this.value[1]))
         return `${_from} - ${to}`
       }
-      return moment(this.value).format(this.getFormat())
+      return moment(this.value).format(this.getFormat(this.value))
     },
-    getFormat() {
-      if (this.isDateTimePicker()) return 'YYYY-MM-DD HH:mm'
+    getFormat(value = this.value) {
+      if (this.isDateTimePicker()) {
+        const date = moment(value)
+        if (date.millisecond()) return 'YYYY-MM-DD HH:mm:ss.SSS'
+        if (date.second()) return 'YYYY-MM-DD HH:mm:ss'
+        return 'YYYY-MM-DD HH:mm'
+      }
       if (this.isDate()) return 'YYYY-MM-DD'
       if (this.isTimePicker()) return 'HH:mm'
       console.error('DateTime bad type:', this.field.type)
@@ -206,23 +211,23 @@ export default {
       if (!date) return ''
 
       if (this.isRange()) {
-        const _from = moment(date[0]).format(this.getFormat())
-        const to = moment(date[1]).format(this.getFormat())
+        const _from = moment(date[0]).format(this.getFormat(date[0]))
+        const to = moment(date[1]).format(this.getFormat(date[1]))
         return `${_from} - ${to}`
       }
-      return moment(date).format(this.getFormat())
+      return moment(date).format(this.getFormat(date))
     },
     serializeValue(date) {
       if (!date) return
 
       if (this.isRange()) {
         return {
-          'from': moment(date[0]).format('yyyy-MM-DDTHH:mm:ss'),
-          'to': moment(date[1]).format('yyyy-MM-DDTHH:mm:ss'),
+          'from': moment(date[0]).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          'to': moment(date[1]).format('YYYY-MM-DDTHH:mm:ss.SSS'),
         }
       }
       if (this.isTimePicker()) return moment(date).format('HH:mm')
-      return moment(date).format('yyyy-MM-DDTHH:mm:ss')
+      return moment(date).format('YYYY-MM-DDTHH:mm:ss.SSS')
     },
     isRange() {
       return this.field.range
