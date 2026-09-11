@@ -83,7 +83,28 @@
       </div>
     </div>
 
+    <TableView
+      :items="pageData.data || []"
+      :table-schema="getTableInfo().table_schema"
+      :ordering-fields="getTableInfo().ordering_fields"
+      :table-options="getTableOptions()"
+      :loading="loading"
+      :selected="selected"
+      :selectable="isShowSelect()"
+      :select-all="actionToAll"
+      :total-count="getTotalCount()"
+      :items-per-page="pageInfo.limit"
+      :page="pageInfo.page"
+      :get-detail-url="canRetrieve() ? getDetailUrl : undefined"
+      hide-default-footer
+      @update:selected="selected = $event"
+      @update:select-all="actionToAll = $event"
+      @update:sort-by="updateSortBy"
+      @click:row="clickRow"
+    />
+
     <v-data-table
+      v-if="false"
       :class="{
         'model-table': true,
         'model-table--fit-screen': isFitScreenEnabled(),
@@ -412,6 +433,7 @@ import { isNavigationFailure, NavigationFailureType } from 'vue-router'
 import moment from 'moment'
 import FormCreate from '/src/components/table/FormCreate.vue'
 import TableActionExecutor from '/src/components/table/TableActionExecutor.vue'
+import TableView from '/src/components/table/TableView.vue'
 
 export default {
   props: {
@@ -422,6 +444,7 @@ export default {
   components: {
     FormCreate,
     TableActionExecutor,
+    TableView,
   },
   data() {
     return {
@@ -439,6 +462,7 @@ export default {
       isNarrow: false,
       pageInputOpen: false,
       pageInput: '',
+      navigationCategoryClickHandler: null,
     }
   },
   watch: {
@@ -447,6 +471,14 @@ export default {
     },
   },
   mounted () {
+    this.navigationCategoryClickHandler = ({group, category}) => {
+      if (group !== this.categorySchema.group || category !== this.categorySchema.category) return
+
+      this.selected = []
+      this.actionToAll = false
+    }
+    this.emitter.on('navigation-category-click', this.navigationCategoryClickHandler)
+
     const mq = window.matchMedia('(max-width: 1280px)')
     this.isNarrow = mq.matches
 
@@ -457,6 +489,9 @@ export default {
     this.$nextTick(() => {
       this.syncRoute()
     })
+  },
+  beforeUnmount() {
+    this.emitter.off('navigation-category-click', this.navigationCategoryClickHandler)
   },
   created() {
     this.headers = this.getHeaders()

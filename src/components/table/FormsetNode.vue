@@ -4,13 +4,14 @@
     'formset-inline--sectioned': inlineFieldSlug && hasNamedChildFormset(node),
   }">
     <v-card
-      v-if="node.title || node.description"
+      v-if="node.title || node.description || node.icon"
       flat
       :color="node.header_bg_color"
       class="field-inline-card formset-header"
     >
-      <v-card-title v-if="node.title" class="formset-title">
-        <span class="field-title">{{ node.title }}</span>
+      <v-card-title v-if="node.title || node.icon" class="formset-title">
+        <v-icon v-if="node.icon" class="formset-icon">{{ node.icon }}</v-icon>
+        <span v-if="node.title" class="field-title">{{ node.title }}</span>
       </v-card-title>
       <v-card-subtitle v-if="node.description" class="formset-description">
         {{ node.description }}
@@ -157,7 +158,7 @@ export default {
     hasNamedChildFormset(formset) {
       // A named child formset is a separate section, so its inline record needs inner spacing.
       return formset.fields.some(field =>
-        this.isFormsetNode(field) && (field.title || field.description),
+        this.isFormsetNode(field) && (field.title || field.description || field.icon),
       )
     },
     needFormsetCard(formset) {

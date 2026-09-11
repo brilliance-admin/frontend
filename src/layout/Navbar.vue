@@ -35,6 +35,7 @@
           :subtitle="group.description"
           :to="getFirstCategoryUrl(group_slug, group)"
           :density="navbarDensity()"
+          @click="notifyCategoryClick(group_slug, getFirstCategorySlug(group))"
         ></v-list-item>
 
         <!-- Группа с несколькими разделами -->
@@ -63,6 +64,7 @@
             :subtitle="category.description"
             :to="categoryUrl(group_slug, category_slug)"
             :density="navbarDensity()"
+            @click="notifyCategoryClick(group_slug, category_slug)"
           ></v-list-item>
         </v-list-group>
 
@@ -146,12 +148,18 @@ export default {
       return Object.keys(group.categories).length === 1
     },
     getFirstCategoryUrl(group_slug, group) {
-      const firstCategorySlug = Object.keys(group.categories)[0]
+      const firstCategorySlug = this.getFirstCategorySlug(group)
       return categoryUrl(group_slug, firstCategorySlug)
     },
+    getFirstCategorySlug(group) {
+      return Object.keys(group.categories)[0]
+    },
     isFirstCategoryActive(group_slug, group) {
-      const firstCategorySlug = Object.keys(group.categories)[0]
+      const firstCategorySlug = this.getFirstCategorySlug(group)
       return this.isTabActive(group_slug, firstCategorySlug)
+    },
+    notifyCategoryClick(group, category) {
+      this.emitter.emit('navigation-category-click', {group, category})
     },
   },
 }

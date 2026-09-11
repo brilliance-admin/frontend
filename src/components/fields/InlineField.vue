@@ -19,14 +19,23 @@
       </v-card-subtitle>
 
       <v-card
-        v-if="readOnly && value.length === 0"
+        v-if="readOnly && value.length === 0 && !field.table_view"
         variant="elevated"
         class="field-inline-record inline-record-empty"
       >
         {{ $t('noRecords') }}
       </v-card>
 
+      <TableView
+        v-if="field.table_view"
+        :items="value"
+        :table-schema="field.inline_field_schema"
+        :loading="loading"
+        hide-default-footer
+      />
+
       <v-card
+        v-else
         v-for="(item, index) in value"
         :key="item?.id ?? index"
         variant="elevated"
@@ -78,6 +87,7 @@
 <script>
 import { defineAsyncComponent } from 'vue'
 import { defaultProps, validateProps } from '/src/utils/fields.js'
+import TableView from '/src/components/table/TableView.vue'
 
 const requiredFields = {
   inline_field_schema: {type: Object, required: true},
@@ -92,6 +102,7 @@ export default {
   },
   components: {
     FieldsContainer,
+    TableView,
   },
   emits: ["changed"],
   data(props) {

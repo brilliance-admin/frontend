@@ -546,6 +546,15 @@
 .field-title {
     color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
+.formset-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .formset-icon {
+        color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+    }
+}
 // Bool choice title
 .v-selection-control {
     .field-title {
