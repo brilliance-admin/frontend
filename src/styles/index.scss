@@ -135,12 +135,13 @@ body {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: start;
-    align-items: center;
+    align-items: flex-start;
 
     .filter-element {
-        display: flex;
+        display: grid;
         margin: 2px;
-        width: 300px;
+        width: fit-content;
+        gap: 0;
     }
 
     .filter-button {
@@ -413,7 +414,7 @@ body {
 }
 .theme-swatch {
     width: 80px;
-    height: 40px;
+    align-self: stretch;
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.15);
@@ -442,9 +443,50 @@ body {
     border-right: 1px solid rgba(var(--v-theme-on-surface), 0.04) !important;
 }
 
-/* Уменьшить ширину полей фильтров */
+/* Размеры и общий вид составных фильтров */
 .filters-container .filter-element {
-    width: 215px;
+    width: fit-content;
+    align-items: stretch;
+    grid-template-columns: max-content max-content;
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+        0 3px 1px -2px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)),
+        0 2px 2px 0 var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)),
+        0 1px 5px 0 var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
+}
+.filters-container .filter-label {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    color: inherit;
+    min-height: 40px;
+    height: auto;
+    align-self: stretch;
+    padding: 0 12px;
+    font-size: 0.8rem;
+    letter-spacing: 0.009375em;
+    line-height: 1.5;
+    min-width: 0;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: rgba(var(--v-theme-on-surface), 0.04);
+    border: 0;
+    border-right: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border-radius: 0;
+    box-shadow: none;
+}
+.filters-container .filter-label > span {
+    opacity: 0.6;
+}
+.filters-container .filter-element > .v-input {
+    align-self: stretch;
+    flex: none;
+    width: auto;
+    max-width: 512px;
 }
 .filter-button-apply {
     font-size: 0.9rem!important;
@@ -459,7 +501,9 @@ body {
 }
 /* Скруглить поля */
 .filters-container .v-field {
-    border-radius: 8px !important;
+    border: 0;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 /* Кнопка Apply — компактнее, в тон */
 .filters-container .filter-button .v-btn {
@@ -473,6 +517,12 @@ body {
 }
 .filters-container .v-field .v-icon {
     font-size: 20px;
+}
+.filters-container .v-select .v-field--appended {
+    padding-inline-end: 6px;
+}
+.filters-container .v-select__menu-icon {
+    margin-inline-start: 0;
 }
 .filters-drawer .v-btn--icon {
     width: 40px;

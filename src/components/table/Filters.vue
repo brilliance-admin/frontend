@@ -2,14 +2,15 @@
 
   <div class="filters-container">
 
-    <div class="filter-element" v-if="searchEnabled">
+    <div class="filter-element filter-element--search" v-if="searchEnabled">
+
+      <label class="filter-label"><span>{{ $t('search') }}</span></label>
 
       <v-text-field
         v-model="search"
         density="compact"
         variant="solo"
         prepend-inner-icon="mdi-magnify"
-        :label="$t('search')"
         v-on:keydown.enter.prevent="applyFilter"
       >
         <template #append-inner>
@@ -31,6 +32,8 @@
       :title="filter.help_text || null"
       v-on:keydown.enter.prevent="applyFilter"
     >
+      <label class="filter-label"><span>{{ filter.label }}</span></label>
+
       <component
         v-if="getFieldComponent(filter)"
         :is="getFieldComponent(filter)"

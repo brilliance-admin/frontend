@@ -11,7 +11,7 @@
     @update:modelValue="onChange"
     @keydown.enter.prevent="keydownEnter"
   >
-    <template #label>
+    <template v-if="!isFilter" #label>
       <span class="field-title">{{ field.label }}</span>
       <span v-if="field.required" class="required-star">*</span>
     </template>
@@ -31,7 +31,7 @@
       @update:modelValue="onChange"
       @keydown.enter.prevent="keydownEnter"
     >
-      <template #label>
+      <template v-if="!isFilter" #label>
         <span class="field-title">{{ field.label }}</span>
         <span v-if="field.required" class="required-star">*</span>
       </template>

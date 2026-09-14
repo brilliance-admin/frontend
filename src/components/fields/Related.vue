@@ -4,13 +4,12 @@
     <v-autocomplete
       :density="density"
       :variant="variant"
-      :clearable="!isReadOnly()"
       v-model="value"
-      :label="field.label"
+      :label="isFilter ? undefined : field.label"
       :messages="getMessages()"
       :readonly="isReadOnly()"
       :menu-icon="isReadOnly() ? null : undefined"
-      :placeholder="$t('inputStringForSearch')"
+      :placeholder="isFilter ? undefined : $t('inputStringForSearch')"
 
       :items="choices"
       :multiple="isMany()"
@@ -32,7 +31,7 @@
       @update:menu="onMenuUpdate"
       @update:modelValue="onChange"
     >
-      <template #label>
+      <template v-if="!isFilter" #label>
         <span class="field-title">{{ field.label }}</span>
         <span v-if="field.required" class="required-star">*</span>
       </template>

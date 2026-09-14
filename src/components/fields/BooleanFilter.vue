@@ -4,7 +4,7 @@
     :density="density"
     :variant="variant"
     :clearable="!readOnly"
-    :label="field.label"
+    :label="isFilter ? undefined : field.label"
     :model-value="value"
     :messages="[]"
     :readonly="readOnly"
@@ -17,7 +17,7 @@
 
     @update:modelValue="onChange"
   >
-    <template #label>
+    <template v-if="!isFilter" #label>
       <span class="field-title">{{ field.label }}</span>
       <span v-if="field.required" class="required-star">*</span>
     </template>

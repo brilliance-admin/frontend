@@ -1,6 +1,6 @@
 <template>
   <v-card class="group-field-card">
-    <div class="field-title-section">
+    <div v-if="!isFilter" class="field-title-section">
       <span class="field-title">{{ field.label }}</span>
       <span v-if="field.required" class="required-star">*</span>
     </div>

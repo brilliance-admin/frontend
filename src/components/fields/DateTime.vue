@@ -6,7 +6,7 @@
         v-bind="activatorProps"
         :density="density"
         :variant="variant"
-        :label="field.label"
+        :label="isFilter ? undefined : field.label"
         :model-value="displayValue"
         :messages="getMessages()"
         :readonly="readOnly"
@@ -15,7 +15,7 @@
 
         @update:modelValue="updateDisplayValue"
       >
-        <template #label>
+        <template v-if="!isFilter" #label>
           <span class="field-title">{{ field.label }}</span>
           <span v-if="field.required" class="required-star">*</span>
         </template>
