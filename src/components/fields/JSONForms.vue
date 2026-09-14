@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import { toast } from "vue3-toastify"
 import { defaultProps, validateProps } from '/src/utils/fields.js'
 
 //import { vuetifyRenderers } from '@jsonforms/vue-vuetify';
@@ -67,9 +66,8 @@ export default {
         for (const error of event.errors) {
           errorMessage.push(`<b>${error.instancePath}</b> ${error.message}`)
         }
-        toast(
-          `${this.viewname}.${this.fieldSlug} json forms errors:</br>${errorMessage.join('<br>')}`,
-          {"theme": "auto", "type": "error", "position": "top-center", "dangerouslyHTMLString": true}
+        console.error(
+          `${this.viewname}.${this.fieldSlug} json forms errors: ${errorMessage.join('; ')}`
         )
       }
       this.$emit('changed', this.data)
