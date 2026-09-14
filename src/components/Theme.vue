@@ -5,12 +5,12 @@
       <div
         v-for="name in getThemeList()"
         :key="name"
-        class="theme-swatch"
-        :class="{ 'theme-swatch-active': currentTheme === name }"
+        class="theme-switch"
+        :class="{ 'theme-switch-active': currentTheme === name }"
         @click="currentTheme = name"
       >
-        <div class="swatch-half swatch-left" :style="{ backgroundColor: getColor(name, 'primary') }" />
-        <div class="swatch-half swatch-right" :style="{ backgroundColor: getColor(name, 'background') }" />
+        <div class="switch-half switch-left" :style="{ backgroundColor: getColor(name, 'primary') }" />
+        <div class="switch-half switch-right" :style="{ backgroundColor: getColor(name, 'background') }" />
       </div>
     </div>
   </div>

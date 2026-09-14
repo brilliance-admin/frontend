@@ -412,9 +412,9 @@ body {
     grid-template-columns: repeat(2, 80px);
     gap: 8px;
 }
-.theme-swatch {
+.theme-switch {
     width: 80px;
-    align-self: stretch;
+    height: 40px;
     border-radius: 6px;
     cursor: pointer;
     border: 1px solid rgba(var(--v-theme-on-surface), 0.15);
@@ -422,21 +422,21 @@ body {
     display: flex;
     overflow: hidden;
 }
-.theme-swatch:hover {
+.theme-switch:hover {
     border-color: rgba(var(--v-theme-on-surface), 0.4);
 }
-.theme-swatch-active {
+.theme-switch-active {
     border-color: rgb(var(--v-theme-on-surface));
     border-width: 1px;
 }
-.swatch-half {
+.switch-half {
     width: 50%;
     height: 100%;
 }
-.swatch-left {
+.switch-left {
     border-radius: 4px 0 0 4px;
 }
-.swatch-right {
+.switch-right {
     border-radius: 0 4px 4px 0;
 }
 .model-table td:not(:last-child) {
@@ -448,7 +448,7 @@ body {
     width: fit-content;
     align-items: stretch;
     grid-template-columns: max-content max-content;
-    border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border: 1px solid rgba(var(--v-border-color), 0.06);
     border-radius: 8px;
     overflow: hidden;
     box-shadow:
@@ -464,7 +464,7 @@ body {
     min-height: 40px;
     height: auto;
     align-self: stretch;
-    padding: 0 12px;
+    padding: 0 8px;
     font-size: 0.8rem;
     letter-spacing: 0.009375em;
     line-height: 1.5;
@@ -475,18 +475,30 @@ body {
     white-space: nowrap;
     background: rgba(var(--v-theme-on-surface), 0.04);
     border: 0;
-    border-right: 1px solid rgba(var(--v-theme-on-surface), 0.12);
+    border-right: 1px solid rgba(var(--v-border-color), 0.04);
     border-radius: 0;
     box-shadow: none;
 }
 .filters-container .filter-label > span {
+    display: block;
+    min-width: 0;
     opacity: 0.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .filters-container .filter-element > .v-input {
     align-self: stretch;
     flex: none;
-    width: auto;
+    width: fit-content;
     max-width: 512px;
+}
+.filters-container .v-text-field input.v-field__input {
+    flex: 0 1 auto;
+    field-sizing: content;
+    min-inline-size: calc(
+        1ch + var(--v-field-padding-start) + var(--v-field-padding-end)
+    );
 }
 .filter-button-apply {
     font-size: 0.9rem!important;
@@ -518,11 +530,26 @@ body {
 .filters-container .v-field .v-icon {
     font-size: 20px;
 }
-.filters-container .v-select .v-field--appended {
-    padding-inline-end: 6px;
-}
 .filters-container .v-select__menu-icon {
     margin-inline-start: 0;
+}
+.filters-container .number-filter .v-field__outline {
+    display: none;
+}
+.filters-container .number-filter .v-number-input__control {
+    display: none;
+}
+.filters-container .number-filter .v-field__append-inner {
+    display: none;
+}
+.filters-container .v-field.v-field--appended {
+    padding-inline-end: 0;
+}
+.filters-container .v-field__append-inner {
+    padding-inline-start: 0;
+}
+.filters-container .v-field__append-inner:has(.v-icon) {
+    padding-inline-end: 4px;
 }
 .filters-drawer .v-btn--icon {
     width: 40px;

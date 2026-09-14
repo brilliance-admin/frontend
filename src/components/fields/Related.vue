@@ -4,6 +4,7 @@
     <v-autocomplete
       :density="density"
       :variant="variant"
+      :clearable="!isReadOnly()"
       v-model="value"
       :label="isFilter ? undefined : field.label"
       :messages="getMessages()"

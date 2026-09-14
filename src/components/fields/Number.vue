@@ -1,5 +1,6 @@
 <template>
   <v-number-input
+    :class="{ 'number-filter': isFilter }"
     :density="density"
     :variant="variant"
     :clearable="!readOnly"
@@ -23,8 +24,8 @@
       <span v-if="field.required" class="required-star">*</span>
     </template>
 
-    <template v-if="readOnly || isFilter" #increment></template>
-    <template v-if="readOnly || isFilter" #decrement></template>
+    <template v-if="readOnly" #increment></template>
+    <template v-if="readOnly" #decrement></template>
   </v-number-input>
 
 </template>

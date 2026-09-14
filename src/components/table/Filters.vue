@@ -2,7 +2,7 @@
 
   <div class="filters-container">
 
-    <div class="filter-element filter-element--search" v-if="searchEnabled">
+    <div class="filter-element filter-element--search" v-if="searchEnabled" :title="$t('search')">
 
       <label class="filter-label"><span>{{ $t('search') }}</span></label>
 
@@ -10,7 +10,6 @@
         v-model="search"
         density="compact"
         variant="solo"
-        prepend-inner-icon="mdi-magnify"
         v-on:keydown.enter.prevent="applyFilter"
       >
         <template #append-inner>
@@ -29,7 +28,7 @@
       v-for="(filter, filter_name) in fieldsInfo"
       v-bind:key="filter_name"
       class="filter-element"
-      :title="filter.help_text || null"
+      :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
       v-on:keydown.enter.prevent="applyFilter"
     >
       <label class="filter-label"><span>{{ filter.label }}</span></label>
