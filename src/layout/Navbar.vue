@@ -30,9 +30,9 @@
           class="navbar-link"
           :key="'single-' + group_slug"
           :active="isFirstCategoryActive(group_slug, group)"
-          :prepend-icon="group.icon"
-          :title="group.title"
-          :subtitle="group.description"
+          :prepend-icon="getFirstCategory(group).icon"
+          :title="getFirstCategory(group).title"
+          :subtitle="getFirstCategory(group).description"
           :to="getFirstCategoryUrl(group_slug, group)"
           :density="navbarDensity()"
           @click="notifyCategoryClick(group_slug, getFirstCategorySlug(group))"
@@ -153,6 +153,9 @@ export default {
     },
     getFirstCategorySlug(group) {
       return Object.keys(group.categories)[0]
+    },
+    getFirstCategory(group) {
+      return group.categories[this.getFirstCategorySlug(group)]
     },
     isFirstCategoryActive(group_slug, group) {
       const firstCategorySlug = this.getFirstCategorySlug(group)

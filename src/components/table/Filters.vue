@@ -261,6 +261,12 @@ export default {
     },
     _updateValue(value, filter_name) {
       this.filters[filter_name] = value
+
+      for (const name of Object.keys(this.fieldsInfo)) {
+        const ref = this.$refs[this.getRefString(name)]
+        const field = ref?.[0] || ref
+        field?.updateFormContext?.(this.filters)
+      }
     },
     updateSubtableValue(value, filter_name) {
       this._updateValue(value, filter_name)

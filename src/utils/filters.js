@@ -21,59 +21,39 @@ function castValue(value, fieldType) {
 export function extractFiltersFromQuery(route, tableFiltersFields) {
   const query = route.query ?? route
   const filters = {}
-  const objectKeys = new Set()
-  const allowedKeys = Object.keys(tableFiltersFields || {})
+  for (const [fieldSlug, field] of Object.entries(tableFiltersFields || {})) {
+    if (field.type === 'related') {
+      const keys = toArray(query[`${FILTER_PREFIX}${fieldSlug}__key`])
+      const titles = toArray(query[`${FILTER_PREFIX}${fieldSlug}__title`])
+      if (!keys.length) continue
 
-  // 1. определяем object-фильтры по наличию __
-  for (const key of Object.keys(query)) {
-    if (!key.startsWith(FILTER_PREFIX)) continue
-    const cleanKey = key.slice(FILTER_PREFIX.length)
-    if (!cleanKey.includes('__')) continue
-    const root = cleanKey.split('__')[0]
-    if (!allowedKeys.length || allowedKeys.includes(root)) {
-      objectKeys.add(root)
-    }
-  }
-
-  // 2. собираем фильтры
-  for (const [rawKey, value] of Object.entries(query)) {
-    if (!rawKey.startsWith(FILTER_PREFIX)) continue
-
-    const key = rawKey.slice(FILTER_PREFIX.length)
-    const parts = key.split('__')
-    const root = parts[0]
-
-    if (allowedKeys.length && !allowedKeys.includes(root)) continue
-
-    const fieldType = tableFiltersFields[root]?.type
-
-    // object-фильтр
-    if (objectKeys.has(root)) {
-      if (!filters[root]) {
-        filters[root] = {}
-      }
-      if (parts.length === 2) {
-        filters[root][parts[1]] = castValue(value, fieldType)
+      if (field.many) {
+        filters[fieldSlug] = keys.map((key, index) => ({
+          key,
+          title: titles[index],
+        }))
+      } else {
+        filters[fieldSlug] = {
+          key: keys[0],
+          title: titles[0],
+        }
       }
       continue
     }
 
-    // примитивный фильтр
-    if (parts.length === 1) {
-      filters[root] = castValue(value, fieldType)
+    if (field.type === 'datetime') {
+      const from = query[`${FILTER_PREFIX}${fieldSlug}__from`]
+      const to = query[`${FILTER_PREFIX}${fieldSlug}__to`]
+      if (from !== undefined || to !== undefined) {
+        filters[fieldSlug] = {from, to}
+      }
+      continue
     }
-  }
 
-  for (const [key, value] of Object.entries(filters)) {
-    const field = tableFiltersFields[key]
-    if (!field?.many || !value || typeof value !== 'object' || Array.isArray(value)) continue
-
-    const keys = Array.isArray(value.key) ? value.key : [value.key]
-    const titles = Array.isArray(value.title) ? value.title : [value.title]
-    filters[key] = keys.map((item, index) => ({
-      key: item,
-      title: titles[index],
-    }))
+    const value = query[`${FILTER_PREFIX}${fieldSlug}`]
+    if (value !== undefined) {
+      filters[fieldSlug] = castValue(value, field.type)
+    }
   }
 
   return filters
@@ -85,29 +65,43 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
  */
 export function applyFiltersToQuery(newQuery, filters, tableFiltersFields = {}) {
   for (const [key, value] of Object.entries(filters)) {
-    if (tableFiltersFields[key]?.many) {
-      newQuery[`${FILTER_PREFIX}${key}__key`] = value.map(item => item.key)
-      newQuery[`${FILTER_PREFIX}${key}__title`] = value.map(item => item.title)
+    const field = tableFiltersFields[key]
+
+    if (field?.type === 'related') {
+      const values = field.many ? value : [value]
+      const choices = values.filter(Boolean)
+      if (!choices.length) continue
+
+      newQuery[`${FILTER_PREFIX}${key}__key`] = field.many
+        ? choices.map(item => item.key)
+        : choices[0].key
+      newQuery[`${FILTER_PREFIX}${key}__title`] = field.many
+        ? choices.map(item => item.title)
+        : choices[0].title
       continue
     }
 
-    if (
-      value !== null &&
-      typeof value === 'object' &&
-      !Array.isArray(value)
-    ) {
-      // object → f-key__subKey
-      for (const [subKey, subValue] of Object.entries(value)) {
-        if (subValue !== undefined && subValue !== null) {
-          newQuery[`${FILTER_PREFIX}${key}__${subKey}`] = subValue
-        }
+    if (field?.type === 'datetime') {
+      if (value?.from !== undefined && value.from !== null) {
+        newQuery[`${FILTER_PREFIX}${key}__from`] = value.from
       }
-    } else if (value !== undefined && value !== null) {
+      if (value?.to !== undefined && value.to !== null) {
+        newQuery[`${FILTER_PREFIX}${key}__to`] = value.to
+      }
+      continue
+    }
+
+    if (value !== undefined && value !== null) {
       newQuery[`${FILTER_PREFIX}${key}`] = value
     }
   }
 
   return newQuery
+}
+
+function toArray(value) {
+  if (value === undefined || value === null) return []
+  return Array.isArray(value) ? value : [value]
 }
 
 /**
