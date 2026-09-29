@@ -2,7 +2,10 @@
 
   <div class="filters-container">
 
-    <div class="filter-element filter-element--search" v-if="searchEnabled" :title="$t('search')">
+    <div class="filters-row">
+      <div class="filters-fields">
+
+        <div class="filter-element filter-element--search" v-if="searchEnabled" :title="$t('search')">
 
       <label class="filter-label"><span>{{ $t('search') }}</span></label>
 
@@ -22,40 +25,41 @@
         </template>
       </v-text-field>
 
-    </div>
+        </div>
 
-    <div
-      v-for="(filter, filter_name) in fieldsInfo"
-      v-bind:key="filter_name"
-      class="filter-element"
-      :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
-      v-on:keydown.enter.prevent="applyFilter"
-    >
-      <label class="filter-label"><span>{{ filter.label }}</span></label>
+        <div
+          v-for="(filter, filter_name) in fieldsInfo"
+          v-bind:key="filter_name"
+          class="filter-element"
+          :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
+          v-on:keydown.enter.prevent="applyFilter"
+        >
+          <label class="filter-label"><span>{{ filter.label }}</span></label>
 
-      <component
-        v-if="getFieldComponent(filter)"
-        :is="getFieldComponent(filter)"
+          <component
+            v-if="getFieldComponent(filter)"
+            :is="getFieldComponent(filter)"
 
-        :ref="getRefString(filter_name)"
+            :ref="getRefString(filter_name)"
 
-        density="compact"
-        variant="solo"
+            density="compact"
+            variant="solo"
 
-        :category-schema="categorySchema"
+            :category-schema="categorySchema"
 
-        :field="filter"
-        :field-slug="filter_name"
-        :loading="false"
-        :is-filter="true"
+            :field="filter"
+            :field-slug="filter_name"
+            :loading="false"
+            :is-filter="true"
 
-        @changed="value => _updateValue(value, filter_name)"
-        @open-subtable="toggleSubtable(filter_name)"
-      />
-      <template v-else>
-        {{ filter }}
-      </template>
-    </div>
+            @changed="value => _updateValue(value, filter_name)"
+            @open-subtable="toggleSubtable(filter_name)"
+          />
+          <template v-else>
+            {{ filter }}
+          </template>
+        </div>
+      </div>
 
     <!--
     <div class="filter-button">
@@ -72,7 +76,6 @@
 
     <div class="filter-button">
       <v-btn
-        v-if="isCompactApply"
         class="filter-button-apply"
         @click="applyFilter"
         color="secondary"
@@ -81,14 +84,7 @@
         :aria-label="$t('apply')"
         :disabled="loading"
       />
-      <v-btn
-        v-else
-        class="filter-button-apply"
-        @click="applyFilter"
-        color="secondary"
-        prepend-icon="mdi-magnify"
-        :disabled="loading"
-      >{{ $t('apply') }}</v-btn>
+    </div>
     </div>
 
     <div class="filter-subtables">
@@ -165,9 +161,6 @@ export default {
     this.deserializeQuery(this.$route)
   },
   computed: {
-    isCompactApply() {
-      return Object.keys(this.fieldsInfo).length >= 6
-    },
     filterQuery() {
       return this.getFilterQuery(this.$route.query)
     },

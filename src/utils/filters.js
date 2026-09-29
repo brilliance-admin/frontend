@@ -41,6 +41,15 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
       continue
     }
 
+    if (Array.isArray(field.choices)) {
+      const key = query[`${FILTER_PREFIX}${fieldSlug}__key`]
+      if (key !== undefined) {
+        const choice = field.choices.find(choice => String(choice.value) === String(key))
+        filters[fieldSlug] = choice ? choice.value : key
+      }
+      continue
+    }
+
     if (field.type === 'datetime') {
       const from = query[`${FILTER_PREFIX}${fieldSlug}__from`]
       const to = query[`${FILTER_PREFIX}${fieldSlug}__to`]
@@ -78,6 +87,11 @@ export function applyFiltersToQuery(newQuery, filters, tableFiltersFields = {}) 
       newQuery[`${FILTER_PREFIX}${key}__title`] = field.many
         ? choices.map(item => item.title)
         : choices[0].title
+      continue
+    }
+
+    if (Array.isArray(field?.choices)) {
+      newQuery[`${FILTER_PREFIX}${key}__key`] = value
       continue
     }
 

@@ -43,7 +43,7 @@
         </div>
 
         <div
-          v-else-if="resolveField(field).schema && isDisplayField(resolveField(field).schema)"
+          v-else-if="resolveField(field).schema && isDisplayField(field)"
           class="field-cell formset-grid-item"
           :style="{ gridColumn: `span ${resolveField(field).col_span || 12}` }"
         >
@@ -100,7 +100,10 @@ import ArrayField from '/src/components/fields/ArrayField.vue'
 import InlineField from '/src/components/fields/InlineField.vue'
 import TinyMCEField from '/src/components/fields/TinyMCE/index.vue'
 import CKEditor from '/src/components/fields/CKEditor.vue'
+import { createAjv } from '@jsonforms/core'
 import { isChoiceField } from '/src/utils/fields'
+
+const ajv = createAjv()
 
 export default {
   name: 'FormsetNode',
@@ -125,8 +128,10 @@ export default {
   },
   methods: {
     isDisplayField(field) {
-      if (this.formType === 'create' && field.read_only) return false
-      return true
+      const schema = this.resolveField(field).schema
+      if (this.formType === 'create' && schema.read_only) return false
+      if (typeof field === 'string' || !field.rule) return true
+      return ajv.validate(field.rule, this.formData)
     },
     getFieldComponent(field) {
       if (['boolean'].indexOf(field.type) !== -1) return BooleanField
@@ -277,7 +282,7 @@ export default {
         if (!resolved.slug) {
           throw new Error('FormsetNode updateFormData: resolved field slug is empty')
         }
-        if (!resolved.schema || !this.isDisplayField(resolved.schema)) {
+        if (!resolved.schema || !this.isDisplayField(field)) {
           continue
         }
 

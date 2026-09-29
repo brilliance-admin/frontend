@@ -30,6 +30,14 @@ html {
   background-image: linear-gradient(rgb(var(--v-theme-primary)), rgb(var(--v-theme-darken4))) !important;
 }
 
+.history-diff-removed {
+  color: rgb(var(--v-theme-error));
+}
+
+.history-diff-added {
+  color: rgb(var(--v-theme-success));
+}
+
 :root {
   --toastify-toast-width: 640px;
   --toastify-toast-min-height: 64px;
@@ -136,6 +144,20 @@ body {
     flex-wrap: wrap;
     justify-content: start;
     align-items: flex-start;
+
+    .filters-row {
+        display: inline-flex;
+        flex: 0 1 auto;
+        max-width: 100%;
+        align-items: flex-start;
+    }
+
+    .filters-fields {
+        display: flex;
+        flex: 0 1 auto;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
 
     .filter-element {
         display: grid;
