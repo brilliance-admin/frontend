@@ -45,7 +45,7 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
       const key = query[`${FILTER_PREFIX}${fieldSlug}__key`]
       if (key !== undefined) {
         const choice = field.choices.find(choice => String(choice.value) === String(key))
-        filters[fieldSlug] = choice ? choice.value : key
+        filters[fieldSlug] = choice ? choice : key
       }
       continue
     }
@@ -91,7 +91,10 @@ export function applyFiltersToQuery(newQuery, filters, tableFiltersFields = {}) 
     }
 
     if (Array.isArray(field?.choices)) {
-      newQuery[`${FILTER_PREFIX}${key}__key`] = value
+      newQuery[`${FILTER_PREFIX}${key}__key`] =
+        value !== null && typeof value === 'object'
+          ? value.value
+          : value
       continue
     }
 

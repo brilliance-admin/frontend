@@ -616,6 +616,9 @@ export default {
 
     },
     async syncRoute() {
+      this.selected = []
+      this.actionToAll = false
+
       this.deserializeQuery()
       await this.$nextTick()
       await this.getListData()
