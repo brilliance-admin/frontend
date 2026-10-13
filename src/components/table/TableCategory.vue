@@ -84,6 +84,7 @@
     </div>
 
     <TableView
+      ref="tableView"
       :items="pageData.data || []"
       :table-schema="getTableInfo().table_schema"
       :ordering-fields="getTableInfo().ordering_fields"
@@ -474,6 +475,7 @@ export default {
     this.navigationCategoryClickHandler = ({group, category}) => {
       if (group !== this.categorySchema.group || category !== this.categorySchema.category) return
 
+      this.$refs.tableView.reset()
       this.selected = []
       this.actionToAll = false
     }
@@ -611,8 +613,7 @@ export default {
         this.pageInfo.limit = Math.min(150, Math.max(25, parsed))
       }
 
-      const ordering = this.$route.query.ordering
-      if (ordering) this.ordering = ordering
+      this.ordering = this.$route.query.ordering || null
 
     },
     async syncRoute() {

@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    v-model:sort-by="sortBy"
     :class="{
       'model-table': true,
       'model-table--fit-screen': tableOptions.fit_screen === true,
@@ -140,6 +141,11 @@ export default {
     getDetailUrl: {type: Function, required: false},
   },
   emits: ['update:selected', 'update:select-all', 'update:sort-by', 'click:row'],
+  data() {
+    return {
+      sortBy: [],
+    }
+  },
   computed: {
     headers() {
       return this.tableSchema.list_display.map(slug => {
@@ -173,6 +179,9 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.sortBy = []
+    },
     detailUrl,
     isChoiceField,
     truncate,
