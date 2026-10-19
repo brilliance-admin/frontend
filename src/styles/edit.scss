@@ -243,7 +243,7 @@
         // Ввод данных
         .form-field-container {
             min-height: 50px;
-            flex: 0 1 920px;
+            flex: 0 1 $form-field-width;
             width: 100%;
             min-width: 0;
         }
@@ -375,8 +375,12 @@
   gap: 12px;
 }
 .form-field-container {
-    .v-input {
-        max-width: 920px !important;
+    .v-input,
+    .related-field:not(.related-field-dual) {
+        max-width: $form-field-width !important;
+    }
+    .related-field .v-input {
+        max-width: none !important;
     }
     .v-messages__message {
         display: inline-block;

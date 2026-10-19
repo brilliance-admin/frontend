@@ -1,171 +1,178 @@
 <template>
 
-  <template v-if="!isDualList()">
-    <v-autocomplete
-      :density="density"
-      :variant="variant"
-      :clearable="!isReadOnly()"
-      v-model="value"
-      :label="isFilter ? undefined : field.label"
-      :messages="getMessages()"
-      :readonly="isReadOnly()"
-      :menu-icon="isReadOnly() ? null : undefined"
-      :placeholder="isFilter ? undefined : $t('inputStringForSearch')"
+  <div
+    class="related-field d-flex align-start ga-2 w-100"
+    :class="{ 'related-field-dual': isDualList() }"
+  >
+    <div class="flex-grow-1" style="min-width: 0">
+      <template v-if="!isDualList()">
+        <v-autocomplete
+          :density="density"
+          :variant="variant"
+          :clearable="!isReadOnly()"
+          v-model="value"
+          :label="isFilter ? undefined : field.label"
+          :messages="getMessages()"
+          :readonly="isReadOnly()"
+          :menu-icon="isReadOnly() ? null : undefined"
+          :placeholder="isFilter ? undefined : $t('inputStringForSearch')"
 
-      :items="choices"
-      :multiple="isMany()"
-      :loading="loading || apiLoading"
-      chips
-      :closable-chips="!isReadOnly()"
-      persistent-hint
-      no-filter
-      hide-selected
+          :items="choices"
+          :multiple="isMany()"
+          :loading="loading || apiLoading"
+          chips
+          :closable-chips="!isReadOnly()"
+          persistent-hint
+          no-filter
+          hide-selected
 
-      :return-object="true"
-      item-value="key"
-      item-title="title"
+          :return-object="true"
+          item-value="key"
+          item-title="title"
 
-      :append-inner-icon="isMany() ? 'mdi-share-variant' : null"
+          :append-inner-icon="isMany() ? 'mdi-share-variant' : null"
 
-      :search="search"
-      @update:search="updateSearch"
-      @update:menu="onMenuUpdate"
-      @update:modelValue="onChange"
-    >
-      <template v-if="!isFilter" #label>
-        <span class="field-title">{{ field.label }}</span>
-        <span v-if="field.required" class="required-star">*</span>
-      </template>
-
-      <template v-slot:chip="{ item }">
-        <v-chip
-          :class="relatedChipClass(item.raw)"
-          :href="relatedDetailHref(item.raw)"
-          :link="hasRelatedDetail(item.raw)"
-          :closable="!isReadOnly()"
-          @mousedown.stop
-          @click.stop="openRelatedDetail($event, item.raw)"
-          @click:close="removeChip(item.raw)"
-          :text="item.raw.title"
-        ></v-chip>
-      </template>
-
-      <template v-slot:item="{ props, item }">
-        <v-list-item
-          v-bind="props"
-          :title="item.raw.title"
-        ></v-list-item>
-      </template>
-
-      <template v-if="canCreateRelated" #append>
-        <FormCreate
-          :title="relatedCategorySchema.title"
-          :admin-schema="adminSchema"
-          :category-schema="relatedCategorySchema"
-          @created="addCreatedRelated"
+          :search="search"
+          @update:search="updateSearch"
+          @update:menu="onMenuUpdate"
+          @update:modelValue="onChange"
         >
-          <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              icon="mdi-plus"
-              size="small"
-              variant="flat"
-              color="secondary"
-            />
+          <template v-if="!isFilter" #label>
+            <span class="field-title">{{ field.label }}</span>
+            <span v-if="field.required" class="required-star">*</span>
           </template>
-        </FormCreate>
+
+          <template v-slot:chip="{ item }">
+            <v-chip
+              :class="relatedChipClass(item.raw)"
+              :href="relatedDetailHref(item.raw)"
+              :link="hasRelatedDetail(item.raw)"
+              :closable="!isReadOnly()"
+              @mousedown.stop
+              @click.stop="openRelatedDetail($event, item.raw)"
+              @click:close="removeChip(item.raw)"
+              :text="item.raw.title"
+            ></v-chip>
+          </template>
+
+          <template v-slot:item="{ props, item }">
+            <v-list-item
+              v-bind="props"
+              :title="item.raw.title"
+            ></v-list-item>
+          </template>
+
+        </v-autocomplete>
       </template>
-    </v-autocomplete>
-  </template>
 
-  <template v-else>
-    <div class="field-title-section">
-      <span class="field-title">{{ field.label }}</span>
-      <span v-if="field.required" class="required-star">*</span>
-    </div>
-
-    <v-card
-      variant="elevated"
-      class="dial-list-card"
-      :loading="loading || apiLoading"
-    >
-
-      <v-card-text>
-        <v-row>
-          <v-col cols="6 dial-list-col">
-            <v-text-field
-              v-model="search"
-              :label="$t('inputStringForSearch')"
-              @update:modelValue="updateSearch"
-              @focus="refreshChoicesIfFormDataUpdated"
-              density="compact"
-                :readonly="isReadOnly()"
-            />
-
-            <v-card
-              style="height: 320px;"
-            >
-              <v-list
-                style="height: 100%; overflow-y: auto;"
-                density="compact"
-                :disabled="apiLoading || loading"
-                class="dial-list-list-card"
-              >
-                <v-list-item
-                  v-for="item in leftChoices"
-                  :key="item.key"
-                  :title="item.title"
-                  @click="addItem(item)"
-                  :disabled="isReadOnly()"
-                />
-              </v-list>
-            </v-card>
-          </v-col>
-
-          <v-col cols="6 dial-list-col">
-            <div
-              class="dial-list-selected-text text-caption"
-            >
-              <template v-if="!isReadOnly()">
-                {{ $t('selected') }}
-              </template>
-            </div>
-
-            <v-card
-              style="height: 320px;"
-            >
-              <v-list
-                style="height: 100%; overflow-y: auto;"
-                density="compact"
-                :disabled="apiLoading || loading"
-                class="dial-list-list-card"
-              >
-                <v-list-item
-                  v-for="item in rightChoices"
-                  :key="item.key"
-                  :title="item.title"
-                  @click="removeItem(item)"
-                  :disabled="isReadOnly()"
-                />
-              </v-list>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-    <div class="field-help-text text-caption mt-1">
-      <template v-if="totalChoicesCount !== null">
-        {{ $t('relatedCounter', { shown: currentChoicesCount, total: totalChoicesCount }) }}
-      </template>
       <template v-else>
-        {{ $t('relatedCurrentCounter', { shown: currentChoicesCount }) }}
+        <div class="field-title-section">
+          <span class="field-title">{{ field.label }}</span>
+          <span v-if="field.required" class="required-star">*</span>
+        </div>
+
+        <v-card
+          variant="elevated"
+          class="dial-list-card"
+          :loading="loading || apiLoading"
+        >
+
+          <v-card-text>
+            <v-row>
+              <v-col cols="6 dial-list-col">
+                <v-text-field
+                  v-model="search"
+                  :label="$t('inputStringForSearch')"
+                  @update:modelValue="updateSearch"
+                  @focus="refreshChoicesIfFormDataUpdated"
+                  density="compact"
+                    :readonly="isReadOnly()"
+                />
+
+                <v-card
+                  style="height: 320px;"
+                >
+                  <v-list
+                    style="height: 100%; overflow-y: auto;"
+                    density="compact"
+                    :disabled="apiLoading || loading"
+                    class="dial-list-list-card"
+                  >
+                    <v-list-item
+                      v-for="item in leftChoices"
+                      :key="item.key"
+                      :title="item.title"
+                      @click="addItem(item)"
+                      :disabled="isReadOnly()"
+                    />
+                  </v-list>
+                </v-card>
+              </v-col>
+
+              <v-col cols="6 dial-list-col">
+                <div
+                  class="dial-list-selected-text text-caption"
+                >
+                  <template v-if="!isReadOnly()">
+                    {{ $t('selected') }}
+                  </template>
+                </div>
+
+                <v-card
+                  style="height: 320px;"
+                >
+                  <v-list
+                    style="height: 100%; overflow-y: auto;"
+                    density="compact"
+                    :disabled="apiLoading || loading"
+                    class="dial-list-list-card"
+                  >
+                    <v-list-item
+                      v-for="item in rightChoices"
+                      :key="item.key"
+                      :title="item.title"
+                      @click="removeItem(item)"
+                      :disabled="isReadOnly()"
+                    />
+                  </v-list>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+        <div class="field-help-text text-caption mt-1">
+          <template v-if="totalChoicesCount !== null">
+            {{ $t('relatedCounter', { shown: currentChoicesCount, total: totalChoicesCount }) }}
+          </template>
+          <template v-else>
+            {{ $t('relatedCurrentCounter', { shown: currentChoicesCount }) }}
+          </template>
+        </div>
+        <div v-if="!isFilter && field.help_text" class="field-help-text text-caption mt-1">
+          {{ field.help_text }}
+        </div>
       </template>
     </div>
-    <div v-if="!isFilter && field.help_text" class="field-help-text text-caption mt-1">
-      {{ field.help_text }}
-    </div>
-  </template>
 
+    <FormCreate
+      v-if="canCreateRelated"
+      :title="relatedCategorySchema.title"
+      :admin-schema="adminSchema"
+      :category-schema="relatedCategorySchema"
+      @created="addCreatedRelated"
+    >
+      <template #activator="{ props }">
+        <v-btn
+          v-bind="props"
+          class="flex-shrink-0"
+          icon="mdi-plus"
+          size="small"
+          variant="flat"
+          color="secondary"
+        />
+      </template>
+    </FormCreate>
+  </div>
 </template>
 
 <script>

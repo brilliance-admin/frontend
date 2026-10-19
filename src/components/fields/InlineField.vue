@@ -3,6 +3,15 @@
     <v-card class="field-inline-card">
 
       <v-card-title class="d-flex align-center">
+        <v-btn
+          :icon="collapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'"
+          :aria-expanded="!collapsed"
+          :aria-label="field.label"
+          variant="text"
+          size="small"
+          class="mr-2"
+          @click="collapsed = !collapsed"
+        />
         <span class="field-title">{{ field.label }}</span>
         <v-chip
           size="small"
@@ -14,70 +23,74 @@
         <span v-if="field.required" class="required-star">*</span>
       </v-card-title>
 
-      <v-card-subtitle v-if="field.help_text">
-        {{ field.help_text }}
-      </v-card-subtitle>
+      <v-expand-transition>
+        <div v-show="!collapsed">
+          <v-card-subtitle v-if="field.help_text">
+            {{ field.help_text }}
+          </v-card-subtitle>
 
-      <v-card
-        v-if="readOnly && value.length === 0 && !field.table_view"
-        variant="elevated"
-        class="field-inline-record inline-record-empty"
-      >
-        {{ $t('noRecords') }}
-      </v-card>
+          <v-card
+            v-if="readOnly && value.length === 0 && !field.table_view"
+            variant="elevated"
+            class="field-inline-record inline-record-empty"
+          >
+            {{ $t('noRecords') }}
+          </v-card>
 
-      <TableView
-        v-if="field.table_view"
-        :items="value"
-        :table-schema="field.inline_field_schema"
-        :loading="loading"
-        hide-default-footer
-      />
-
-      <v-card
-        v-else
-        v-for="(item, index) in value"
-        :key="item?.id ?? index"
-        variant="elevated"
-        class="field-inline-record"
-      >
-        <div class="inline-record-layout">
-          <FieldsContainer
-            ref="fieldscontainer"
-            :form-type="itemFormTypes[index] ?? 'edit'"
-            :admin-schema="adminSchema"
-            :category-schema="categorySchema"
+          <TableView
+            v-if="field.table_view"
+            :items="value"
             :table-schema="field.inline_field_schema"
-            :inline-field-slug="fieldSlug"
-            :initial-form-data="item"
-
             :loading="loading"
-            :read-only="readOnly"
-
-            @changed="newValue => onChange(index, newValue)"
+            hide-default-footer
           />
-          <div v-if="!readOnly && canRemoveItem" class="inline-record-actions">
+
+          <v-card
+            v-else
+            v-for="(item, index) in value"
+            :key="item?.id ?? index"
+            variant="elevated"
+            class="field-inline-record"
+          >
+            <div class="inline-record-layout">
+              <FieldsContainer
+                ref="fieldscontainer"
+                :form-type="itemFormTypes[index] ?? 'edit'"
+                :admin-schema="adminSchema"
+                :category-schema="categorySchema"
+                :table-schema="field.inline_field_schema"
+                :inline-field-slug="fieldSlug"
+                :initial-form-data="item"
+
+                :loading="loading"
+                :read-only="readOnly"
+
+                @changed="newValue => onChange(index, newValue)"
+              />
+              <div v-if="!readOnly && canRemoveItem" class="inline-record-actions">
+                <v-btn
+                  class="inline-record-remove"
+                  icon="mdi-close"
+                  size="small"
+                  variant="flat"
+                  color="secondary"
+                  @click="removeItem(index)"
+                />
+              </div>
+            </div>
+          </v-card>
+
+          <div v-if="!readOnly && canAddItem" class="inline-record-add-wrap">
             <v-btn
-              class="inline-record-remove"
-              icon="mdi-close"
+              class="inline-record-add"
+              icon="mdi-plus"
               size="small"
               variant="flat"
-              color="secondary"
-              @click="removeItem(index)"
+              @click="addItem"
             />
           </div>
         </div>
-      </v-card>
-
-      <div v-if="!readOnly && canAddItem" class="inline-record-add-wrap">
-        <v-btn
-          class="inline-record-add"
-          icon="mdi-plus"
-          size="small"
-          variant="flat"
-          @click="addItem"
-        />
-      </div>
+      </v-expand-transition>
 
     </v-card>
   </div>
@@ -107,6 +120,7 @@ export default {
   emits: ["changed"],
   data(props) {
     return {
+      collapsed: false,
       value: [],
       itemFormTypes: [],
     }
