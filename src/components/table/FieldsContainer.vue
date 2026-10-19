@@ -66,12 +66,16 @@ export default {
   },
   mounted() {
     if (this.initialFormData) {
-      this.updateFormData(this.initialFormData)
+      if (this.formType === 'create') {
+        this.updateFormData({ ...this.getDefaultFormData(), ...this.initialFormData }, true)
+      } else {
+        this.updateFormData(this.initialFormData)
+      }
       return
     }
 
     if (this.formType === 'create') {
-      this.updateFormData(this.getDefaultFormData())
+      this.updateFormData(this.getDefaultFormData(), true)
     }
   },
   methods: {
@@ -110,12 +114,12 @@ export default {
     updateErrors(field_errors) {
       this.field_errors = field_errors
     },
-    updateFormData(newData) {
-      this.formData = newData
+    updateFormData(newData, partial = false) {
+      this.formData = partial ? { ...this.formData, ...newData } : newData
       const root = this.$refs.rootFormsetNode
       if (root && root.updateFormData) {
         try {
-          root.updateFormData(this.formData)
+          root.updateFormData(this.formData, partial)
         } catch (error) {
           console.warn('updateFormData error:', error)
           toast(

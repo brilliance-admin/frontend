@@ -6,6 +6,7 @@ import urlJoin from 'url-join'
 const tableDataListUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/list/')
 const tableDataRetriveUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/retrieve/{pk}/')
 const tableDataCreateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/create/')
+const tableBeforeCreateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/before-create/')
 const tableDataUpdateUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/update/{pk}/')
 const tableDataActionUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/action/{action}/')
 const filterSubtableUrl = urlJoin(getBackendApi(), 'table/{group}/{category}/filter-subtable/{field_slug}/')
@@ -95,6 +96,22 @@ export function getFilterSubtable(kwargs) {
       signal: kwargs.signal,
       timeout: config_dataset.api_timeout_ms,
     }).then(response => resolve(response.data)).catch(error => reject(error))
+  })
+}
+
+export function getTableBeforeCreate(kwargs) {
+  let url = tableBeforeCreateUrl.replace('{group}', kwargs.group).replace('{category}', kwargs.category)
+  url = appendQueryParams(url, kwargs)
+  return request({
+    url,
+    method: 'post',
+    data: { form_data: kwargs.formData || {} },
+    signal: kwargs.signal,
+    timeout: config_dataset.api_timeout_ms,
+    headers: {
+      'Accept-Language': getLang(),
+      'Cache-Control': 'no-cache',
+    },
   })
 }
 

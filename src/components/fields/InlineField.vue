@@ -8,7 +8,8 @@
           :aria-expanded="!collapsed"
           :aria-label="field.label"
           variant="text"
-          size="small"
+          size="default"
+          density="compact"
           class="mr-2"
           @click="collapsed = !collapsed"
         />

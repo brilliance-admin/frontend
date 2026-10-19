@@ -259,7 +259,7 @@ export default {
         }
       }
     },
-    updateFormData(newData) {
+    updateFormData(newData, partial = false) {
       if (newData === null || newData === undefined) {
         throw new Error('FormsetNode updateFormData: newData is empty')
       }
@@ -267,14 +267,14 @@ export default {
         throw new Error(`FormsetNode updateFormData: expected object, got ${Array.isArray(newData) ? 'array' : typeof newData}`)
       }
 
-      this.formData = newData
+      this.formData = partial ? { ...this.formData, ...newData } : newData
       for (const field of this.node.fields) {
         if (this.isFormsetNode(field)) {
           const child = this.$refs[this.getRefString(this.getFieldKey(field))]
           if (!child || !child[0] || !child[0].updateFormData) {
             throw new Error(`FormsetNode updateFormData: child formset ref missing for "${this.getFieldKey(field)}"`)
           }
-          child[0].updateFormData(newData)
+          child[0].updateFormData(newData, partial)
           continue
         }
 
@@ -283,6 +283,10 @@ export default {
           throw new Error('FormsetNode updateFormData: resolved field slug is empty')
         }
         if (!resolved.schema || !this.isDisplayField(field)) {
+          continue
+        }
+
+        if (partial && !Object.hasOwn(newData, resolved.slug)) {
           continue
         }
 

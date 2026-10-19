@@ -19,7 +19,7 @@
     </template>
 
     <template v-slot:default="{ isActive }">
-      <v-card v-if="open">
+      <v-card v-if="open" :loading="loading">
 
         <v-card-title class="d-flex justify-space-between align-center">
           <span v-if="getTitle()">{{ getTitle() }}: {{ $t('creation') }}</span>
@@ -34,12 +34,14 @@
 
         <!-- Form for create new model record -->
         <FieldsContainer
+          v-if="defaultsLoaded"
           ref="fieldscontainer"
           form-type="create"
           :admin-schema="adminSchema"
           :category-schema="categorySchema"
           :table-schema="categorySchema.getTableInfo().table_schema"
           :parent-pk="parentPk"
+          :initial-form-data="initialFormData"
 
           :loading="loading"
 
@@ -57,18 +59,29 @@
             :text="$t('create')"
             variant="elevated"
             color="primary"
+            :disabled="loading || !defaultsLoaded"
             @click="createModel"
           />
         </v-card-actions>
       </v-card>
     </template>
   </v-dialog>
+
+  <v-dialog v-model="persistentMessageDialog" class="persistent-message-dialog">
+    <v-card>
+      <v-card-text v-html="persistentMessage" />
+      <v-card-actions>
+        <v-spacer />
+        <v-btn :text="$t('close')" @click="persistentMessageDialog = false" />
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
 // A component for displaying a button that causes a form to be opened to create a model.
 import { CategorySchema } from '/src/api/schema'
-import { getTableCreate } from '/src/api/table'
+import { getTableBeforeCreate, getTableCreate } from '/src/api/table'
 import { toast } from "vue3-toastify"
 import FieldsContainer from '/src/components/table/FieldsContainer.vue'
 
@@ -88,13 +101,66 @@ export default {
       open: false,
       formData: {},
       loading: false,
+      defaultsLoaded: false,
+      initialFormData: {},
+      defaultsController: null,
+      persistentMessageDialog: false,
+      persistentMessage: null,
     }
   },
+  watch: {
+    open(isOpen) {
+      if (isOpen) {
+        this.loadDefaults()
+      } else {
+        this.defaultsController?.abort()
+        this.defaultsLoaded = false
+      }
+    },
+  },
+  beforeUnmount() {
+    this.defaultsController?.abort()
+  },
   methods: {
+    async loadDefaults() {
+      this.defaultsController?.abort()
+      const controller = new AbortController()
+      this.defaultsController = controller
+      this.defaultsLoaded = false
+      this.initialFormData = {}
+      this.formData = {}
+      this.loading = true
+      try {
+        const response = await getTableBeforeCreate({
+          group: this.categorySchema.group,
+          category: this.categorySchema.category,
+          subcategory: this.categorySchema.subcategory,
+          parent_pk: this.parentPk,
+          formData: this.formData,
+          signal: controller.signal,
+        })
+        if (controller.signal.aborted) return
+        this.initialFormData = response.data.form_data
+        this.formData = { ...response.data.form_data }
+        this.defaultsLoaded = true
+      } catch (error) {
+        if (controller.signal.aborted) return
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadRecord'))
+        if (errorResult.persistentMessage) {
+          this.persistentMessageDialog = true
+          this.persistentMessage = errorResult.persistentMessage
+        }
+      } finally {
+        if (this.defaultsController === controller) {
+          this.loading = false
+        }
+      }
+    },
     getTitle() {
       return this.title
     },
     createModel() {
+      if (this.loading || !this.defaultsLoaded) return
       this.loading = true
       this.$refs.fieldscontainer.updateErrors({})
       getTableCreate({

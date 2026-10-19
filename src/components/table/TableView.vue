@@ -134,7 +134,7 @@ export default {
     selected: {type: Array, default: () => []},
     selectable: {type: Boolean, required: false},
     selectAll: {type: Boolean, required: false},
-    totalCount: {type: Number, required: false},
+    totalCount: {type: [String, Number], required: false},
     itemsPerPage: {type: Number, default: -1},
     page: {type: Number, required: false},
     hideDefaultFooter: {type: Boolean, required: false},
