@@ -41,7 +41,7 @@
     </v-dialog>
 
     <v-dialog persistent v-model="actionFormDialogOpen" class="action-form-dialog">
-      <v-card :disabled="actionLoading" :loading="actionLoading">
+      <v-card :disabled="actionLoading" :loading="actionLoading || defaultsLoading">
         <v-card-title class="d-flex justify-space-between align-center">
           <span>{{ getActionTitle() }}</span>
 
@@ -57,11 +57,15 @@
 
         <div v-on:keydown.enter.prevent="applyAction">
           <FieldsContainer
+            v-if="defaultsLoaded"
             ref="actionFieldsContainer"
             formType="create"
             :admin-schema="adminSchema"
             :category-schema="categorySchema"
             :table-schema="getActionInfo().form_schema"
+            :initial-form-data="initialFormData"
+            :action-name="actionSelected"
+            :parent-pk="parentPk"
             :loading="actionLoading"
             @changed="value => actionFormData = value"
           />
@@ -80,7 +84,7 @@
             variant="tonal"
             color="primary"
             @click="applyAction"
-            :disabled="actionLoading"
+            :disabled="actionLoading || defaultsLoading || !defaultsLoaded"
           />
         </v-card-actions>
       </v-card>
@@ -102,7 +106,7 @@
 <script>
 import moment from 'moment'
 import { toast } from "vue3-toastify"
-import { sendTableAction, downloadContent } from '/src/api/table'
+import { getTableBeforeCreate, sendTableAction, downloadContent } from '/src/api/table'
 import { CategorySchema } from '/src/api/schema'
 import FieldsContainer from '/src/components/table/FieldsContainer.vue'
 
@@ -125,6 +129,10 @@ export default {
       actionSelected: null,
       actionInfo: null,
       actionFormData: null,
+      initialFormData: {},
+      defaultsLoaded: false,
+      defaultsLoading: false,
+      defaultsController: null,
       actionContext: {
         pks: [],
         sendToAll: false,
@@ -136,6 +144,17 @@ export default {
       persistentMessageDialog: false,
       persistentMessage: null,
     }
+  },
+  watch: {
+    actionFormDialogOpen(isOpen) {
+      if (!isOpen) {
+        this.defaultsController?.abort()
+        this.defaultsLoaded = false
+      }
+    },
+  },
+  beforeUnmount() {
+    this.defaultsController?.abort()
   },
   methods: {
     run({actionKey, actionInfo, pks = [], sendToAll = false, filters = {}, search = null, totalCount = null}) {
@@ -156,6 +175,9 @@ export default {
         return
       }
 
+      this.defaultsController?.abort()
+      this.defaultsLoaded = false
+      this.initialFormData = {}
       this.actionSelected = actionKey
       this.actionInfo = actionInfo
       this.actionFormData = null
@@ -173,6 +195,7 @@ export default {
 
       if (actionInfo.form_schema) {
         this.actionFormDialogOpen = true
+        this.loadDefaults()
         return
       }
 
@@ -182,6 +205,43 @@ export default {
       }
 
       this.applyAction()
+    },
+    async loadDefaults() {
+      const controller = new AbortController()
+      this.defaultsController = controller
+      this.defaultsLoading = true
+      try {
+        const response = await getTableBeforeCreate({
+          group: this.categorySchema.group,
+          category: this.categorySchema.category,
+          subcategory: this.categorySchema.subcategory,
+          parent_pk: this.parentPk,
+          action_name: this.actionSelected,
+          pks: this.actionContext.pks,
+          sendToAll: this.actionContext.sendToAll,
+          filters: this.actionContext.filters,
+          search: this.actionContext.search,
+          formData: this.actionFormData || {},
+          signal: controller.signal,
+        })
+        if (controller.signal.aborted) return
+        this.initialFormData = response.data.form_data
+        this.actionFormData = { ...response.data.form_data }
+        this.defaultsLoaded = true
+        await this.$nextTick()
+      } catch (error) {
+        if (controller.signal.aborted) return
+        const errorResult = this.$handleError(error, this.$t('errorTitles.loadRecord'))
+        if (errorResult.persistentMessage) {
+          this.persistentMessageDialog = true
+          this.persistentMessage = errorResult.persistentMessage
+        }
+        this.$emit('error', { actionKey: this.actionSelected, error, errorResult })
+      } finally {
+        if (this.defaultsController === controller) {
+          this.defaultsLoading = false
+        }
+      }
     },
     getActionInfo() {
       if (!this.actionInfo) {
@@ -203,6 +263,8 @@ export default {
       this.actionFormDialogOpen = false
     },
     applyAction() {
+      if (this.actionLoading) return
+      if (this.getActionInfo().form_schema && (this.defaultsLoading || !this.defaultsLoaded)) return
       this.actionLoading = true
       this.$emit('started')
       sendTableAction({

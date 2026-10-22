@@ -5,25 +5,26 @@
     <div class="filters-row">
       <div class="filters-fields">
 
-        <div class="filter-element filter-element--search" v-if="searchEnabled" :title="$t('search')">
+        <div class="filter-element filter-element--search" v-if="searchEnabled">
 
-      <label class="filter-label"><span>{{ $t('search') }}</span></label>
+      <v-tooltip v-if="searchHelp" location="bottom">
+        <template #activator="{ props }">
+          <label class="filter-label" v-bind="props">
+            <span>{{ $t('search') }}</span>
+          </label>
+        </template>
+        <div v-html="searchHelpHtml()"></div>
+      </v-tooltip>
+      <label v-else class="filter-label"><span>{{ $t('search') }}</span></label>
 
       <v-text-field
+        class="filter-search-input"
+        :placeholder="$t('searchPlaceholder')"
         v-model="search"
         density="compact"
         variant="solo"
         v-on:keydown.enter.prevent="applyFilter"
-      >
-        <template #append-inner>
-          <v-tooltip location="bottom">
-            <template #activator="{ props }">
-              <v-icon v-bind="props" icon="mdi-help-circle-outline" v-if="searchHelp"/>
-            </template>
-            <div v-html="searchHelpHtml()"></div>
-          </v-tooltip>
-        </template>
-      </v-text-field>
+      />
 
         </div>
 
@@ -31,10 +32,14 @@
           v-for="(filter, filter_name) in fieldsInfo"
           v-bind:key="filter_name"
           class="filter-element"
-          :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
           v-on:keydown.enter.prevent="applyFilter"
         >
-          <label class="filter-label"><span>{{ filter.label }}</span></label>
+          <label
+            class="filter-label"
+            :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
+          >
+            <span>{{ filter.label }}</span>
+          </label>
 
           <component
             v-if="getFieldComponent(filter)"

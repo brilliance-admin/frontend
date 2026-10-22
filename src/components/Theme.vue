@@ -20,14 +20,18 @@
 import { ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 import { getLocalSettings, setLocalSettings } from '/src/utils/settings'
-import { getThemeList } from '/src/styles/themes'
+import { getThemes, getThemeList } from '/src/styles/themes'
 
 const theme = useTheme()
 const currentTheme = ref(theme.global.name.value)
+const previewThemes = getThemes()
 
 function getColor(name, key) {
-  const t = theme.themes.value[name]
+  const t = previewThemes[name]
   if (!t) return undefined
+  if (key === 'background') {
+    return t.colors.background ?? (t.dark ? '#121212' : '#FFFFFF')
+  }
   return t.colors[key]
 }
 

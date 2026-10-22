@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 .list-page {
     display: flex;
     flex-direction: column;
@@ -125,7 +127,17 @@
     }
 }
 
+.filter-search-input {
+    min-width: 160px;
+}
+
+.filters-container .filter-search-input input:placeholder-shown {
+    max-inline-size: 160px;
+    text-overflow: ellipsis;
+}
+
 .table-bottom {
+    border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     height: auto;
     display: flex;
     flex-direction: row;
@@ -138,6 +150,8 @@
     }
     .selected-count {
         min-width: 80px;
+        max-width: 250px;
+        margin: 0px;
     }
     .actions-cell {
         flex: 1 0 0;

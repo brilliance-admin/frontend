@@ -19,7 +19,7 @@
       </router-link>
     </v-list-item>
 
-    <v-divider></v-divider>
+    <v-divider gradient color="primary" :thickness="2" :opacity="0.6" />
 
     <v-list v-model:opened="openedGroups">
       <template v-for="(group, group_slug) in adminSchema.get_categories()">

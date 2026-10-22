@@ -1,6 +1,7 @@
 <template>
 
   <v-select
+    v-if="!field.btn_toggle"
     :density="density"
     :variant="variant"
     :clearable="!readOnly"
@@ -59,6 +60,41 @@
     </template>
   </v-select>
 
+  <div v-else>
+    <div v-if="!isFilter" class="field-title-section">
+      <span class="field-title">{{ field.label }}</span>
+      <span v-if="field.required" class="required-star">*</span>
+    </div>
+    <v-input
+      :messages="getMessages()"
+      :readonly="readOnly"
+      :disabled="loading"
+    >
+      <template #default>
+        <v-btn-toggle
+          class="choice-btn-toggle"
+          :model-value="toggleValue"
+          :density="density"
+          :disabled="readOnly || loading"
+          variant="outlined"
+          mandatory
+          divided
+          @update:modelValue="onChange"
+        >
+          <v-btn
+            v-for="(choice, index) in field.choices"
+            :key="index"
+            :value="choice"
+            :color="choice.tag_color"
+            :text="choice.title.length > 15 ? `${choice.title.slice(0, 15)}…` : choice.title"
+            :title="choice.title"
+            variant="outlined"
+          />
+        </v-btn-toggle>
+      </template>
+    </v-input>
+  </div>
+
 </template>
 
 <script>
@@ -85,6 +121,14 @@ export default {
       this.value = this.field.default
     }
   },
+  computed: {
+    toggleValue() {
+      const selected = this.value !== null && typeof this.value === 'object'
+        ? this.value.value
+        : this.value
+      return this.field.choices?.find(choice => choice.value === selected) ?? null
+    },
+  },
   methods: {
     getChoiceChipColor(value) {
       const choice = this.field.choices?.find(c => c.value === value)
@@ -105,3 +149,5 @@ export default {
   },
 }
 </script>
+
+

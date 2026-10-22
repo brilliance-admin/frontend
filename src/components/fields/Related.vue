@@ -44,21 +44,21 @@
 
           <template v-slot:chip="{ item }">
             <v-chip
-              :class="relatedChipClass(item.raw)"
-              :href="relatedDetailHref(item.raw)"
-              :link="hasRelatedDetail(item.raw)"
+              :class="relatedChipClass(item)"
+              :href="relatedDetailHref(item)"
+              :link="hasRelatedDetail(item)"
               :closable="!isReadOnly()"
               @mousedown.stop
-              @click.stop="openRelatedDetail($event, item.raw)"
-              @click:close="removeChip(item.raw)"
-              :text="item.raw.title"
+              @click.stop="openRelatedDetail($event, item)"
+              @click:close="removeChip(item)"
+              :text="item.title"
             ></v-chip>
           </template>
 
           <template v-slot:item="{ props, item }">
             <v-list-item
               v-bind="props"
-              :title="item.raw.title"
+              :title="item.title"
             ></v-list-item>
           </template>
 

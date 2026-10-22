@@ -22,7 +22,7 @@
       :parent-pk="parentPk"
       :form-type="formType"
       :field-errors="field_errors"
-      @changed="value => $emit('changed', value)"
+      @changed="onChanged"
     />
 
   </div>
@@ -79,6 +79,10 @@ export default {
     }
   },
   methods: {
+    onChanged(value) {
+      this.formData = value
+      this.$emit('changed', value)
+    },
     getDefaultFormData() {
       const defaults = {}
 

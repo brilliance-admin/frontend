@@ -1,5 +1,9 @@
 <template>
-  <div class="navigation-page">
+  <div class="navigation-page" :class="{ 'navigation-page--empty': !hasSections }">
+
+    <p v-if="!hasSections" class="text-center text-medium-emphasis" role="status">
+      {{ $t('noAccessibleSections') }}
+    </p>
 
     <template v-for="(group, group_slug) in adminSchema.get_categories()">
       <div
@@ -56,6 +60,11 @@ export default {
     return {
       categoryUrl: categoryUrl,
     }
+  },
+  computed: {
+    hasSections() {
+      return Object.values(this.adminSchema.get_categories()).some(group => this.hasSubcategories(group))
+    },
   },
   watch: {
     $route: {

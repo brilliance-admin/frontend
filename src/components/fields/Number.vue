@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { VNumberInput } from 'vuetify/labs/VNumberInput'
+import { VNumberInput } from 'vuetify/components'
 import { defaultProps, validateProps } from '/src/utils/fields.js'
 
 const requiredFields = {

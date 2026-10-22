@@ -1,7 +1,7 @@
 <template>
   <div :class="{
     'formset-card': needFormsetCard(node),
-    'formset-inline--sectioned': inlineFieldSlug && hasNamedChildFormset(node),
+    'formset-inline--sectioned': inlineFieldSlug && !needFormsetCard(node) && hasNamedChildFormset(node),
   }">
     <v-card
       v-if="node.title || node.description || node.icon"
@@ -20,10 +20,13 @@
 
     <div class="formset-grid">
       <template v-for="field in node.fields" v-bind:key="getFieldKey(field)">
-        <div
+        <v-lazy
           v-if="isFormsetNode(field)"
           class="formset-grid-item"
           :style="{ gridColumn: `span ${field.col_span || 12}` }"
+          :min-height="readyFormsets.has(getFieldKey(field)) ? undefined : 200"
+          :transition="false"
+          @update:modelValue="active => initializeFormset(field, active)"
         >
           <FormsetNode
             :ref="getRefString(getFieldKey(field))"
@@ -40,7 +43,7 @@
             :field-errors="fieldErrors"
             @changed="value => _mergeValue(value)"
           />
-        </div>
+        </v-lazy>
 
         <div
           v-else-if="resolveField(field).schema && isDisplayField(field)"
@@ -92,7 +95,6 @@ import NumberField from '/src/components/fields/Number.vue'
 import ChoiceField from '/src/components/fields/Choice.vue'
 import MultipleChoiceField from '/src/components/fields/MultipleChoice.vue'
 import FileField from '/src/components/fields/File.vue'
-import JSONFormsField from '/src/components/fields/JSONForms.vue'
 import JSONEditorField from '/src/components/fields/JSONEditor.vue'
 import RelatedField from '/src/components/fields/Related.vue'
 import DateTimeField from '/src/components/fields/DateTime.vue'
@@ -100,10 +102,12 @@ import ArrayField from '/src/components/fields/ArrayField.vue'
 import InlineField from '/src/components/fields/InlineField.vue'
 import TinyMCEField from '/src/components/fields/TinyMCE/index.vue'
 import CKEditor from '/src/components/fields/CKEditor.vue'
-import { createAjv } from '@jsonforms/core'
+import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
 import { isChoiceField } from '/src/utils/fields'
 
-const ajv = createAjv()
+const ajv = new Ajv({ allErrors: true, verbose: true, strict: false, addUsedSchema: false })
+addFormats(ajv)
 
 export default {
   name: 'FormsetNode',
@@ -124,9 +128,26 @@ export default {
   data() {
     return {
       formData: {},
+      hasFormData: false,
+      partialFormData: false,
+      readyFormsets: new Set(),
     }
   },
   methods: {
+    async initializeFormset(field, active) {
+      if (!active) return
+      await this.$nextTick()
+      const key = this.getFieldKey(field)
+      const child = this.$refs[this.getRefString(key)]?.[0]
+      if (!child || !child.updateFormData) {
+        throw new Error(`FormsetNode initializeFormset: child formset ref missing for "${key}"`)
+      }
+      if (this.hasFormData) {
+        child.updateFormData(this.formData, this.partialFormData)
+        child.updateChildrenFormContext()
+      }
+      this.readyFormsets.add(key)
+    },
     isDisplayField(field) {
       const schema = this.resolveField(field).schema
       if (this.formType === 'create' && schema.read_only) return false
@@ -152,7 +173,6 @@ export default {
       if (['array'].indexOf(field.type) !== -1) return ArrayField
       if (['inline'].indexOf(field.type) !== -1) return InlineField
       if (field.type === 'json') {
-        if (field.json_forms) return JSONFormsField
         return JSONEditorField
       }
       return
@@ -268,8 +288,11 @@ export default {
       }
 
       this.formData = partial ? { ...this.formData, ...newData } : newData
+      this.hasFormData = true
+      this.partialFormData = partial
       for (const field of this.node.fields) {
         if (this.isFormsetNode(field)) {
+          if (!this.readyFormsets.has(this.getFieldKey(field))) continue
           const child = this.$refs[this.getRefString(this.getFieldKey(field))]
           if (!child || !child[0] || !child[0].updateFormData) {
             throw new Error(`FormsetNode updateFormData: child formset ref missing for "${this.getFieldKey(field)}"`)

@@ -1,13 +1,9 @@
-$model-form-width: 1200px;
-$form-field-width: 920px;
-$screen-narrow: 1280px;
-$screen-mobile-wide: 640px;
-
-@import '/src/styles/list.scss';
-@import '/src/styles/navbar.scss';
-@import '/src/styles/dashboard.scss';
-@import '/src/styles/edit.scss';
-@import '/src/styles/login.scss';
+@use 'variables' as *;
+@use 'list';
+@use 'navbar';
+@use 'dashboard';
+@use 'edit';
+@use 'login';
 
 html,
 body {
@@ -114,9 +110,24 @@ body {
     overflow-x: auto;
 }
 
+.navigation-page--empty {
+    display: grid;
+    place-items: center;
+    min-height: calc(100dvh - var(--v-layout-top, 0px) - var(--v-layout-bottom, 0px));
+    padding: 24px;
+
+    > p {
+        white-space: pre-line;
+    }
+}
+
 .navigation-page {
     margin-left: 10px;
     margin-top: 10px;
+
+    &.navigation-page--empty {
+        margin: 0;
+    }
 
     .navigation-element {
         display: inline-block;
@@ -371,10 +382,13 @@ body {
     }
 }
 
-// Подсветка полей в фльтрах
+// Фон полей фильтров в тёмной теме
 .filters-container .v-field[class*="dark" i] {
+    background-color: rgb(var(--v-theme-surface)) !important;
+    background-image: none;
+
     .v-field__overlay {
-        background-color: rgba(var(--v-theme-on-surface), 0.025) !important;
+        background-color: transparent !important;
     }
 }
 

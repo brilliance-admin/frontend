@@ -46,7 +46,11 @@
       @changed="value => formData = value"
     />
 
-    <div class="model-form-bottom-actions">
+    <v-footer
+      v-if="canUpdate()"
+      color="surface"
+      class="model-form-bottom-actions form-update-actions"
+    >
       <div class="model-form-button">
         <v-btn
           v-if="canUpdate()"
@@ -67,7 +71,7 @@
           :disabled="this.loading"
         />
       </div>
-    </div>
+    </v-footer>
   </div>
 
 </template>

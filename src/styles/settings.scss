@@ -5,6 +5,8 @@
 
 // https://vuetifyjs.com/en/features/sass-variables/#variable-api
 @use 'vuetify/settings' with (
+    $card-title-font-size: 1.25rem,
+    $card-title-font-weight: 500,
     $list-item-prepend-size: 10px,
     $list-item-icon-margin-start: 10px,
     $list-item-slim-spacer-width: 10px,

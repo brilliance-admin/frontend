@@ -17,6 +17,9 @@ function appendQueryParams(url, kwargs) {
   if (kwargs.subcategory) {
     params.set('subcategory', kwargs.subcategory)
   }
+  if (kwargs.action_name) {
+    params.set('action_name', kwargs.action_name)
+  }
   if (kwargs.parent_pk !== undefined && kwargs.parent_pk !== null && kwargs.parent_pk !== '') {
     params.set('parent_pk', kwargs.parent_pk)
   }
@@ -105,7 +108,13 @@ export function getTableBeforeCreate(kwargs) {
   return request({
     url,
     method: 'post',
-    data: { form_data: kwargs.formData || {} },
+    data: {
+      form_data: kwargs.formData || {},
+      pks: kwargs.pks || [],
+      send_to_all: kwargs.sendToAll || false,
+      filters: kwargs.filters || {},
+      search: kwargs.search ?? null,
+    },
     signal: kwargs.signal,
     timeout: config_dataset.api_timeout_ms,
     headers: {
