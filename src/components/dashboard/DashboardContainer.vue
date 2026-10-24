@@ -6,7 +6,7 @@
     :lg="componentData.lg"
     class="d-flex flex-column"
   >
-    <v-row v-if="componentData.components" class="flex-grow-1 h-100">
+    <v-row v-if="componentData.components" density="default" :gap="24" class="flex-grow-1 h-100">
       <template v-for="component in componentData.components" :key="component">
         <template v-if="component.component_type === 'container'">
           <DashboardContainer :component-data="component" />

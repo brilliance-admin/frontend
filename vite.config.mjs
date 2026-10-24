@@ -1,5 +1,4 @@
 // Plugins
-import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
@@ -22,16 +21,6 @@ export default defineConfig({
       },
     }),
     Components(),
-    AutoImport({
-      imports: [
-        'vue',
-        'vue-router',
-      ],
-      eslintrc: {
-        enabled: true,
-      },
-      vueTemplate: true,
-    }),
   ],
   define: { 'process.env': {} },
   resolve: {

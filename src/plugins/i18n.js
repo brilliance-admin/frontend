@@ -11,6 +11,7 @@ const messages = {
       max_length: 'Значение должно содержать не более {max_length} символов',
     },
     sectionSettings: 'Section settings',
+    initialLoadErrorHelp: 'Could not retrieve the settings or section structure from the server. The server may be unavailable or an error may have occurred while processing the request.\nRefresh the page. If the problem persists, contact your administrator.',
     notFoundPageHeadline: 'Page not found',
     notFoundPageTitle: 'The page you were looking for does not exist',
     notFoundPageGoBack: 'Go back to navigation',
@@ -86,6 +87,7 @@ const messages = {
   },
   ru: {
     sectionSettings: 'Настройки раздела',
+    initialLoadErrorHelp: 'Не удалось получить настройки или структуру разделов от сервера. Возможно, сервер недоступен или при обработке запроса произошла ошибка.\nОбновите страницу. Если проблема повторяется, обратитесь к администратору.',
     notFoundPageHeadline: 'Страница не найдена',
     notFoundPageTitle: 'Страница, которую вы искали, не существует',
     notFoundPageGoBack: 'Вернуться на главную страницу',

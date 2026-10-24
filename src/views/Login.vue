@@ -4,7 +4,13 @@
     <v-main class="login-page">
       <Settings v-if="settings" ref="settings" :settings="settings"/>
 
-      <v-container fluid class="fill-height gradient-bg">
+      <InitialLoadError
+        v-if="settingsError"
+        :error="settingsError"
+        :title="$t('errorTitles.loadSettings')"
+      />
+
+      <v-container v-else fluid class="fill-height gradient-bg">
 
         <v-row>
 
@@ -116,8 +122,10 @@ import { getMainPage } from '/src/utils/router'
 import Settings from '/src/components/Settings.vue'
 import Language from '/src/components/Language.vue'
 import Loader from '/src/components/Loader.vue'
+import InitialLoadError from '/src/components/InitialLoadError.vue'
 
 export default {
+  components: { InitialLoadError },
   data () {
     return {
       settings: null,
@@ -127,6 +135,7 @@ export default {
       show: false,
       loading: false,
       settingsLoading: true,
+      settingsError: null,
     }
   },
   watch: {
@@ -150,14 +159,7 @@ export default {
       this.settingsLoading = false
       console.error('Get admin settings error:', error)
 
-      const errorResult = this.$handleError(error, this.$t('errorTitles.loadSettings'))
-      if (errorResult.fieldErrors) {
-        this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
-      }
-      if (errorResult.persistentMessage) {
-        this.persistentMessageDialog = true
-        this.persistentMessage = errorResult.persistentMessage
-      }
+      this.settingsError = error
     })
   },
   methods: {

@@ -1,7 +1,9 @@
 <template>
   <v-layout class="h-screen">
 
-    <template v-if="settings && adminSchema">
+    <InitialLoadError v-if="loadError" :error="loadError.error" :title="loadError.title" />
+
+    <template v-else-if="settings && adminSchema">
 
       <Navbar ref="navbar" :admin-schema="adminSchema" :settings="settings"/>
 
@@ -46,6 +48,7 @@ import Navbar from '/src/layout/Navbar.vue'
 import Header from '/src/layout/Header.vue'
 import Settings from '/src/components/Settings.vue'
 import Loader from '/src/components/Loader.vue'
+import InitialLoadError from '/src/components/InitialLoadError.vue'
 
 import { getAdminSchema } from '/src/api/schema'
 import { getToken } from '/src/utils/auth'
@@ -58,12 +61,14 @@ export default {
     Navbar,
     Header,
     Settings,
+    InitialLoadError,
   },
   data() {
     return {
       adminSchema: null,
       settings: null,
       loading: true,
+      loadError: null,
       langs: null,
     }
   },
@@ -81,11 +86,7 @@ export default {
       console.error('Get admin settings error:', error)
       this.loading = false
 
-      const errorResult = this.$handleError(error, this.$t('errorTitles.loadSettings'))
-      if (errorResult.persistentMessage) {
-        this.persistentMessageDialog = true
-        this.persistentMessage = errorResult.persistentMessage
-      }
+      this.loadError = { error, title: this.$t('errorTitles.loadSettings') }
       return
     })
   },
@@ -112,14 +113,7 @@ export default {
           return
         }
 
-        const errorResult = this.$handleError(error, this.$t('errorTitles.loadAdminSchema'))
-        if (errorResult.fieldErrors) {
-          this.$refs.fieldscontainer.updateErrors(errorResult.fieldErrors)
-        }
-        if (errorResult.persistentMessage) {
-          this.persistentMessageDialog = true
-          this.persistentMessage = errorResult.persistentMessage
-        }
+        this.loadError = { error, title: this.$t('errorTitles.loadAdminSchema') }
       })
     }
   }

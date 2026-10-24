@@ -139,7 +139,9 @@ export default {
       return this.field.help_text || []
     },
     updateFormData(initFormData) {
-      const value = initFormData[this.fieldSlug]
+      const value = Object.hasOwn(initFormData, this.fieldSlug)
+        ? initFormData[this.fieldSlug]
+        : this.isFilter ? undefined : this.field.default
       this.value = value
     },
     onChange(newValue) {

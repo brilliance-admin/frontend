@@ -1,14 +1,10 @@
 <template>
-  <v-container fluid class="fill-height h-screen">
-    <v-row>
-      <v-col class="d-flex justify-center">
-        <v-progress-circular
-          :size="50"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-      </v-col>
-    </v-row>
+  <v-container fluid class="h-screen d-flex align-center justify-center">
+    <v-progress-circular
+      :size="50"
+      color="primary"
+      indeterminate
+    />
   </v-container>
 </template>
 

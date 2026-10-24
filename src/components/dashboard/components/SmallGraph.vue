@@ -2,10 +2,10 @@
   <v-card rounded="lg" class="dashboard-card pa-6 flex-grow-1 d-flex flex-column">
     <div class="d-flex align-center mb-2">
       <v-icon size="20" color="grey-darken-1" class="mr-2">{{ componentData.icon || 'mdi-wallet-outline' }}</v-icon>
-      <span class="text-body-2 text-grey-darken-1">{{ componentData.title }}</span>
+      <span class="dashboard-label text-grey-darken-1">{{ componentData.title }}</span>
     </div>
     <div class="d-flex align-center mb-4">
-      <span class="dashboard-value text-h5 font-weight-bold">{{ componentData.value }}</span>
+      <span class="dashboard-value dashboard-value--small">{{ componentData.value }}</span>
       <v-chip
         v-if="componentData.change !== undefined"
         :color="componentData.change >= 0 ? 'success' : 'error'"
@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div class="d-flex justify-space-between text-caption text-grey">
+    <div class="d-flex justify-space-between dashboard-caption text-grey">
       <span v-for="label in pointLabels" :key="label">{{ label }}</span>
     </div>
   </v-card>

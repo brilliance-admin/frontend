@@ -28,27 +28,6 @@ function appendQueryParams(url, kwargs) {
   return query ? `${url}?${query}` : url
 }
 
-function getDebugCategory(kwargs) {
-  if (kwargs.subcategory) {
-    return `${kwargs.group}/${kwargs.category}/${kwargs.subcategory}`
-  }
-  return `${kwargs.group}/${kwargs.category}`
-}
-
-function logDebugInfo(action, kwargs, data) {
-  const debugInfo = data?.debug_info
-  if (!debugInfo) return
-
-  const category = getDebugCategory(kwargs)
-  const serializeText = debugInfo.serialize_ms !== null && debugInfo.serialize_ms !== undefined
-    ? ` (serialize: ${debugInfo.serialize_ms}ms)`
-    : ''
-  console.log(`${action} ${category} SQL query count: ${debugInfo.db_query_count}${serializeText}`)
-  for (const query of debugInfo.queries || []) {
-    console.log(`${action} ${category} [${query.time_ms}ms] SQL: ${query.sql}`)
-  }
-}
-
 export function getDataList(kwargs) {
   return new Promise((resolve, reject) => {
     const pageInfo = kwargs.pageInfo || {}
@@ -71,7 +50,6 @@ export function getDataList(kwargs) {
       },
       timeout: config_dataset.api_timeout_ms,
     }).then(response => {
-      logDebugInfo('List', kwargs, response.data)
       resolve(response.data)
     }).catch(error => reject(error))
   })
@@ -138,7 +116,6 @@ export function getTableCreate(kwargs) {
         'Cache-Control': 'no-cache',
       },
     }).then(response => {
-      logDebugInfo('Create', kwargs, response.data)
       resolve(response)
     }).catch(error => reject(error))
   })
@@ -157,7 +134,6 @@ export function getTableRetrieve(kwargs) {
         'Cache-Control': 'no-cache',
       },
     }).then(response => {
-      logDebugInfo('Retrieve', kwargs, response.data)
       resolve(response)
     }).catch(error => reject(error))
   })
@@ -188,7 +164,6 @@ export async function sendTableUpdate(kwargs) {
       },
       timeout: config_dataset.api_timeout_ms,
     }).then(response => {
-      logDebugInfo('Update', kwargs, response.data)
       resolve(response)
     }).catch(error => {
       reject(error)
