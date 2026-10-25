@@ -91,6 +91,16 @@
 
     <div class="filter-button">
       <v-btn
+        class="filter-button-reset"
+        icon="mdi-filter-remove-outline"
+        :title="$t('resetFilters')"
+        :aria-label="$t('resetFilters')"
+        :disabled="loading || !hasFiltersToReset"
+        @click="resetFilters"
+      />
+    </div>
+    <div class="filter-button">
+      <v-btn
         class="filter-button-apply"
         @click="applyFilter"
         color="secondary"
@@ -134,6 +144,8 @@
 </template>
 
 <script>
+import { toast } from 'vue3-toastify'
+import { escapeHtml } from '/src/utils'
 import { applyFiltersToQuery, extractFiltersFromQuery, normalizeFilters } from '/src/utils/filters'
 import { isChoiceField } from '/src/utils/fields'
 import { CategorySchema } from '/src/api/schema'
@@ -176,6 +188,11 @@ export default {
     this.deserializeQuery(this.$route)
   },
   computed: {
+    hasFiltersToReset() {
+      return Boolean(this.search) || Object.values(this.getFilters()).some(
+        value => !Array.isArray(value) || value.length > 0
+      )
+    },
     filterQuery() {
       return this.getFilterQuery(this.$route.query)
     },
@@ -359,6 +376,26 @@ export default {
         this.filterSubtableLoading[fieldSlug] = false
         this.filterSubtableAbortController = null
       })
+    },
+    showErrors(fieldErrors) {
+      const messages = Object.entries(fieldErrors).map(([slug, error]) => {
+        const label = escapeHtml(this.fieldsInfo[slug]?.label || slug)
+        const message = escapeHtml(error.message || this.$t(error.code))
+        return `<strong>${label}:</strong> ${message}`
+      }).join('\n')
+
+      toast(this.$t('filterValidationError', { messages }).replaceAll('\n', '<br>'), {
+        dangerouslyHTMLString: true,
+        theme: 'auto',
+        type: 'error',
+        position: 'top-center',
+      })
+    },
+    resetFilters() {
+      if (this.loading) return
+      this.search = null
+      this.filters = {}
+      this.applyFiltersToFields()
     },
     applyFilter() {
       if (this.loading) return

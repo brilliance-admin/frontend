@@ -660,6 +660,12 @@ export default {
         this.loading = false
       }).catch(error => {
         this.loading = false
+        const fieldErrors = error.response?.data?.field_errors
+        if (fieldErrors && this.$refs.filters) {
+          this.$refs.filters.showErrors(fieldErrors)
+          return
+        }
+
         console.error('Get list error:', error)
 
         const errorResult = this.$handleError(error, this.$t('errorTitles.loadList'))

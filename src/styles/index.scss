@@ -556,6 +556,9 @@ body {
 .filter-button-apply {
     font-size: 0.9rem!important;
 }
+.filter-button-reset .v-btn__overlay {
+    transition: none;
+}
 /* Приглушить label'ы внутри фильтров */
 .filters-container .v-field .v-label {
     font-size: 0.8rem;
