@@ -3,6 +3,7 @@
   <v-dialog width="auto" :disabled="readOnly">
     <template v-slot:activator="{ props: activatorProps }">
       <v-text-field
+        :class="{ 'datetime-filter': isFilter }"
         v-bind="activatorProps"
         :density="density"
         :variant="variant"

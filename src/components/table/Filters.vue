@@ -189,7 +189,7 @@ export default {
   },
   computed: {
     hasFiltersToReset() {
-      return Boolean(this.search) || Object.values(this.getFilters()).some(
+      return Boolean(this.search || this.activeSubtableSlug) || Object.values(this.getFilters()).some(
         value => !Array.isArray(value) || value.length > 0
       )
     },
@@ -395,6 +395,7 @@ export default {
       if (this.loading) return
       this.search = null
       this.filters = {}
+      this.activeSubtableSlug = null
       this.applyFiltersToFields()
     },
     applyFilter() {

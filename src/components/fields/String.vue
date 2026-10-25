@@ -1,6 +1,7 @@
 <template>
   <v-textarea
     v-if="field.multilined"
+    :class="{ 'string-filter': isFilter }"
     :variant="variant"
     :density="density"
     :clearable="!readOnly"
@@ -19,6 +20,7 @@
 
   <template v-else>
     <v-text-field
+      :class="{ 'string-filter': isFilter }"
       :variant="variant"
       :density="density"
       :clearable="!readOnly"

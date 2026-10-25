@@ -545,8 +545,10 @@ body {
         1ch + var(--v-field-padding-start) + var(--v-field-padding-end)
     );
 }
-.filters-container .v-text-field input.v-field__input[type="text"] {
-    min-inline-size: 60px;
+.filters-container .filter-element > .string-filter,
+.filters-container .filter-element > .number-filter,
+.filters-container .filter-element > .datetime-filter {
+    min-width: 70px;
 }
 .filters-container .v-autocomplete .v-field .v-field__input > input {
     flex: 0 1 auto;
