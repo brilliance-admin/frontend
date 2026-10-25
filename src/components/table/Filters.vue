@@ -10,12 +10,12 @@
       <v-tooltip v-if="searchHelp" location="bottom">
         <template #activator="{ props }">
           <label class="filter-label" v-bind="props">
-            <span>{{ $t('search') }}</span>
+            <span>{{ $t('search') }}*:</span>
           </label>
         </template>
         <div v-html="searchHelpHtml()"></div>
       </v-tooltip>
-      <label v-else class="filter-label"><span>{{ $t('search') }}</span></label>
+      <label v-else class="filter-label"><span>{{ $t('search') }}:</span></label>
 
       <v-text-field
         class="filter-search-input"
@@ -34,12 +34,23 @@
           class="filter-element"
           v-on:keydown.enter.prevent="applyFilter"
         >
-          <label
+          <div
             class="filter-label"
+            :class="{ 'filter-label--subtable': filter.has_filter_subtable }"
             :title="filter.help_text ? `${filter.label}: ${filter.help_text}` : filter.label"
           >
-            <span>{{ filter.label }}</span>
-          </label>
+            <span>{{ filter.label }}{{ filter.help_text ? '*' : '' }}:</span>
+            <v-btn
+              v-if="filter.has_filter_subtable"
+              class="filter-subtable-trigger"
+              icon="mdi-chart-line"
+              density="compact"
+              variant="text"
+              :aria-label="filter.label"
+              :aria-expanded="activeSubtableSlug === filter_name"
+              @click.stop="toggleSubtable(filter_name)"
+            />
+          </div>
 
           <component
             v-if="getFieldComponent(filter)"
@@ -58,7 +69,6 @@
             :is-filter="true"
 
             @changed="value => _updateValue(value, filter_name)"
-            @open-subtable="toggleSubtable(filter_name)"
           />
           <template v-else>
             {{ filter }}

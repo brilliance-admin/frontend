@@ -20,16 +20,6 @@
           <span v-if="field.required" class="required-star">*</span>
         </template>
 
-        <template v-slot:append-inner>
-          <v-btn
-            v-if="isFilter && field.has_filter_subtable"
-            class="filter-subtable-trigger"
-            icon="mdi-chart-line"
-            density="compact"
-            variant="text"
-            @click.stop="$emit('open-subtable')"
-          />
-        </template>
       </v-text-field>
     </template>
 
@@ -41,7 +31,6 @@
           :readonly="readOnly"
           rows="2"
           max-rows="2"
-          auto-grow
           @update:modelValue="updateDisplayValue"
           @keydown.enter.prevent="isActive.value = false"
         />
@@ -96,7 +85,7 @@ export default {
   props: {
     ...defaultProps,
   },
-  emits: ["changed", "open-subtable"],
+  emits: ["changed"],
   data(props) {
     return {
       value: null,

@@ -523,10 +523,14 @@ body {
 .filters-container .filter-label > span {
     display: block;
     min-width: 0;
+    max-width: 100px;
     opacity: 0.6;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+.filters-container .filter-label--subtable {
+    max-width: none;
 }
 .filters-container .filter-element > .v-input {
     align-self: stretch;
@@ -540,6 +544,9 @@ body {
     min-inline-size: calc(
         1ch + var(--v-field-padding-start) + var(--v-field-padding-end)
     );
+}
+.filters-container .v-text-field input.v-field__input[type="text"] {
+    min-inline-size: 60px;
 }
 .filters-container .v-autocomplete .v-field .v-field__input > input {
     flex: 0 1 auto;

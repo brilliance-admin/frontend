@@ -49,6 +49,8 @@ const messages = {
     relatedCurrentCounter: 'Shown {shown}',
     filterSubtable: {
       selectRange: 'Select a "{field}" filter range to display the chart.',
+      groupBy: 'Group chart by:',
+      periodChart: 'Chart for filter period',
       applyFilter: 'Apply the filter to load chart data.',
     },
     leaveEditPage: 'Leave this page? All unsaved changes will be lost.',
@@ -125,6 +127,8 @@ const messages = {
     relatedCurrentCounter: 'Показано {shown}',
     filterSubtable: {
       selectRange: 'Выберите диапазон фильтра "{field}" для отображения графика.',
+      groupBy: 'Группировать график по:',
+      periodChart: 'График за период фильтра',
       applyFilter: 'Примените фильтр для получения данных графика.',
     },
     leaveEditPage: 'Покинуть страницу? Все несохранённые изменения будут потеряны.',

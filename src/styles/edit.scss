@@ -91,15 +91,25 @@
     display: flex;
 }
 
-.filter-subtable-trigger.v-btn {
+.filters-container .filter-subtable-trigger.v-btn {
     width: 36px;
     min-width: 36px;
+    height: 36px;
     padding: 0;
+    margin-left: 5px;
     border-radius: 50%;
 }
 
 .filters-container .filter-subtable__controls {
     display: flex;
+}
+.filter-subtable__controls > .filter-subtable__group-label {
+    font-size: 13px !important;
+    font-weight: 700;
+}
+.filter-subtable__period-label {
+    font-size: 13px;
+    font-weight: 700;
 }
 .filters-container .filter-subtable__refresh {
     margin-left: 4px;

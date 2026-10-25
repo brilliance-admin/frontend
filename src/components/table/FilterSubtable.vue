@@ -1,8 +1,11 @@
 <template>
   <v-card class="filter-subtable">
     <v-card-title class="filter-subtable__header">
-      <span>{{ field.label }}</span>
+      <span>{{ field.label }}: <span class="filter-subtable__period-label">{{ $t('filterSubtable.periodChart') }}</span></span>
       <div class="filter-subtable__controls">
+        <span class="filter-subtable__group-label mr-2 align-self-center">
+          {{ $t('filterSubtable.groupBy') }}
+        </span>
         <v-btn-toggle v-model="unit" mandatory density="compact" variant="outlined" divided>
           <v-btn value="10min" density="compact">10 min</v-btn>
           <v-btn value="1hour" density="compact">1 hour</v-btn>
