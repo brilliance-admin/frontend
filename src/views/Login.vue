@@ -10,7 +10,7 @@
         :title="$t('errorTitles.loadSettings')"
       />
 
-      <v-container v-else fluid class="fill-height gradient-bg">
+      <v-container v-else fluid class="fill-height gradient-bg d-flex align-center">
 
         <v-row>
 
