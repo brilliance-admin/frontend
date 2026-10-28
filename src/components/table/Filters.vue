@@ -397,6 +397,7 @@ export default {
       this.filters = {}
       this.activeSubtableSlug = null
       this.applyFiltersToFields()
+      this.applyFilter()
     },
     applyFilter() {
       if (this.loading) return
