@@ -62,6 +62,7 @@
             variant="solo"
 
             :category-schema="categorySchema"
+            :parent-pk="parentPk"
 
             :field="filter"
             :field-slug="filter_name"
