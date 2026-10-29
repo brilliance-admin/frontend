@@ -5,6 +5,7 @@
       <div
         v-for="name in getThemeList()"
         :key="name"
+        :title="name"
         class="theme-switch"
         :class="{ 'theme-switch-active': currentTheme === name }"
         @click="currentTheme = name"

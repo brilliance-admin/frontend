@@ -11,6 +11,7 @@ var config_dataset = {
   backend_debug: undefined,
   logo_image: '/logo-outline.png',
   custom_themes: [],
+  exclude_default_themes: false,
 }
 
 if (import.meta.env.PROD) {

@@ -140,25 +140,55 @@ const defaultThemes = {
   deepPurpleDark,
 }
 
+export function applyThemeStylesheet(name) {
+  document.documentElement.dataset.adminTheme = name
+  const stylesheetId = 'admin-theme-stylesheet'
+  const current = document.getElementById(stylesheetId)
+  const file = getThemes()[name]?.css_url
+  if (!file) {
+    current?.remove()
+    return
+  }
+
+  const backendUrl = new URL(config_dataset.base_url || window.location.origin, window.location.origin)
+  const stylesheetUrl = new URL(file, backendUrl)
+  if (
+    !['http:', 'https:'].includes(stylesheetUrl.protocol) ||
+    stylesheetUrl.origin !== backendUrl.origin ||
+    stylesheetUrl.username || stylesheetUrl.password
+  ) {
+    throw new Error(`Theme stylesheet must use the backend origin: ${stylesheetUrl.origin}`)
+  }
+  const href = stylesheetUrl.href
+  if (current?.getAttribute('href') === href) return
+
+  const stylesheet = current || document.createElement('link')
+  stylesheet.id = stylesheetId
+  stylesheet.rel = 'stylesheet'
+  stylesheet.href = href
+  if (!current) document.head.appendChild(stylesheet)
+}
+
 export function getThemes() {
   const custom = {}
   for (const t of (config_dataset.custom_themes || [])) {
-    custom[t.name] = { dark: t.dark, colors: t.colors }
+    custom[t.name] = { dark: t.dark, colors: t.colors, css_url: t.css_url }
   }
-  return { ...defaultThemes, ...custom }
+  const themes = config_dataset.exclude_default_themes ? custom : { ...defaultThemes, ...custom }
+  if (Object.keys(themes).length === 0) {
+    throw new Error('No themes available: custom_themes must not be empty when exclude_default_themes is true')
+  }
+  return themes
 }
 
-const defaultThemesNames = [
-  'blueLight', 'blueDark', 'greenLight', 'greenDark', 'deepPurpleLight', 'deepPurpleDark'
-]
-
 export function getThemeList() {
-  const customNames = (config_dataset.custom_themes || []).map(t => t.name)
-  return [...defaultThemesNames, ...customNames]
+  return Object.keys(getThemes())
 }
 
 export function getTheme() {
-  const theme = getLocalSettings().theme || config_dataset.default_theme
-  if (getThemeList().indexOf(theme) !== -1) return theme
-  return getThemeList()[0]
+  const names = getThemeList()
+  const savedTheme = getLocalSettings().theme
+  if (names.includes(savedTheme)) return savedTheme
+  if (names.includes(config_dataset.default_theme)) return config_dataset.default_theme
+  return names[0]
 }
