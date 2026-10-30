@@ -38,6 +38,7 @@
       form-type="edit"
       :admin-schema="adminSchema"
       :category-schema="categorySchema"
+      :parent-pk="parentPk"
       :table-schema="categorySchema.getTableInfo().table_schema"
 
       :loading="loading"
