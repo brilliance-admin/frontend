@@ -1,5 +1,23 @@
 <template>
-  <v-number-input
+  <div v-if="isRange" class="number-range-filter d-flex">
+    <v-number-input
+      v-for="bound in ['from', 'to']"
+      :key="bound"
+      class="number-filter"
+      :label="$t(bound === 'from' ? 'from' : 'to')"
+      :density="density"
+      :variant="variant"
+      :clearable="!readOnly"
+      :model-value="value?.[bound] ?? null"
+      :readonly="readOnly"
+      :loading="loading"
+      :min="field.min_value"
+      :max="field.max_value"
+      :step="step"
+      @update:modelValue="onRangeChange(bound, $event)"
+    />
+  </div>
+  <v-number-input v-else
     :class="{ 'number-filter': isFilter }"
     :density="density"
     :variant="variant"
@@ -60,6 +78,9 @@ export default {
     }
   },
   computed: {
+    isRange() {
+      return this.isFilter && this.field.range
+    },
     step() {
       if (typeof this.field.scale !== 'number' || this.field.scale <= 0) {
         return 1
@@ -75,6 +96,10 @@ export default {
     getMessages() {
       if (this.isFilter) return []
       return this.field.help_text || []
+    },
+    onRangeChange(bound, newValue) {
+      this.value = {...(this.value || {}), [bound]: newValue ?? null}
+      this.$emit('changed', this.value)
     },
     onChange(newValue) {
       this.value = newValue === undefined ? null : newValue

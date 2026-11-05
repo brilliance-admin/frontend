@@ -282,7 +282,7 @@ export default {
       if (['datetime'].indexOf(filter.type) !== -1) return DateTimeField
       if (['related'].indexOf(filter.type) !== -1) return RelatedField
       if (['string', 'duration'].indexOf(filter.type) !== -1) return StringField
-      if (['integer'].indexOf(filter.type) !== -1) return NumberField
+      if (['integer', 'decimal'].indexOf(filter.type) !== -1) return NumberField
       if (['boolean'].indexOf(filter.type) !== -1) return BooleanFilter
     },
     _updateValue(value, filter_name) {

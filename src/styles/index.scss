@@ -591,6 +591,14 @@ body {
 .filters-container .v-select__menu-icon {
     margin-inline-start: 0;
 }
+.filters-container .number-range-filter > .number-filter {
+    flex: none;
+    width: max-content;
+    min-width: 60px;
+}
+.filters-container .number-range-filter > .number-filter + .number-filter {
+    border-left: 1px solid rgba(var(--v-border-color), 0.04);
+}
 .filters-container .number-filter .v-field__outline {
     display: none;
 }

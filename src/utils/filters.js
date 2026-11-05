@@ -4,6 +4,7 @@ function castValue(value, fieldType) {
   if (value === '' || value === null || value === undefined) return value
   switch (fieldType) {
     case 'integer':
+    case 'decimal':
       return isFinite(value) ? Number(value) : value
     case 'boolean':
       if (value === 'true') return true
@@ -50,11 +51,11 @@ export function extractFiltersFromQuery(route, tableFiltersFields) {
       continue
     }
 
-    if (field.type === 'datetime') {
+    if (field.type === 'datetime' || (field.range && ['integer', 'decimal'].includes(field.type))) {
       const from = query[`${FILTER_PREFIX}${fieldSlug}__from`]
       const to = query[`${FILTER_PREFIX}${fieldSlug}__to`]
       if (from !== undefined || to !== undefined) {
-        filters[fieldSlug] = {from, to}
+        filters[fieldSlug] = {from: castValue(from, field.type), to: castValue(to, field.type)}
       }
       continue
     }
@@ -98,7 +99,7 @@ export function applyFiltersToQuery(newQuery, filters, tableFiltersFields = {}) 
       continue
     }
 
-    if (field?.type === 'datetime') {
+    if (field?.type === 'datetime' || (field?.range && ['integer', 'decimal'].includes(field.type))) {
       if (value?.from !== undefined && value.from !== null) {
         newQuery[`${FILTER_PREFIX}${key}__from`] = value.from
       }
