@@ -19,9 +19,9 @@
     </v-card>
 
     <div class="formset-grid">
-      <template v-for="field in node.fields" v-bind:key="getFieldKey(field)">
         <v-lazy
-          v-if="isFormsetNode(field)"
+          v-for="field in sections"
+          :key="getFieldKey(field)"
           class="formset-grid-item"
           :style="{ gridColumn: `span ${field.col_span || 12}` }"
           :min-height="readyFormsets.has(getFieldKey(field)) ? undefined : 200"
@@ -46,7 +46,8 @@
         </v-lazy>
 
         <div
-          v-else-if="resolveField(field).schema && isDisplayField(field)"
+          v-for="field in displayFields"
+          :key="getFieldKey(field)"
           class="field-cell formset-grid-item"
           :style="{ gridColumn: `span ${resolveField(field).col_span || 12}` }"
         >
@@ -83,7 +84,6 @@
             </template>
           </div>
         </div>
-      </template>
     </div>
   </div>
 </template>
@@ -133,7 +133,26 @@ export default {
       readyFormsets: new Set(),
     }
   },
+  computed: {
+    sections() {
+      return this.getSections(this.node)
+    },
+    displayFields() {
+      if (this.sections.length) return []
+      return this.node.fields.filter(field => this.resolveField(field).schema && this.isDisplayField(field))
+    },
+  },
   methods: {
+    getSections(node) {
+      if (!node.fields.some(field => this.isFormsetNode(field))) return []
+      return node.fields.map(field => {
+        if (this.isFormsetNode(field)) return field
+        return {
+          fields: [typeof field === 'string' ? field : { ...field, col_span: 12 }],
+          col_span: typeof field === 'string' ? 12 : field.col_span,
+        }
+      })
+    },
     async initializeFormset(field, active) {
       if (!active) return
       await this.$nextTick()
@@ -262,8 +281,8 @@ export default {
       this.$emit('changed', nextValue)
     },
     updateChildrenFormContext() {
-      for (const field of this.node.fields) {
-        if (this.isFormsetNode(field)) {
+      for (const field of this.sections.length ? this.sections : this.node.fields) {
+        if (this.sections.length) {
           const child = this.$refs[this.getRefString(this.getFieldKey(field))]
           if (child && child[0] && child[0].updateChildrenFormContext) {
             child[0].formData = this.formData
@@ -290,8 +309,8 @@ export default {
       this.formData = partial ? { ...this.formData, ...newData } : newData
       this.hasFormData = true
       this.partialFormData = partial
-      for (const field of this.node.fields) {
-        if (this.isFormsetNode(field)) {
+      for (const field of this.sections.length ? this.sections : this.node.fields) {
+        if (this.sections.length) {
           if (!this.readyFormsets.has(this.getFieldKey(field))) continue
           const child = this.$refs[this.getRefString(this.getFieldKey(field))]
           if (!child || !child[0] || !child[0].updateFormData) {

@@ -510,9 +510,6 @@
         padding: 3px;
     }
 }
-.field-inline-card:not(.formset-header) {
-    background-color: rgba(var(--v-theme-secondary), 0.8) !important;
-}
 .formset-header:not([class*="bg-"]) {
     background-color: rgba(var(--v-theme-primary), 0.48) !important;
 }
@@ -598,6 +595,10 @@
 .field-title {
     color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
+.formset-description {
+    color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+    opacity: 1;
+}
 .formset-title {
     display: flex;
     align-items: center;
@@ -646,4 +647,9 @@
     .v-selection-control {
         min-height: 32px;
     }
+}
+.multiple-choice-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: 16px;
 }

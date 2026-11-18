@@ -1,8 +1,35 @@
 <template>
   <v-card class="group-field-card">
-    <div v-if="!isFilter" class="field-title-section">
+    <div v-if="!isFilter" class="field-title-section d-flex align-center">
       <span class="field-title">{{ field.label }}</span>
       <span v-if="field.required" class="required-star">*</span>
+
+      <div class="multiple-choice-buttons">
+        <v-btn
+          variant="tonal"
+          size="small"
+          height="20"
+          density="compact"
+          min-width="0"
+          class="text-none"
+          :disabled="readOnly || loading"
+          @click="selectAll"
+        >
+          {{ $t('selectAll') }}
+        </v-btn>
+        <v-btn
+          variant="tonal"
+          size="small"
+          height="20"
+          density="compact"
+          min-width="0"
+          class="text-none"
+          :disabled="readOnly || loading"
+          @click="clearAll"
+        >
+          {{ $t('clearAll') }}
+        </v-btn>
+      </div>
     </div>
 
     <div class="multiple-choice-options">
@@ -53,6 +80,14 @@ export default {
     }
   },
   methods: {
+    selectAll() {
+      this.value = this.field.choices.map(choice => choice.value)
+      this.onChange()
+    },
+    clearAll() {
+      this.value = []
+      this.onChange()
+    },
     getMessages() {
       if (this.isFilter) return []
       return this.field.help_text || []

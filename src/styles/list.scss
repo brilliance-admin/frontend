@@ -89,6 +89,10 @@
     }
 }
 
+.inline-table .table-cell {
+    overflow-wrap: anywhere;
+}
+
 .model-table--fit-screen {
     width: 100%;
     min-width: 0;

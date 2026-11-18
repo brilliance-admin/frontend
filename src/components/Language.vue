@@ -1,6 +1,6 @@
 <template>
 
-  <v-dialog max-width="300">
+  <v-dialog v-if="Object.keys(langs).length > 1" max-width="300">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn icon v-bind="activatorProps"><v-icon>mdi-translate</v-icon></v-btn>
     </template>

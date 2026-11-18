@@ -10,7 +10,17 @@ import { getThemes, getTheme } from '/src/styles/themes'
 export default createVuetify({
   theme: {
     defaultTheme: getTheme(),
-    themes: getThemes(),
+    themes: {
+      light: { colors: {
+        'error-background': 'rgb(207, 146, 142)',
+        'light-blue-background': '#BBDEFB',
+      } },
+      dark: { colors: {
+        'error-background': 'rgb(115, 53, 50)',
+        'light-blue-background': '#315675',
+      } },
+      ...getThemes(),
+    },
   },
   locale: {
     adapter: createVueI18nAdapter({ i18n, useI18n }),

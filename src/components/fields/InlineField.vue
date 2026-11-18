@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-card class="field-inline-card">
+    <v-card class="field-inline-card" :color="field.header_bg_color ?? 'secondary'">
 
-      <v-card-title class="d-flex align-center">
+      <v-card-title class="d-flex align-center text-medium-emphasis">
         <v-btn
           :icon="collapsed ? 'mdi-chevron-right' : 'mdi-chevron-down'"
           :aria-expanded="!collapsed"
@@ -26,7 +26,7 @@
 
       <v-expand-transition>
         <div v-show="!collapsed">
-          <v-card-subtitle v-if="field.help_text">
+          <v-card-subtitle v-if="field.help_text" class="text-medium-emphasis" :opacity="1">
             {{ field.help_text }}
           </v-card-subtitle>
 
@@ -40,6 +40,7 @@
 
           <TableView
             v-if="field.table_view"
+            class="inline-table"
             :items="value"
             :table-schema="field.inline_field_schema"
             :loading="loading"
